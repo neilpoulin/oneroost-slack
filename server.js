@@ -32,11 +32,19 @@ app.post('/tokens/slack', (req, res) => {
         if (!ok){
             throw error
         }
-        res.send({
+        const info = {
             access_token,
             scope,
             team,
             user
+        }
+        res.send(info)
+        return info
+    })
+    .then(({ok, access_token, scope, team, user, error}) => {
+        //this is to the #random channel
+        axios.post('https://hooks.slack.com/services/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', {
+            text: `${user.name} has logged into OneRoost via Slack`
         })
     })
     .catch(function (error) {
