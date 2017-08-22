@@ -13,6 +13,7 @@ var extractCssPlugin = new ExtractTextPlugin({
 module.exports = {
     devtool: 'eval-source-map',
     entry: [
+        'webpack-hot-middleware/client',
         './src/frontend/index.js',
     ],
     output: {
@@ -25,16 +26,16 @@ module.exports = {
         modules: ['frontend', 'src', 'ducks', 'components', 'node_modules']
     },
     plugins: [
-        extractCssPlugin,
         new ProgressBarPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
         new ProgressBarPlugin(),
-        new OptimizeCssAssetsPlugin()
     ],
     module: {
         rules: [
             {
                 test: /\.jsx?$/,
                 use: [
+                    {loader: 'react-hot-loader'},
                     {loader:'babel-loader'},
                     {loader: path.join(__dirname, 'loaders', 'jsx-import-sass-loader')}
                 ],
@@ -42,22 +43,22 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: "style-loader",
-                    use: [
-                        {
-                            loader: "css-loader",
-                            options: {sourceMap: true, }
-                        },
-                        {
-                            loader: "css-encapsulation-loader"
-                        },
-                        {
-                            loader: "sass-loader",
-                            options: {sourceMap: true, }
-                        }
-                    ]
-                })
+                use: [
+                    {
+                        loader:  "style-loader",
+                    },
+                    {
+                        loader: "css-loader",
+                        options: {sourceMap: true, }
+                    },
+                    {
+                        loader: "css-encapsulation-loader"
+                    },
+                    {
+                        loader: "sass-loader",
+                        options: {sourceMap: true, }
+                    }
+                ]
             }
         ]
     }

@@ -54,7 +54,7 @@ const Topics = ({ match }) => (
 
 const App = () => (
   <Router>
-    <div>
+    <div className="container">
       <ul>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/login">Login</Link></li>
