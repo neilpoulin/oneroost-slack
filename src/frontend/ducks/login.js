@@ -1,6 +1,7 @@
 import Immutable from 'immutable'
 import axios from 'axios'
 
+const localstorage_SLACK_ACCESS_TOKEN = 'slackAccessToken'
 
 export const SLACK_AUTH_REQUEST = 'oneroost/login/SLACK_AUTH_REQUEST'
 export const SLACK_AUTH_SUCCESS = 'oneroost/login/SLACK_AUTH_SUCCESS'
@@ -27,6 +28,7 @@ export default function reducer(state=initialState, action){
             state = state.set('isLoggedIn', true)
             state = state.set('slackUser', action.payload.get('user'))
             state = state.set('slackTeam', action.payload.get('team'))
+            state = state.set('channels', action.payload.get('channels', Immutable.List()))
             return state
         case SLACK_AUTH_ERROR:
             state = state.set('isLoading', false)
@@ -39,6 +41,25 @@ export default function reducer(state=initialState, action){
     return state;
 }
 
+export function loadUser(){
+    return dispatch => {
+        axios.get('slack/userInfo').then(({data}) => {
+            console.log('data!', data)
+            dispatch({
+                type: SLACK_AUTH_SUCCESS,
+                payload: {
+                    user: data.user,
+                    team: data.team,
+                    accessToken: data.access_token,
+                    channels: data.channels,
+                }
+            })
+        }).catch(error => {
+            console.error(error)
+        })
+    }
+}
+
 export function loginWithSlack(code){
     return dispatch => {
         dispatch({
@@ -48,19 +69,23 @@ export function loginWithSlack(code){
         axios.post('/tokens/slack', {
             code,
         })
-        .then(function ({data: {
-            accessToken, user, team
-        }}) {
+        .then( ({data: {
+            access_token: accessToken, user, team
+        }}) => {
             dispatch({
                 type: SLACK_AUTH_SUCCESS,
                 payload: {
                     accessToken,
                     user,
                     team,
+                    channels,
                 }
             })
+            if (localStorage){
+                localStorage.setItem(localstorage_SLACK_ACCESS_TOKEN, accessToken)
+            }
         })
-        .catch(function ({response: {data: error}}) {
+        .catch( ({response: {data: error}}) => {
             console.log(error);
             dispatch({
                 type: SLACK_AUTH_ERROR,

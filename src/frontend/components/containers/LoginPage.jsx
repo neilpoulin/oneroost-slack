@@ -4,6 +4,7 @@ import {connect} from 'react-redux'
 import qs from 'qs'
 import {loginWithSlack} from 'ducks/login'
 import {Redirect} from 'react-router'
+import Immutable from 'immutable'
 
 class LoginPage extends React.Component{
     static propTypes = {
@@ -34,6 +35,7 @@ class LoginPage extends React.Component{
             teamImageUrl,
             userImageUrl,
             location,
+            channels,
         } = this.props
 
         if ((isLoggedIn || error) && location.search){
@@ -46,11 +48,23 @@ class LoginPage extends React.Component{
         return (
             <div>
                 <h1>Hello Login</h1>
-                <div display-if={isLoggedIn}>
-                    <div display-if={userImageUrl}>
-                        <img src={userImageUrl} />
+                <div display-if={isLoggedIn} className="">
+                    <p>Welcome, {userName} @ {teamName}</p>
+                    <div className="userInfo">
+                        <div className="images">
+                            <div display-if={userImageUrl}>
+                                <img src={userImageUrl} />
+                            </div>
+                            <div display-if={teamImageUrl}>
+                                <img src={teamImageUrl} />
+                            </div>
+                        </div>
+                        <div display-if={channels}>
+                            <h4>Channels</h4>
+                            {channels.map((c, i) => <div key={`channel_${i}`}>{c.name}</div>)}
+                        </div>    
                     </div>
-                    Welcome, {userName} @ {teamName}
+
                 </div>
                 <div display-if={error}>
                     Something went wrong while authenticating with Slack: {error}
@@ -92,7 +106,8 @@ const mapStateToProps = (state, ownProps) => {
         teamImageUrl: login.getIn(['slackTeam', 'image_230']),
         userImageUrl: login.getIn(['slackUser', 'image_72']),
         userName: login.getIn(['slackUser', 'name']),
-        userEmail: login.getIn(['slackUser', 'email'])
+        userEmail: login.getIn(['slackUser', 'email']),
+        channels: login.get('channels', Immutable.List()).toJS()
     }
 }
 

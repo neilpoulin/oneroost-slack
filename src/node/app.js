@@ -1,6 +1,7 @@
 var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser')
 var devConfig = require('./app/config');
 var router = express.Router()
 var routes = require('./routes');
@@ -8,6 +9,7 @@ var routes = require('./routes');
 var app = express();
 devConfig(app);
 app.use(bodyParser.json());
+app.use(cookieParser());
 router.use(function(req, res, next) {
     console.log(req.method + ': ' + (req.path || '/'))
     next()
