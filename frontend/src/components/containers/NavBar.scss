@@ -1,0 +1,29 @@
+.navContainer{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    // height: 4rem;
+    background: lightgray;
+}
+
+ul.nav{
+    list-style: none;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+    li {
+        text-decoration: none;
+        display: flex;
+        a {
+            height: 100%;
+            padding: 1rem;
+            text-decoration: none;
+
+            &:hover{
+                background-color: gray;
+            }
+        }
+    }
+}

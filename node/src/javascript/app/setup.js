@@ -11,7 +11,7 @@ module.exports = function(app){
         app.use(require('webpack-dev-middleware')(compiler, {
             publicPath: config.output.publicPath,
             stats: {colors: true},
-            noInfo: false,
+            noInfo: true,
         }));
 
         app.use(require('webpack-hot-middleware')(compiler, {
