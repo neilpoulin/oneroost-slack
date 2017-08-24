@@ -4,7 +4,10 @@
     left: 0;
     right: 0;
     // height: 4rem;
-    background: lightgray;
+    // background: lightgray;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid gray;
 }
 
 ul.nav{
@@ -13,17 +16,23 @@ ul.nav{
     align-items: flex-start;
     margin: 0;
     padding: 0;
+    align-items: center;
     li {
         text-decoration: none;
         display: flex;
-        a {
+        &.navLink a {
             height: 100%;
             padding: 1rem;
             text-decoration: none;
-
-            &:hover{
-                background-color: gray;
+            color: black;
+            &.active, &:hover{
+                // background-color: gray;
+                color: orange;
             }
         }
+    }
+
+    &:last-child{
+        margin-right: 1rem;
     }
 }
