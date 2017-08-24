@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "axios": "^0.16.2",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
     "body-parser": "^1.17.2"
   }
 }

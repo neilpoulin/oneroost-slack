@@ -43,6 +43,12 @@ export default function reducer(state=initialState, action){
 
 export function loadUser(){
     return dispatch => {
+        if (!document.cookie || document.cookie.indexOf('slack_token=') === -1)
+        {
+            console.log('user is not logged in, not fetching data')
+            return null;
+        }
+
         axios.get('slack/userInfo').then(({data}) => {
             console.log('data!', data)
             dispatch({
@@ -70,7 +76,7 @@ export function loginWithSlack(code){
             code,
         })
         .then( ({data: {
-            access_token: accessToken, user, team
+            access_token: accessToken, user, team, channels
         }}) => {
             dispatch({
                 type: SLACK_AUTH_SUCCESS,
@@ -81,11 +87,8 @@ export function loginWithSlack(code){
                     channels,
                 }
             })
-            if (localStorage){
-                localStorage.setItem(localstorage_SLACK_ACCESS_TOKEN, accessToken)
-            }
         })
-        .catch( ({response: {data: error}}) => {
+        .catch( error => {
             console.log(error);
             dispatch({
                 type: SLACK_AUTH_ERROR,

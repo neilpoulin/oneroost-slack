@@ -8,6 +8,15 @@ import plumber from 'gulp-plumber'
 import babel from 'gulp-babel'
 import sourcemaps from 'gulp-sourcemaps'
 
+const nodeBabelOptions = {
+    presets: ["es2015", "stage-0"],
+    plugins: [
+        "transform-async-to-generator"
+    ]
+}
+
+
+
 gulp.task('clean', ['fe:clean', 'node:clean'])
 
 gulp.task('fe:clean', () => {
@@ -84,7 +93,7 @@ function transpileNode(){
         }
     }))
     .pipe(sourcemaps.init())
-    .pipe(babel())
+    .pipe(babel(nodeBabelOptions))
     .on('error', function (err) {
         gutil.log(gutil.colors.red('[Task "transpile:node"][Babel Error]'));
         gutil.log(gutil.colors.red(err.message));
@@ -111,7 +120,7 @@ function startServer(props){
 }
 
 
-function bundle(done, withStats=false, env="prod") {
+function bundle(done, withLog=false, withStats=false, env="prod") {
     webpack(webpackConfig).run((err, stats) => {
         if (err) {
             var error = new gutil.PluginError("bundle", err);
@@ -122,18 +131,20 @@ function bundle(done, withStats=false, env="prod") {
             });
         }
         else {
-            gutil.log(`[webpack:build-${env}]`, stats.toString({
-                colors: true,
-                version: true,
-                timings: true,
-                errorDetails: true,
-                hash: true,
-                assets: true,
-                chunks: false
-            }));
-            Object.keys(stats.compilation.assets).forEach(function(key) {
-                gutil.log("Webpack: output ", gutil.colors.green(key));
-            });
+            if( withLog){
+                gutil.log(`[webpack:build-${env}]`, stats.toString({
+                    colors: true,
+                    version: true,
+                    timings: true,
+                    errorDetails: true,
+                    hash: true,
+                    assets: true,
+                    chunks: false
+                }));
+                Object.keys(stats.compilation.assets).forEach(function(key) {
+                    gutil.log("Webpack: output ", gutil.colors.green(key));
+                });                
+            }
             if (done) {
                 done();
             }

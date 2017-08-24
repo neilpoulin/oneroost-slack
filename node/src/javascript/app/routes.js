@@ -9,59 +9,62 @@ var slackConfig = {
     verificationToken: process.env.SLACK_VERIFICATION_TOKEN
 }
 console.log('Slack Config:', slackConfig)
-router.post('/tokens/slack', (req, res) => {
+router.post('/tokens/slack', async (req, res) => {
     let code = req.body.code
     if(!code){
         return res.error({error: {
             code: 'An auth code is required'
         }})
     }
-    axios.get(`https://slack.com/api/oauth.access?client_id=${slackConfig.clientId}&client_secret=${slackConfig.clientSecret}&code=${code}`)
-    .then(({data: {ok, access_token, scope, team, user, error}}) => {
+
+    try{
+        let userResponse = await axios.get(`https://slack.com/api/oauth.access?client_id=${slackConfig.clientId}&client_secret=${slackConfig.clientSecret}&code=${code}`)
+        const {data: {ok, access_token, scope, team, user, error}} = userResponse
+
         if (!ok){
             throw error
         }
 
-        return axios.post('https://slack.com/api/channels.list', qs.stringify({
+        let channelResponse = await axios.post('https://slack.com/api/channels.list', qs.stringify({
             token: access_token,
             exclude_archived: true,
             exclude_members: true,
-        })).then(({data}) => {
-            const info = {
-                access_token,
-                scope,
-                team,
-                user,
-                channels: data.channels
-            }
-            res.cookie('slack_token', access_token)
-            res.send(info)
-            return info
-        })
-
-    })
-    .then(({ok, access_token, scope, team, user, error}) => {
-        //this is to the #random channel
-        const slackbot_channel = 'https://hooks.slack.com/services/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'
-        const random_channel = 'https://hooks.slack.com/services/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'
-
-
-        axios.post(slackbot_channel, {
-            text: `${user.name} has logged into OneRoost via Slack`
-        })
-        axios.post('https://slack.com/api/channels.create', qs.stringify({
-            token: access_token,
-            name: 'OneRoost Testing 1',
-            validate: true
         }))
+        
+        const info = {
+            access_token,
+            scope,
+            team,
+            user,
+            channels: channelResponse.data.channels
+        }
 
-    })
-    .catch(function (error) {
-        console.log(error);
+        // postToChannel(access_token)
+
+        res.cookie('slack_token', access_token)
+        res.send(info)
+
+    }catch(e){
+        console.error(e);
         res.status(403)
         res.send({error})
-    });
+    }
 })
+
+async function postToChannel(access_token){
+    //this is to the #random channel
+    const slackbot_channel = 'https://hooks.slack.com/services/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'
+    const random_channel = 'https://hooks.slack.com/services/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'
+
+    return axios.post(slackbot_channel, {
+        text: `${user.name} has logged into OneRoost via Slack`
+    })
+    // axios.post('https://slack.com/api/channels.create', qs.stringify({
+    //     token: access_token,
+    //     name: 'OneRoost Testing 1',
+    //     validate: true
+    // }))
+}
 
 router.get('/slack/userInfo', (req, res) => {
     let accessToken = req.cookies.slack_token
