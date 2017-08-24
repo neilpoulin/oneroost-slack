@@ -14,7 +14,7 @@ module.exports = {
     devtool: 'eval-source-map',
     entry: [
         'webpack-hot-middleware/client',
-        './src/frontend/index.js',
+        './frontend/src/index.js',
     ],
     output: {
         path: path.join(__dirname, 'dist'),
@@ -39,7 +39,7 @@ module.exports = {
                     {loader:'babel-loader'},
                     {loader: path.join(__dirname, 'loaders', 'jsx-import-sass-loader')}
                 ],
-                include: path.join(__dirname, 'src')
+                include: path.join(__dirname, 'frontend', 'src')
             },
             {
                 test: /\.scss$/,

@@ -47,7 +47,7 @@ class LoginPage extends React.Component{
 
         return (
             <div>
-                <h1>Hello Login</h1>
+                <h1>OneRoost</h1>
                 <div display-if={isLoggedIn} className="">
                     <p>Welcome, {userName} @ {teamName}</p>
                     <div className="userInfo">
@@ -62,7 +62,7 @@ class LoginPage extends React.Component{
                         <div display-if={channels}>
                             <h4>Channels</h4>
                             {channels.map((c, i) => <div key={`channel_${i}`}>{c.name}</div>)}
-                        </div>    
+                        </div>
                     </div>
 
                 </div>

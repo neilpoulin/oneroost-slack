@@ -1,0 +1,6 @@
+{
+  "presets": ["es2015", "stage-0", "react"],
+  "plugins": [
+      "dynamic-import-webpack",
+      "jsx-display-if", "babel-plugin-encapsulate-jsx"]
+}

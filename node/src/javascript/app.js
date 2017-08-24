@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser')
 var devConfig = require('./app/config');
 var router = express.Router()
-var routes = require('./routes');
+import routes from './app/routes';
 
 var app = express();
 devConfig(app);
@@ -20,6 +20,5 @@ app.listen(3000, function(err) {
     if (err) {
         return console.error(err);
     }
-
-    console.log('Listening at http://localhost:3000/');
+    console.log('Listening on http://localhost:3000/');
 });

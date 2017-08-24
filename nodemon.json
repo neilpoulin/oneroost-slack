@@ -1,0 +1,16 @@
+{
+    "delay": "500",
+    "events": {
+        "restart": "osascript -e 'display notification \"app restarted\" with title \"nodemon\"'"
+    },
+    "ignore": [
+        ".git",
+        "node_modules"
+    ],
+    "watch": [
+        "node/src"
+    ],
+    "execMap": {
+        "js": "node --inspect"
+    }
+}

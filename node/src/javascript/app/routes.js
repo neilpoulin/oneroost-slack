@@ -2,7 +2,7 @@ var path = require('path');
 var axios = require('axios');
 var qs = require('qs');
 var router = require('express').Router()
-
+var viewRoot = path.join(__dirname, '..', '..', 'view')
 var slackConfig = {
     clientId: process.env.SLACK_CLIENT_ID,
     clientSecret: process.env.SLACK_CLIENT_SECRET,
@@ -98,7 +98,7 @@ router.get('/slack/userInfo', (req, res) => {
 })
 
 router.get('*', function(req, res) {
-    res.sendFile(path.join(process.cwd(), 'index.html'));
+    res.sendFile(path.join(viewRoot, 'index.html'));
 });
 
 

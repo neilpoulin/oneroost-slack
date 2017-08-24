@@ -56,7 +56,7 @@ const App = () => (
   <Router>
     <div className="container">
       <ul>
-        <li><Link to="/">Home</Link></li>
+        <li><Link to="/">Home Page</Link></li>
         <li><Link to="/login">Login</Link></li>
       </ul>
 

@@ -13,7 +13,7 @@ var extractCssPlugin = new ExtractTextPlugin({
 module.exports = {
     devtool: 'eval-source-map',
     entry: [
-        './src/frontend/index.js',
+        './frontend/src/index.js',
     ],
     output: {
         path: path.join(__dirname, 'dist'),
@@ -27,7 +27,6 @@ module.exports = {
     plugins: [
         extractCssPlugin,
         new ProgressBarPlugin(),
-        new ProgressBarPlugin(),
         new OptimizeCssAssetsPlugin()
     ],
     module: {
@@ -38,7 +37,7 @@ module.exports = {
                     {loader:'babel-loader'},
                     {loader: path.join(__dirname, 'loaders', 'jsx-import-sass-loader')}
                 ],
-                include: path.join(__dirname, 'src')
+                include: path.join(__dirname, 'frontend', 'src')
             },
             {
                 test: /\.scss$/,
