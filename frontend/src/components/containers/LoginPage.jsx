@@ -6,6 +6,7 @@ import {loginWithSlack} from 'ducks/login'
 import {Redirect} from 'react-router'
 import Immutable from 'immutable'
 import GoogleLoginButton from './GoogleLoginButton'
+import Parse from 'parse'
 
 class LoginPage extends React.Component{
     static propTypes = {
@@ -39,6 +40,7 @@ class LoginPage extends React.Component{
             location,
             channels,
             redirectUri,
+            parseUserId
         } = this.props
 
         if ((isLoggedIn || error) && location.search){
@@ -88,8 +90,9 @@ class LoginPage extends React.Component{
                 </a>
             </div>
             <div>
-                <GoogleLoginButton/>                
+                <GoogleLoginButton/>
             </div>
+            ParseUserId = {parseUserId}
 
         </div>
     )
@@ -104,6 +107,7 @@ const mapStateToProps = (state, ownProps) => {
         const {code, state: stateParam, error} = qs.parse(location.search, { ignoreQueryPrefix: true })
         params = {code, state: stateParam, error}
     }
+    const parseUser = Parse.User.current()
 
     return {
         slackClientId: config.get('SLACK_CLIENT_ID'),
@@ -118,7 +122,8 @@ const mapStateToProps = (state, ownProps) => {
         userEmail: login.getIn(['slackUser', 'email']),
         channels: login.get('channels', Immutable.List()).toJS(),
         teamId: login.getIn(['slackTeam', 'id']),
-        redirectUri: 'https://dev.oneroost.com/login'
+        redirectUri: 'https://dev.oneroost.com/login',
+        parseUserId: parseUser ? parseUser.id : null,
     }
 }
 

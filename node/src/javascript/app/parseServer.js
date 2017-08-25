@@ -84,6 +84,9 @@ export function getParseServer(){
             google: {
                 client_id: GOOGLE_CLIENT_ID
             },
+            slack: {
+                module: path.join(__dirname, 'auth', 'slack')
+            },
             linkedin: {client_id: LINKEDIN_CLIENT_ID},
         }
     });

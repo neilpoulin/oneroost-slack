@@ -1,14 +1,20 @@
 import axios from 'axios'
+import {getUserInfo} from './../../slack/slackService'
+import {Parse} from 'parse/node'
 
 export async function validateAuthData(authData, options) {
-
-
-    const {data: {team, user, ok}} =  await axios.post('https://slack.com/api/users.identity', qs.stringify({
-        token: accessToken,
-        scope: 'identity.email,identity.avatar,identity.team'
-    }))
-
-    
+    console.log('authData', authData)
+    let {user} = await getUserInfo(authData.access_token)
+    if (!user){
+        throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'Slack user not found for provided access_token')
+    }
+    else if ( user.id !== authData.id){
+        console.log('user', user)
+        throw new Parse.Error(Parse.Error.OBJECT_NOT_FOUND, 'The use ID found does not match the provided user id')
+    }
+    return
 }
 
-export function validateAppId(appIds, authData) {}
+export function validateAppId(appIds, authData) {
+    return Promise.resolve()
+}

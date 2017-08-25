@@ -17,12 +17,13 @@ const initialState = Immutable.Map({
     slackAccessToken: null,
     slackUser: null,
     slackTeam: null,
+    parseUserId: null,
 })
 
 export default function reducer(state=initialState, action){
     switch(action.type){
         case SLACK_AUTH_REQUEST:
-        return state.set('isLoading', true)
+            return state.set('isLoading', true)
         case SLACK_AUTH_SUCCESS:
             state = state.set('isLoading', false)
             state = state.set('slackAccessToken', action.payload.get('accessToken'))
@@ -38,12 +39,13 @@ export default function reducer(state=initialState, action){
             return state
         case LOGIN_SUCCESS:
             state = state.set('isLoggedIn', true)
+            state = state.set('parseUserId', action.payload.get('objectId'))
             return state;
         case SET_PROVIDER_ERROR:
             state = state.set('error', action.payload)
             return state;
         default:
-            break
+        break
     }
 
     return state;
@@ -59,6 +61,7 @@ export function loadUser(){
 
         axios.get('slack/userInfo').then(({data}) => {
             console.log('data!', data)
+            let {user, team} = data
             dispatch({
                 type: SLACK_AUTH_SUCCESS,
                 payload: {
@@ -68,6 +71,15 @@ export function loadUser(){
                     channels: data.channels,
                 }
             })
+            dispatch(linkUserWithProvider('slack', {
+                access_token: data.access_token,
+                // id_token: authData.tokenId,
+                id: user.id,
+                firstName: user.name ? user.name.split(' ')[0] : '',
+                lastName:  user.name ? user.name.split(' ')[1] : '',
+                email: user.email,
+                username: user.email,
+            }))
         }).catch(error => {
             console.error(error)
         })
@@ -96,6 +108,15 @@ export function loginWithSlack(code, redirectUri){
                     channels,
                 }
             })
+            dispatch(linkUserWithProvider('slack', {
+                access_token: accessToken,
+                // id_token: authData.tokenId,
+                id: user.id,
+                firstName: user.name ? user.name.split(' ')[0] : '',
+                lastName:  user.name ? user.name.split(' ')[1] : '',
+                email: user.email,
+                username: user.email,
+            }))
         })
         .catch( error => {
             console.log(error);
@@ -145,7 +166,7 @@ function linkUser(user, provider, authData){
 
         return user._linkWith(provider, options).then(savedUser => {
             console.log('Linked with ' + provider, savedUser)
-            dispatch(userLoggedIn(savedUser))
+            dispatch(userLoggedIn(savedUser.toJSON()))
             // Parse.Cloud.run('checkEmailAfterOAuth').then((response) => {
             //     dispatch(userLoggedIn(savedUser))
             // }).catch(error => log.error)
@@ -163,7 +184,7 @@ function linkUser(user, provider, authData){
                 default:
                     log.error('Failed to link with' + provider, error)
                     dispatch(linkUserWithProviderError(provider, error))
-                    break;
+                break;
             }
         })
     }
@@ -182,8 +203,8 @@ export function connectExistingUser({email, provider, authData}){
             log.error('Failed to link existing with' + provider, error)
             switch(error.code){
                 case 206:
-                    error.message = 'If you already have an account, you must log in before you can connect via a thrid party.'
-                    break
+                error.message = 'If you already have an account, you must log in before you can connect via a thrid party.'
+                break
             }
             dispatch(linkUserWithProviderError(provider, error))
         })
