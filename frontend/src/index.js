@@ -17,7 +17,7 @@ store.subscribe(() => {
 
 store.dispatch(loadServerConfigs()).then(({PARSE_PUBLIC_URL, PARSE_APP_ID}) => {
     Parse.initialize(PARSE_APP_ID);
-    Parse.serverUrl = PARSE_PUBLIC_URL
+    Parse.serverURL = window.location.origin + '/parse';
     console.log(Parse.User.current())
 
     ReactDOM.render(
