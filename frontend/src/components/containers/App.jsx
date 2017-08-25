@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom'
 import LoginPage from './LoginPage'
 import NavBar from './NavBar'
+import {connect} from 'react-redux'
 
 const Home = () => (
   <div>
@@ -53,16 +54,30 @@ const Topics = ({ match }) => (
   </div>
 )
 
-const App = () => (
+const App = ({hasLoaded}) => (
   <Router>
     <div className="container">
       <NavBar/>
-      <div className="pageBase">
+      <div className="pageBase" display-if={hasLoaded}>
           <Route exact path="/" component={Home}/>
           <Route path="/login" component={LoginPage}/>
           <Route path="/topics" component={Topics}/>
       </div>
+      <div display-if={!hasLoaded}>
+          Loading!
+      </div>
     </div>
   </Router>
 )
-export default App
+
+const mapStateToProps = (state, ownProps) => {
+    const {config} = state;
+    const isLoading = config.get('isLoading')
+    const hasLoaded = config.get('hasLoaded')
+    return {
+        isLoading,
+        hasLoaded,
+    }
+}
+
+export default connect(mapStateToProps)(App)

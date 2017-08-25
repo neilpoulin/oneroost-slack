@@ -36,6 +36,10 @@
     winston "^2.1.1"
     ws "^1.0.1"
 
+"@types/react@*":
+  version "16.0.5"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.5.tgz#d713cf67cc211dea20463d2a0b66005c22070c4b"
+
 abbrev@1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.0.tgz#d0554c2256636e2f56e7c2e5ad183f859428d81f"
@@ -2150,6 +2154,10 @@ ecdsa-sig-formatter@1.0.9:
 ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
+
+ejs@^2.5.7:
+  version "2.5.7"
+  resolved "https://registry.yarnpkg.com/ejs/-/ejs-2.5.7.tgz#cc872c168880ae3c7189762fd5ffc00896c9518a"
 
 electron-to-chromium@^1.2.7:
   version "1.3.18"
@@ -5425,7 +5433,7 @@ promiseback@^2.0.2:
     is-callable "^1.1.0"
     promise-deferred "^2.0.1"
 
-prop-types@^15.5.10, prop-types@^15.5.4:
+prop-types@^15.5.0, prop-types@^15.5.10, prop-types@^15.5.4:
   version "15.5.10"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.5.10.tgz#2797dfc3126182e3a95e3dfbb2e893ddd7456154"
   dependencies:
@@ -5574,6 +5582,13 @@ react-dom@^15.6.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.0"
     prop-types "^15.5.10"
+
+react-google-login@^2.9.3:
+  version "2.9.3"
+  resolved "https://registry.yarnpkg.com/react-google-login/-/react-google-login-2.9.3.tgz#3ae6c395a215e635bad9fa951583fef50acb75fc"
+  dependencies:
+    "@types/react" "*"
+    prop-types "^15.5.0"
 
 react-hot-api@^0.4.5:
   version "0.4.7"

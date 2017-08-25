@@ -6,6 +6,11 @@ var viewRoot = path.join(__dirname, '..', '..', 'view')
 import {
     SLACK_CLIENT_ID,
     SLACK_CLIENT_SECRET,
+    PARSE_PUBLIC_URL,
+    PARSE_APP_ID,
+    ENV,
+    ENV_NAME,
+    GOOGLE_CLIENT_ID,
 } from './../Environment'
 import {
     postToChannel,
@@ -131,6 +136,17 @@ router.get('/slack/userInfo', async (req, res) => {
     } catch(e){
         return res.send({error: e})
     }
+})
+
+router.get('/configs', (req, res) => {
+    res.send({
+        PARSE_PUBLIC_URL,
+        PARSE_APP_ID,
+        ENV,
+        ENV_NAME,
+        SLACK_CLIENT_ID,
+        GOOGLE_CLIENT_ID,
+    })
 })
 
 router.get('*', function(req, res) {

@@ -1,0 +1,38 @@
+$googleButtonImagePath: "/static/images/google_signin_buttons/web/1x/";
+$googleButtonImageStyle: "btn_google_signin_dark_";
+$linkedinButtonImagePath: "/static/images/signin_with_linkedin-buttons/Non-Retina/";
+$linkedinButtonImageStyle: "Sign-in-Large---";
+.googleLogin {
+    display: inline-block;
+    background: url("#{$googleButtonImagePath}#{$googleButtonImageStyle}normal_web.png");
+    width: 191px;
+    height: 46px;
+    &:hover {
+        cursor: pointer;
+        background: url("#{$googleButtonImagePath}#{$googleButtonImageStyle}focus_web.png");
+    }
+    &:active{
+        cursor: pointer;
+        background: url("#{$googleButtonImagePath}#{$googleButtonImageStyle}pressed_web.png");
+    }
+}
+
+.linkedinLogin{
+    display: inline-block;
+    background: url("#{$linkedinButtonImagePath}#{$linkedinButtonImageStyle}Default.png");
+    width: 215px;
+    height: 41px;
+
+    border-width: 0px;
+
+    &:hover {
+        cursor: pointer;
+        background: url("#{$linkedinButtonImagePath}#{$linkedinButtonImageStyle}Hover.png");
+    }
+    &:active, &:focus{
+        cursor: pointer;
+        background: url("#{$linkedinButtonImagePath}#{$linkedinButtonImageStyle}Active.png");
+        border-width: 0px;
+        outline-width: 0px;
+    }
+}

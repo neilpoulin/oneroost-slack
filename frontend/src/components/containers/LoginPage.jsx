@@ -5,6 +5,7 @@ import qs from 'qs'
 import {loginWithSlack} from 'ducks/login'
 import {Redirect} from 'react-router'
 import Immutable from 'immutable'
+import GoogleLoginButton from './GoogleLoginButton'
 
 class LoginPage extends React.Component{
     static propTypes = {
@@ -86,6 +87,9 @@ class LoginPage extends React.Component{
                         srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" />
                 </a>
             </div>
+            <div>
+                <GoogleLoginButton/>                
+            </div>
 
         </div>
     )
@@ -102,7 +106,7 @@ const mapStateToProps = (state, ownProps) => {
     }
 
     return {
-        slackClientId: config.get('slackClientId'),
+        slackClientId: config.get('SLACK_CLIENT_ID'),
         ...params,
         isLoggedIn: login.get('isLoggedIn'),
         isLoading: login.get('isLoading'),

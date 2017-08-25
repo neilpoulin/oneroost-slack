@@ -23,5 +23,6 @@ module.exports = function(app){
         app.use(require('webpack-hot-middleware')(compiler, {
             log: console.log,
         }));
-    }    
+    }
+    app.use("/static/images", express.static(__dirname + "./../../../../images"));
 }
