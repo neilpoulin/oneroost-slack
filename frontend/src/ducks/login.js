@@ -169,11 +169,11 @@ function linkUser(user, provider, authData){
             dispatch(userLoggedIn(savedUser.toJSON()))
             // Parse.Cloud.run('checkEmailAfterOAuth').then((response) => {
             //     dispatch(userLoggedIn(savedUser))
-            // }).catch(error => log.error)
+            // }).catch(error => console.error)
         }).catch(error => {
             switch (error.code){
                 case 202:
-                    log.warn('user exists, can\'t link.. need to login first')
+                    console.log('user exists, can\'t link.. need to login first')
                     let email = user.get('email')
                     dispatch(connectExistingUser({email, provider, authData}))
                     break;
@@ -182,7 +182,7 @@ function linkUser(user, provider, authData){
                     dispatch(linkUserWithProviderError(provider, error))
                     break
                 default:
-                    log.error('Failed to link with' + provider, error)
+                    console.error('Failed to link with' + provider, error)
                     dispatch(linkUserWithProviderError(provider, error))
                 break;
             }
@@ -200,7 +200,7 @@ export function connectExistingUser({email, provider, authData}){
                 throw new Error('No user found.')
             }
         }).catch(error => {
-            log.error('Failed to link existing with' + provider, error)
+            console.error('Failed to link existing with' + provider, error)
             switch(error.code){
                 case 206:
                 error.message = 'If you already have an account, you must log in before you can connect via a thrid party.'
@@ -214,7 +214,7 @@ export function connectExistingUser({email, provider, authData}){
 
 export function linkUserWithProviderError(providerName, error){
     return (dispatch, getState) => {
-        log.error('Failed to link ' + providerName, error)
+        console.error('Failed to link ' + providerName, error)
         dispatch({
             type: SET_PROVIDER_ERROR,
             error: {
