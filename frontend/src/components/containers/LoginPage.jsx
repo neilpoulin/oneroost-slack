@@ -17,9 +17,9 @@ class LoginPage extends React.Component{
 
 
     componentDidMount(){
-        const {code} = this.props
+        const {code, redirectUri} = this.props
         if (code){
-            this.props.getToken(code)
+            this.props.getToken(code, redirectUri)
         }
     }
 
@@ -37,6 +37,7 @@ class LoginPage extends React.Component{
             userImageUrl,
             location,
             channels,
+            redirectUri,
         } = this.props
 
         if ((isLoggedIn || error) && location.search){
@@ -77,7 +78,7 @@ class LoginPage extends React.Component{
                 Loading...
             </div>
             <div display-if={!isLoggedIn}>
-                <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}`}>
+                <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
                     <img alt="Sign in with Slack"
                         height="40"
                         width="172"
@@ -112,13 +113,14 @@ const mapStateToProps = (state, ownProps) => {
         userName: login.getIn(['slackUser', 'name']),
         userEmail: login.getIn(['slackUser', 'email']),
         channels: login.get('channels', Immutable.List()).toJS(),
-        teamId: login.getIn(['slackTeam', 'id'])
+        teamId: login.getIn(['slackTeam', 'id']),
+        redirectUri: 'https://dev.oneroost.com/login'
     }
 }
 
 const mapDispatchToprops = (dispatch, ownProps) => {
     return {
-        getToken: (code) => dispatch(loginWithSlack(code))
+        getToken: (code, redirectUri) => dispatch(loginWithSlack(code, redirectUri))
     }
 }
 

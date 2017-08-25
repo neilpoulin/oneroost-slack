@@ -43,7 +43,6 @@ function getDashboardConfig(){
             }
         ]
     }
-    console.log("dashboard config ", config)
     return config
 }
 

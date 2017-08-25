@@ -66,7 +66,7 @@ export function loadUser(){
     }
 }
 
-export function loginWithSlack(code){
+export function loginWithSlack(code, redirectUri){
     return dispatch => {
         dispatch({
             type: SLACK_AUTH_REQUEST,
@@ -74,6 +74,7 @@ export function loginWithSlack(code){
 
         axios.post('/tokens/slack', {
             code,
+            redirectUri,
         })
         .then( ({data: {
             access_token: accessToken, user, team, channels

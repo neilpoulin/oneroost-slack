@@ -39,6 +39,7 @@
     "nodemon": "^1.11.0",
     "normalizr": "^3.2.3",
     "optimize-css-assets-webpack-plugin": "^3.1.1",
+    "parse": "^1.10.0",
     "parse-dashboard": "^1.1.0",
     "parse-server": "^2.5.3",
     "progress-bar-webpack-plugin": "^1.10.0",

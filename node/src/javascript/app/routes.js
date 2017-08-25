@@ -7,10 +7,15 @@ import {
     SLACK_CLIENT_ID,
     SLACK_CLIENT_SECRET,
 } from './../Environment'
-import {postToChannel} from './../slack/slackService'
+import {
+    postToChannel,
+    getUserInfo,
+} from './../slack/slackService'
 
 router.post('/tokens/slack', async (req, res) => {
+    console.log('POST: /tokens/slack')
     let code = req.body.code
+    let redirectUri = req.body.redirectUri;
     if(!code){
         return res.error({error: {
             code: 'An auth code is required'
@@ -18,7 +23,7 @@ router.post('/tokens/slack', async (req, res) => {
     }
 
     try{
-        let userResponse = await axios.get(`https://slack.com/api/oauth.access?client_id=${SLACK_CLIENT_ID}&client_secret=${SLACK_CLIENT_SECRET}&code=${code}`)
+        let userResponse = await axios.get(`https://slack.com/api/oauth.access?client_id=${SLACK_CLIENT_ID}&client_secret=${SLACK_CLIENT_SECRET}&code=${code}&redirect_uri=${redirectUri}`)
         const {data: {ok, access_token, scope, team, user, error}} = userResponse
 
         if (!ok){
@@ -89,47 +94,43 @@ async function createChannel(access_token){
 }
 
 router.get('/slack/userInfo', async (req, res) => {
+    console.log("GET: /slack/userInfo")
     let accessToken = req.cookies.slack_token
     if (!accessToken){
         return res.sendStatus(401);
     }
-    axios.post('https://slack.com/api/users.identity', qs.stringify({
-        token: accessToken,
-        scope: 'identity.email,identity.avatar,identity.team'
-    })).then(async ({data: {team, user, ok}}) => {
-        console.log('got user info')
-        if (!ok){
-            throw data.error
-        }
+    try{
+        const {team, user} = await getUserInfo(accessToken);
         try{
             await createChannel(accessToken)
+            console.log("creataed channel!")
         } catch(e) {
             console.error(e)
         }
-        return axios.post('https://slack.com/api/channels.list', qs.stringify({
+
+        let channelResponse = await axios.post('https://slack.com/api/channels.list', qs.stringify({
             token: accessToken,
             exclude_archived: true,
             exclude_members: true,
-        })).then(({data: {channels, ok}}) => {
-            const info = {
-                accessToken,
-                team,
-                user,
-                channels
-            }
-            let channel = getChannel(channels)
-            console.log("channel to post to = ", channel)
-            if (channel){
-                postToChannel(channel.id, `${user.name} has logged into OneRoost via Slack`)
-            }
+        }))
+        let channels = channelResponse.data.channels
+        let info = {
+            access_token: accessToken,
+            team,
+            user,
+            channels,
+        }
+        let channel = getChannel(channels)
 
-            res.send(info)
-            return info
-        })
-    }).catch(error => {
-        res.send({error})
-    })
+        console.log("channel to post to = ", channel)
+        if (channel){
+            postToChannel(channel.id, `${user.name} has logged into OneRoost via Slack`)
+        }
 
+        return res.send(info)
+    } catch(e){
+        return res.send({error: e})
+    }
 })
 
 router.get('*', function(req, res) {
