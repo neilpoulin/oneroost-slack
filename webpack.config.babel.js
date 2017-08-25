@@ -14,6 +14,7 @@ module.exports = {
     devtool: 'eval-source-map',
     entry: [
         './frontend/src/index.js',
+        './frontend/src/global.scss'
     ],
     output: {
         path: path.join(__dirname, 'dist'),
@@ -40,7 +41,24 @@ module.exports = {
                 include: path.join(__dirname, 'frontend', 'src')
             },
             {
+                test: path.join(__dirname, 'frontend', 'src', 'global.scss'),
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: [
+                        {
+                            loader: "css-loader",
+                            options: {sourceMap: true, }
+                        },                        
+                        {
+                            loader: "sass-loader",
+                            options: {sourceMap: true, }
+                        }
+                    ]
+                })
+            },
+            {
                 test: /\.scss$/,
+                exclude: path.join(__dirname, 'frontend', 'src', 'global.scss'),
                 use: ExtractTextPlugin.extract({
                     fallback: "style-loader",
                     use: [

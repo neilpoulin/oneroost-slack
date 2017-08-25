@@ -57,8 +57,8 @@ const App = () => (
   <Router>
     <div className="container">
       <NavBar/>
-      <div className="pageBase">          
-          <Route exact path="/" component={LoginPage}/>
+      <div className="pageBase">
+          <Route exact path="/" component={Home}/>
           <Route path="/login" component={LoginPage}/>
           <Route path="/topics" component={Topics}/>
       </div>

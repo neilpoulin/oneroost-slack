@@ -40,22 +40,31 @@ const nodePaths = {
     root: 'node'
 }
 
-var devEnvProps = {
+const sharedProps = {
     AWS_PROFILE: 'oneroost',
-    GA_TRACKING_CODE: 'UA-87950724-3',
     STRIPE_PUBLISH_KEY: process.env.STRIPE_PUBLISH_KEY_TEST,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY_TEST,
-    NODE_ENV: 'development'
+    SLACK_OAUTH_TOKEN: process.env.SLACK_OAUTH_TOKEN,
+    PARSE_MASTER_KEY: process.env.ONEROOST_PARSE_MASTER_KEY_DEV,
+    PARSE_APP_ID: process.env.ONEROOST_PARSE_APP_ID_DEV,
+    DATABASE_URL: "mongodb://localhost:27017/oneroost-db",
+}
+
+var devEnvProps = {
+    ...sharedProps,
+    GA_TRACKING_CODE: 'UA-87950724-3',
+    NODE_ENV: 'development',
+    ENV: 'dev',
+    ENV_NAME: 'dev',
 }
 
 var prodEnvProps = {
-    AWS_PROFILE: 'oneroost',
+    ...sharedProps,
     GA_TRACKING_CODE: 'UA-87950724-3',
-    STRIPE_PUBLISH_KEY: process.env.STRIPE_PUBLISH_KEY_TEST,
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY_TEST,
-    NODE_ENV: 'production'
+    NODE_ENV: 'production',
+    ENV: 'prod',
+    ENV_NAME: 'prod-dev'
 }
-
 
 gulp.task('node:clean', () => {
     return del([nodePaths.outputRoot]);
@@ -143,7 +152,7 @@ function bundle(done, withLog=false, withStats=false, env="prod") {
                 }));
                 Object.keys(stats.compilation.assets).forEach(function(key) {
                     gutil.log("Webpack: output ", gutil.colors.green(key));
-                });                
+                });
             }
             if (done) {
                 done();
