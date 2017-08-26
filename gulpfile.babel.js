@@ -15,8 +15,6 @@ const nodeBabelOptions = {
     ]
 }
 
-
-
 gulp.task('clean', ['fe:clean', 'node:clean'])
 
 gulp.task('fe:clean', () => {
@@ -33,7 +31,7 @@ gulp.task('fe:webpack', ['fe:clean'], (done) => {
 
 gulp.task('dev', ['fe:clean', 'node:start:dev'])
 gulp.task('server', ['fe:clean', 'fe:webpack:watch', 'node:start:prod'])
-
+gulp.task('install', ['fe:clean', 'fe:webpack', 'node:build'])
 const nodePaths = {
     outputRoot: 'node/dist',
     sourceRoot: 'node/src',

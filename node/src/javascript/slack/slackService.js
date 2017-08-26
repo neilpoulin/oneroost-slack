@@ -6,7 +6,7 @@ import qs from 'qs'
 const web = new WebClient(SLACK_OAUTH_TOKEN)
 
 export function postToChannel(channelId, message){
-    console.log('slack oauth token', SLACK_OAUTH_TOKEN)
+    console.log('posting to channel ', channelId)
     web.chat.postMessage(channelId, message, function(err, res) {
         if (err) {
             console.log('Error:', err);
@@ -34,4 +34,17 @@ export async function getUserInfo(accessToken){
         console.error('authentication failed', error)
         return {error};
     }
+}
+
+export async function createChannel(access_token){
+    console.log('Attempting to create channel')
+    return axios.post('https://slack.com/api/channels.create', qs.stringify({
+        token: access_token,
+        name: 'oneroosttesting',
+        validate: true
+    }))
+    .then(({data}) => {
+        console.log('successfully created channel', data)
+    })
+    .catch(error => console.error(error))
 }

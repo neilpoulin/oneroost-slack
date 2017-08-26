@@ -5,7 +5,7 @@ export const CONFIGS_LOAD_REQUEST = 'oneroost/config/CONFIGS_LOAD_REQUEST'
 export const CONFIGS_LOAD_SUCCESS = 'oneroost/config/CONFIGS_LOAD_SUCCESS'
 export const CONFIGS_LOAD_ERROR = 'oneroost/config/CONFIGS_LOAD_ERROR'
 
-const initialState = Immutable.Map({
+const initialState = Immutable.fromJS({
     PARSE_PUBLIC_URL: null,
     ENV: null,
     ENV_NAME: null,

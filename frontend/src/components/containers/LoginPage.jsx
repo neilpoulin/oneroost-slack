@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import qs from 'qs'
-import {loginWithSlack} from 'ducks/login'
+import {loginWithSlack, postMessage} from 'ducks/login'
 import {Redirect} from 'react-router'
 import Immutable from 'immutable'
 import GoogleLoginButton from './GoogleLoginButton'
@@ -14,9 +14,10 @@ class LoginPage extends React.Component{
         slackClientId: PropTypes.string.isRequired,
         error: PropTypes.any,
         isLoggedIn: PropTypes.bool,
-        getToken: PropTypes.func.isRequired
+        //actions
+        getToken: PropTypes.func.isRequired,
+        postToChannel: PropTypes.func.isRequired,
     }
-
 
     componentDidMount(){
         const {code, redirectUri} = this.props
@@ -43,6 +44,7 @@ class LoginPage extends React.Component{
             parseUserId,
             hasGoogle,
             hasSlack,
+            postToChannel,
         } = this.props
 
         if ((isLoggedIn || error) && location.search){
@@ -69,7 +71,7 @@ class LoginPage extends React.Component{
                             <div display-if={channels}>
                                 <h4>Channels</h4>
                                 {channels.map((c, i) => <div key={`channel_${i}`}>
-                                <a href={`slack://channel?id=${c.id}&team=${teamId}`}>#{c.name}</a>
+                                <a href={`slack://channel?id=${c.id}&team=${teamId}`}  onClick={() => postToChannel(c.id, 'This is a test message!')}>#{c.name}</a>
                             </div>)
                         }
                     </div>
@@ -96,9 +98,8 @@ class LoginPage extends React.Component{
             </div>
             ParseUserId = {parseUserId}
 
-        </div>
-    )
-}
+        </div>)
+    }
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -133,7 +134,10 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToprops = (dispatch, ownProps) => {
     return {
-        getToken: (code, redirectUri) => dispatch(loginWithSlack(code, redirectUri))
+        getToken: (code, redirectUri) => dispatch(loginWithSlack(code, redirectUri)),
+        postToChannel: (channelId, message) => {
+            dispatch(postMessage(channelId, message))
+        },
     }
 }
 

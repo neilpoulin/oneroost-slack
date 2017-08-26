@@ -1,0 +1,12 @@
+branch-defaults:
+  flexbox-updates:
+    environment: prod-app-elb-blue
+  master:
+    environment: stage
+global:
+  application_name: oneroost
+  default_ec2_keyname: oneroost-aws-eb
+  default_platform: Node.js
+  default_region: us-east-1
+  profile: oneroost
+  sc: git

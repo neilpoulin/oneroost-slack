@@ -303,6 +303,17 @@ export function logout(){
                 })
             }).catch(console.error)
         }
+    }
+}
 
+export function postMessage(channelId, message){
+    return dispatch => {
+        axios.post(`/slack/channels/${channelId}`, {
+            message,
+        }).then(({data}) => {
+            console.log('successfully posted message')
+        }).catch(response => {
+            console.error('failed to post message', response)
+        })
     }
 }

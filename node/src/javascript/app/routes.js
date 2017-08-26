@@ -15,6 +15,7 @@ import {
 import {
     postToChannel,
     getUserInfo,
+    createChannel,
 } from './../slack/slackService'
 
 router.post('/tokens/slack', async (req, res) => {
@@ -62,19 +63,6 @@ router.post('/tokens/slack', async (req, res) => {
         return res.send({error})
     }
 })
-//
-// async function postToChannel(user, access_token){
-//     //this is to the #random channel
-//     const slackbot_channel = 'https://hooks.slack.com/services/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'
-//     const random_channel = 'https://hooks.slack.com/services/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'
-//     console.log("posting to channel")
-//     return axios.post(`${slackbot_channel}`, {
-//         text: `${user.name} has logged into OneRoost via Slack`
-//     })
-//     .catch(({response: {data}}) => {
-//         console.error("failed to post to channel", data)
-//     })
-// }
 
 function getChannel(channels){
     if (channels && channels.length > 0){
@@ -84,18 +72,6 @@ function getChannel(channels){
         return channel
     }
     return null
-}
-
-async function createChannel(access_token){
-    return axios.post('https://slack.com/api/channels.create', qs.stringify({
-        token: access_token,
-        name: 'oneroosttesting',
-        validate: true
-    }))
-    .then(({data}) => {
-        console.log("successfully created channel", data)
-    })
-    .catch(error => console.error(error))
 }
 
 router.get('/slack/userInfo', async (req, res) => {
@@ -138,6 +114,12 @@ router.get('/slack/userInfo', async (req, res) => {
     }
 })
 
+router.post('/slack/channels/:channelId', (req, res) => {
+    const channelId = req.params.channelId
+    const message = req.body.message
+    postToChannel(channelId, message)
+})
+
 router.get('/configs', (req, res) => {
     res.send({
         PARSE_PUBLIC_URL,
@@ -152,6 +134,5 @@ router.get('/configs', (req, res) => {
 router.get('*', function(req, res) {
     res.sendFile(path.join(viewRoot, 'index.html'));
 });
-
 
 module.exports = router;

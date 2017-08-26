@@ -6,8 +6,8 @@ import {Link} from 'react-router-dom'
 
 class LogoutLink extends React.Component {
     render () {
-        const {doLogout} = this.props
-        return <Link to='/' onClick={doLogout}>Logout</Link>
+        const {doLogout, className} = this.props
+        return <Link to='/' onClick={doLogout} className={className}>Logout</Link>
     }
 }
 

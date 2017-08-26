@@ -15,7 +15,6 @@ class NavBar extends React.Component {
             <ul className="nav">
                 <li className='navLink'><Link to="/">OneRoost</Link></li>
                 <li className='navLink'><NavLink to="/login">Login</NavLink></li>
-
             </ul>
             <ul className='nav'>
                 <li display-if={!hasSlack}>
