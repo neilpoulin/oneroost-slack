@@ -6,6 +6,7 @@ import {
     NavLink
 } from 'react-router-dom'
 import LogoutLink from './LogoutLink'
+import {connect} from 'react-redux'
 
 class NavBar extends React.Component {
     render () {
@@ -35,4 +36,4 @@ const mapStateToProps = (state, ownProps) => {
     }
 }
 
-export default NavBar;
+export default connect(mapStateToProps)(NavBar);

@@ -7,13 +7,15 @@ class Clickable extends React.Component {
         onClick: PropTypes.func,
         styleType: PropTypes.oneOf(['btn', 'link']),
         outline: PropTypes.bool,
-        colorType: PropTypes.oneOf(['primary'])
+        colorType: PropTypes.oneOf(['primary', 'secondary']),
+        className: PropTypes.string,
     }
 
     static defaultProps = {
         styleType: 'btn',
         outline: false,
-        colorType: 'primary'
+        colorType: 'primary',
+        className: '',
     }
 
     render () {
@@ -23,8 +25,9 @@ class Clickable extends React.Component {
             styleType,
             outline,
             colorType,
+            className,
         } = this.props
-        let classNames = `${styleType}  ${styleType}-${outline ? 'outline-' : ''}${colorType}`
+        let classNames = `${styleType} ${styleType}-${outline ? 'outline-' : ''}${colorType} ${className}`
         return <span className={classNames}>{displayText}</span>
     }
 }

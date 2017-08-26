@@ -40,12 +40,14 @@ export default function reducer(state=initialState, action){
             let slackUser = action.payload.get('user')
             state = state.set('slackUser', slackUser)
             if (slackUser){
-                let splitName = slackUser.name.split(' ')
-                let firstName = slitName[0]
-                let lasttName = splitName.length > 0 ? splitName[1] : ''
-                state = state.set('firstName', firstName)
-                    .set('lastName', lastName)
-                    .set('email', slackUser.email)
+                if ( slackUser.name){
+                    let splitName = slackUser.name.split(' ')
+                    let firstName = slitName[0]
+                    let lastName = splitName.length > 0 ? splitName[1] : ''
+                    state = state.set('firstName', firstName)
+                        .set('lastName', lastName)
+                }
+                state = state.set('email', slackUser.email)
             }
             state = state.set('slackTeam', action.payload.get('team'))
             state = state.set('channels', action.payload.get('channels', Immutable.List()))
@@ -69,12 +71,14 @@ export default function reducer(state=initialState, action){
             switch (action.payload.get('provider')) {
                 case 'google':
                     state = state.set('hasGoogle', true)
-                    break;
+                    return state;
                 case 'slack':
                     state = state.set('hasSlack', true)
-                    break;
+                    return state;
                 default:
+                    return state;
             }
+            break;
         case LOGOUT:
             return state = initialState
         default:
@@ -189,11 +193,17 @@ export function linkUserWithProvider(provider, authData){
     }
 }
 
+/**
+* Should be a parse user
+*/
 export function userLoggedIn(user){
     return dispatch => {
+        if (!user){
+            return null;
+        }
         dispatch({
             type: LOGIN_SUCCESS,
-            payload: user
+            payload: user.toJSON()
         })
         let authData = user.get('authData')
         if (authData){
@@ -220,9 +230,11 @@ function linkUser(user, provider, authData){
             console.log('Linked with ' + provider, savedUser)
             dispatch({
                 type: SET_HAS_PROVIDER,
-                provider,
+                payload: {
+                    provider
+                },
             })
-            dispatch(userLoggedIn(savedUser.toJSON()))
+            dispatch(userLoggedIn(savedUser))
             // Parse.Cloud.run('checkEmailAfterOAuth').then((response) => {
             //     dispatch(userLoggedIn(savedUser))
             // }).catch(error => console.error)
