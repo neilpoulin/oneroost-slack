@@ -4,15 +4,11 @@ import {
   Route,
   Link
 } from 'react-router-dom'
-import LoginPage from './LoginPage'
-import NavBar from './NavBar'
+import LoginPage from 'LoginPage'
+import NavBar from 'NavBar'
 import {connect} from 'react-redux'
-
-const Home = () => (
-  <div>
-    <h2>Home</h2>
-  </div>
-)
+import Clickable from 'Clickable'
+import HomePage from 'HomePage'
 
 const About = () => (
   <div>
@@ -59,7 +55,7 @@ const App = ({hasLoaded}) => (
     <div className="container">
       <NavBar/>
       <div className="pageBase" display-if={hasLoaded}>
-          <Route exact path="/" component={Home}/>
+          <Route exact path="/" component={HomePage}/>
           <Route path="/login" component={LoginPage}/>
           <Route path="/topics" component={Topics}/>
       </div>

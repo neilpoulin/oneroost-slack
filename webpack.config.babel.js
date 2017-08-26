@@ -23,7 +23,7 @@ module.exports = {
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json', '.css', '.scss'],
-        modules: ['frontend', 'src', 'ducks', 'components', 'node_modules']
+        modules: ['frontend', 'src', 'atoms', 'containers', 'ducks', 'components', 'node_modules']
     },
     plugins: [
         extractCssPlugin,
@@ -48,7 +48,7 @@ module.exports = {
                         {
                             loader: "css-loader",
                             options: {sourceMap: true, }
-                        },                        
+                        },
                         {
                             loader: "sass-loader",
                             options: {sourceMap: true, }

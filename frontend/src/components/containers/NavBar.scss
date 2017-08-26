@@ -1,3 +1,5 @@
+@import "~variables.scss";
+
 .navContainer{
     position: fixed;
     top: 0;
@@ -27,7 +29,7 @@ ul.nav{
             color: black;
             &.active, &:hover{
                 // background-color: gray;
-                color: orange;
+                color: $roostOrange;
             }
         }
     }

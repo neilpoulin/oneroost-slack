@@ -8,6 +8,9 @@ export const SLACK_AUTH_ERROR = 'oneroost/login/SLACK_AUTH_ERROR'
 
 export const LOGIN_SUCCESS = 'oneroost/login/LOGIN_SUCCESS'
 export const SET_PROVIDER_ERROR = 'oneroost/login/PROVIDER_ERROR'
+export const SET_HAS_PROVIDER = 'oneroost/login/SET_HAS_PROVIDER'
+
+export const LOGOUT = 'oneroost/login/LOGOUT'
 
 const initialState = Immutable.Map({
     isLoggedIn: false,
@@ -15,9 +18,14 @@ const initialState = Immutable.Map({
     userId: null,
     error: null,
     slackAccessToken: null,
+    firstName: null,
+    lastName: null,
+    email: null,
     slackUser: null,
     slackTeam: null,
     parseUserId: null,
+    hasSlack: false,
+    hasGoogle: false,
 })
 
 export default function reducer(state=initialState, action){
@@ -29,9 +37,19 @@ export default function reducer(state=initialState, action){
             state = state.set('slackAccessToken', action.payload.get('accessToken'))
             state = state.set('error', null)
             state = state.set('isLoggedIn', true)
-            state = state.set('slackUser', action.payload.get('user'))
+            let slackUser = action.payload.get('user')
+            state = state.set('slackUser', slackUser)
+            if (slackUser){
+                let splitName = slackUser.name.split(' ')
+                let firstName = slitName[0]
+                let lasttName = splitName.length > 0 ? splitName[1] : ''
+                state = state.set('firstName', firstName)
+                    .set('lastName', lastName)
+                    .set('email', slackUser.email)
+            }
             state = state.set('slackTeam', action.payload.get('team'))
             state = state.set('channels', action.payload.get('channels', Immutable.List()))
+            state = state.set('hasSlack', true)
             return state
         case SLACK_AUTH_ERROR:
             state = state.set('isLoading', false)
@@ -40,10 +58,25 @@ export default function reducer(state=initialState, action){
         case LOGIN_SUCCESS:
             state = state.set('isLoggedIn', true)
             state = state.set('parseUserId', action.payload.get('objectId'))
+            state = state.set('firstName', action.payload.get('firstName'))
+            state = state.set('lastName', action.payload.get('lastName'))
+            state = state.set('email', action.payload.get('email'))
             return state;
         case SET_PROVIDER_ERROR:
             state = state.set('error', action.payload)
             return state;
+        case SET_HAS_PROVIDER:
+            switch (action.payload.get('provider')) {
+                case 'google':
+                    state = state.set('hasGoogle', true)
+                    break;
+                case 'slack':
+                    state = state.set('hasSlack', true)
+                    break;
+                default:
+            }
+        case LOGOUT:
+            return state = initialState
         default:
         break
     }
@@ -57,6 +90,11 @@ export function loadUser(){
         {
             console.log('user is not logged in, not fetching data')
             return null;
+        }
+
+        let parseUser = Parse.User.current()
+        if (parseUser){
+            dispatch(userLoggedIn(parseUser))
         }
 
         axios.get('slack/userInfo').then(({data}) => {
@@ -152,10 +190,24 @@ export function linkUserWithProvider(provider, authData){
 }
 
 export function userLoggedIn(user){
-    return {
-        type: LOGIN_SUCCESS,
-        payload: user
+    return dispatch => {
+        dispatch({
+            type: LOGIN_SUCCESS,
+            payload: user
+        })
+        let authData = user.get('authData')
+        if (authData){
+            Object.keys(authData).forEach(provider => {
+                dispatch({
+                    type: SET_HAS_PROVIDER,
+                    payload: {
+                        provider
+                    }
+                })
+            })
+        }
     }
+
 }
 
 function linkUser(user, provider, authData){
@@ -166,6 +218,10 @@ function linkUser(user, provider, authData){
 
         return user._linkWith(provider, options).then(savedUser => {
             console.log('Linked with ' + provider, savedUser)
+            dispatch({
+                type: SET_HAS_PROVIDER,
+                provider,
+            })
             dispatch(userLoggedIn(savedUser.toJSON()))
             // Parse.Cloud.run('checkEmailAfterOAuth').then((response) => {
             //     dispatch(userLoggedIn(savedUser))
@@ -221,5 +277,20 @@ export function linkUserWithProviderError(providerName, error){
                 [providerName]: error
             }
         })
+    }
+}
+
+export function logout(){
+    return dispatch => {
+        console.log('logging out...')
+        let user = Parse.User.current()
+        if (user){
+            Parse.User.logOut().then(() => {
+                dispatch({
+                    type: LOGOUT
+                })
+            }).catch(console.error)
+        }
+
     }
 }

@@ -8,8 +8,6 @@ import {loadServerConfigs} from 'ducks/config'
 import Parse from 'parse'
 
 const store = getStore()
-
-store.dispatch(loadUser())
 // let unsubscribe =
 store.subscribe(() => {
 
@@ -18,6 +16,7 @@ store.subscribe(() => {
 store.dispatch(loadServerConfigs()).then(({PARSE_PUBLIC_URL, PARSE_APP_ID}) => {
     Parse.initialize(PARSE_APP_ID);
     Parse.serverURL = window.location.origin + '/parse';
+    store.dispatch(loadUser())
     console.log(Parse.User.current())
 
     ReactDOM.render(

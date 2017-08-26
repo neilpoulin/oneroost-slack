@@ -40,7 +40,9 @@ class LoginPage extends React.Component{
             location,
             channels,
             redirectUri,
-            parseUserId
+            parseUserId,
+            hasGoogle,
+            hasSlack,
         } = this.props
 
         if ((isLoggedIn || error) && location.search){
@@ -80,7 +82,7 @@ class LoginPage extends React.Component{
             <div display-if={isLoading}>
                 Loading...
             </div>
-            <div display-if={!isLoggedIn}>
+            <div display-if={!hasSlack}>
                 <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
                     <img alt="Sign in with Slack"
                         height="40"
@@ -89,7 +91,7 @@ class LoginPage extends React.Component{
                         srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" />
                 </a>
             </div>
-            <div>
+            <div display-if={!hasGoogle}>
                 <GoogleLoginButton/>
             </div>
             ParseUserId = {parseUserId}
@@ -118,12 +120,14 @@ const mapStateToProps = (state, ownProps) => {
         teamName: login.getIn(['slackTeam', 'name']),
         teamImageUrl: login.getIn(['slackTeam', 'image_230']),
         userImageUrl: login.getIn(['slackUser', 'image_72']),
-        userName: login.getIn(['slackUser', 'name']),
-        userEmail: login.getIn(['slackUser', 'email']),
+        userName: login.get('firstName') + ' ' + login.get('lastName'),
+        userEmail: login.get('email'),
         channels: login.get('channels', Immutable.List()).toJS(),
         teamId: login.getIn(['slackTeam', 'id']),
         redirectUri: 'https://dev.oneroost.com/login',
         parseUserId: parseUser ? parseUser.id : null,
+        hasGoogle: login.get('hasGoogle', false),
+        hasSlack: login.get('hasSlack', false)
     }
 }
 
