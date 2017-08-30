@@ -1,0 +1,23 @@
+$gmailHoverColor: gray;
+
+.title{
+    font-weight: bold;
+    padding: 5px;
+}
+ul.vanityUrls{
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+    li{
+        padding: 10px;
+        text-decoration: none;
+        margin: 0px;
+        &:hover{
+            cursor: pointer;
+            background-color: $gmailHoverColor;
+        }
+        &:not(:first-child){
+            // border-top: 1px solid darkgray;
+        }
+    }
+}

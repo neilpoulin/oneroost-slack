@@ -1,10 +1,10 @@
 var path = require('path');
 var webpack = require('webpack');
-var ProgressBarPlugin = require("progress-bar-webpack-plugin");
+var ProgressBarPlugin = require('progress-bar-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+var OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 var extractCssPlugin = new ExtractTextPlugin({
-    filename: "styles.css",
+    filename: 'styles.css',
     allChunks: true,
 });
 
@@ -46,14 +46,14 @@ module.exports = {
                 test: path.join(__dirname, 'frontend', 'src', 'global.scss'),
                 use: [
                     {
-                        loader:  "style-loader",
+                        loader:  'style-loader',
                     },
                     {
-                        loader: "css-loader",
+                        loader: 'css-loader',
                         options: {sourceMap: true, }
                     },
                     {
-                        loader: "sass-loader",
+                        loader: 'sass-loader',
                         options: {sourceMap: true, }
                     }
                 ]
@@ -63,17 +63,17 @@ module.exports = {
                 exclude: path.join(__dirname, 'frontend', 'src', 'global.scss'),
                 use: [
                     {
-                        loader:  "style-loader",
+                        loader:  'style-loader',
                     },
                     {
-                        loader: "css-loader",
+                        loader: 'css-loader',
                         options: {sourceMap: true, }
                     },
                     {
-                        loader: "css-encapsulation-loader"
+                        loader: 'css-encapsulation-loader'
                     },
                     {
-                        loader: "sass-loader",
+                        loader: 'sass-loader',
                         options: {sourceMap: true, }
                     }
                 ]

@@ -1,0 +1,5 @@
+export const SET_SUBJECT = "oneroost/thread/SET_SUBJECT"
+export const SET_BODY = "oneroost/thread/SET_BODY"
+export const SET_SENDER = "oneroost/thread/SET_SENDER"
+export const SET_ROOST_ID = "oneroost/thread/SET_ROOST_ID"
+export const RESET_THREAD = "oneroost/thread/RESET_THREAD"

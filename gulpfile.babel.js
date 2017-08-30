@@ -9,9 +9,9 @@ import babel from 'gulp-babel'
 import sourcemaps from 'gulp-sourcemaps'
 
 const nodeBabelOptions = {
-    presets: ["es2015", "stage-0"],
+    presets: ['es2015', 'stage-0'],
     plugins: [
-        "transform-async-to-generator"
+        'transform-async-to-generator'
     ]
 }
 
@@ -45,7 +45,7 @@ const sharedProps = {
     SLACK_OAUTH_TOKEN: process.env.SLACK_OAUTH_TOKEN,
     PARSE_MASTER_KEY: process.env.ONEROOST_PARSE_MASTER_KEY_DEV,
     PARSE_APP_ID: process.env.ONEROOST_PARSE_APP_ID_DEV,
-    DATABASE_URL: "mongodb://localhost:27017/oneroost-db",
+    DATABASE_URL: 'mongodb://localhost:27017/oneroost-db',
 }
 
 var devEnvProps = {
@@ -91,23 +91,23 @@ gulp.task('node:start:prod', ['node:build'], (done) => {
 })
 
 function transpileNode(){
-    console.log("transpile src = " + nodePaths.sourceRoot + '/javascript/**')
+    console.log('transpile src = ' + nodePaths.sourceRoot + '/javascript/**')
     return gulp.src(nodePaths.sourceRoot + '/javascript/**')
-    .pipe(plumber({
-        handleErrors: function(error){
-            console.error(error);
-            this.emit('end');
-        }
-    }))
-    .pipe(sourcemaps.init())
-    .pipe(babel(nodeBabelOptions))
-    .on('error', function (err) {
-        gutil.log(gutil.colors.red('[Task "transpile:node"][Babel Error]'));
-        gutil.log(gutil.colors.red(err.message));
-    })
-    .pipe(sourcemaps.write('.', { sourceRoot: nodePaths.sourceRoot + '/javascript' }))
-    .pipe(plumber.stop())
-    .pipe(gulp.dest(nodePaths.outputRoot + '/javascript'));
+        .pipe(plumber({
+            handleErrors: function(error){
+                console.error(error);
+                this.emit('end');
+            }
+        }))
+        .pipe(sourcemaps.init())
+        .pipe(babel(nodeBabelOptions))
+        .on('error', function (err) {
+            gutil.log(gutil.colors.red('[Task "transpile:node"][Babel Error]'));
+            gutil.log(gutil.colors.red(err.message));
+        })
+        .pipe(sourcemaps.write('.', { sourceRoot: nodePaths.sourceRoot + '/javascript' }))
+        .pipe(plumber.stop())
+        .pipe(gulp.dest(nodePaths.outputRoot + '/javascript'));
 }
 
 
@@ -127,14 +127,14 @@ function startServer(props){
 }
 
 
-function bundle(done, withLog=false, withStats=false, env="prod") {
+function bundle(done, withLog=false, withStats=false, env='prod') {
     webpack(webpackConfig).run((err, stats) => {
         if (err) {
-            var error = new gutil.PluginError("bundle", err);
+            var error = new gutil.PluginError('bundle', err);
             gutil.log(gutil.colors.red(error));
             throw new gutil.PluginError({
-                plugin: "bundle",
-                message: "Failed to process webpack config successfully."
+                plugin: 'bundle',
+                message: 'Failed to process webpack config successfully.'
             });
         }
         else {
@@ -149,7 +149,7 @@ function bundle(done, withLog=false, withStats=false, env="prod") {
                     chunks: false
                 }));
                 Object.keys(stats.compilation.assets).forEach(function(key) {
-                    gutil.log("Webpack: output ", gutil.colors.green(key));
+                    gutil.log('Webpack: output ', gutil.colors.green(key));
                 });
             }
             if (done) {

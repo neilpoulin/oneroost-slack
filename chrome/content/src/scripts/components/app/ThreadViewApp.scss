@@ -1,0 +1,15 @@
+
+.ThreadViewApp{
+    background-color: yellow;
+    .ThreadView{
+        height: 100%;
+        background: lightblue;
+        .subject{
+            font-weight: bold;
+            color: $roostOrange;
+        }
+        .message-body{
+            white-space: pre-line;
+        }
+    }
+}

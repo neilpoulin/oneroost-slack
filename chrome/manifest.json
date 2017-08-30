@@ -1,0 +1,61 @@
+{
+    "name": "OneRoost - Vendor Interceptor",
+    "description": "OneRoost Gmail Extension - Stage",
+    "version": "2.0",
+    "background": {
+        "page": "background.html",
+        "persistent": true
+    },
+    "icons": {
+        "128": "images/oneroost_logo_square_128x128.png"
+    },
+    "browser_action": {
+        "default_title": "OneRoost Example",
+        "default_popup": "popup.html",
+        "default_icon": {
+            "30": "images/logo30x30.png"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://mail.google.com/*",
+                "https://inbox.google.com/*"
+            ],
+            "css": [],
+            "js": ["lib/inboxsdk.js", "content.js"],
+            "css": ["content.css"],
+            "run_at": "document_end"
+        }
+    ],
+    "permissions": [
+        "https://mail.google.com/",
+        "https://inbox.google.com/",
+        "https://stage.oneroost.com/*",
+        "https://www.oneroost.com/*",
+        "https://dev.oneroost.com/*",
+        "https://www.google.com/accounts/OAuthGetRequestToken",
+        "https://www.google.com/accounts/OAuthAuthorizeToken",
+        "https://www.google.com/accounts/OAuthGetAccessToken",
+        "https://docs.google.com/feeds/*",
+        "https://accounts.google.com/o/oauth2/token",
+        "identity",
+        "tabs"
+    ],
+    "web_accessible_resources": [
+        "images/*.png",
+        "lib/*.js",
+        "*.html"
+    ],
+    "manifest_version": 2,
+    "content_security_policy": "script-src https://*.google.com 'unsafe-eval'; object-src 'self'",
+    "oauth2": {
+        "client_id": "298915058255-8mq6ebtrh8e78en6k4kq5p2i8em42s9d.apps.googleusercontent.com",
+        "scopes": [
+            "https://www.googleapis.com/auth/gmail.modify",
+            "https://www.googleapis.com/auth/gmail.settings.basic",
+            "openid", "email", "profile"
+        ]
+    },
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5TPxBMexUUVSn0uUYX2p7/qUmANKdFteXWQdE+MHbTuYCILYTy3qFtMEENEKDQ8oN7n+EQPQpiMTz7/76TZGQHDASxA0shmZvfhTRJ+BcIqr7yrhJSsLvhWGDgT24jf2ubbLTX2GJQHMOsMdsgW14Gb/npFZg5LmheR47rWcpE5WyUq2Vm5ItMGXoWnSTWOjbWWpkz/m5j9cJccbbGOfAsohCLIlaVJ92vPUTALUhK+N/+9kN1xpZrIQ9m5TdN0Z6VvM/eVJe+41+1qDE91/T+lAwFwNTDXkVodVimUM/JnOLPH8Esh7bDHWmSbpvUYGFCYM2hOGVYOq1cMzyRXwZwIDAQAB"
+}
