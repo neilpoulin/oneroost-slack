@@ -49,12 +49,12 @@ class LoginPage extends React.Component{
 
         if ((isLoggedIn || error) && location.search){
             return <Redirect to={{
-                    pathname: '/login',
-                    state: { from: location }
-                }}/>
-            }
+                pathname: '/login',
+                state: { from: location }
+            }}/>
+        }
 
-            return (
+        return (
                 <div>
                     <h1>OneRoost</h1>
                     <div display-if={isLoggedIn} className="">

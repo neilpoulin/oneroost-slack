@@ -14,7 +14,7 @@ module.exports = {
     devtool: 'eval-source-map',
     entry: [
         './frontend/src/index.js',
-        './frontend/src/global.scss'
+        './frontend/src/frontend.scss'
     ],
     output: {
         path: path.join(__dirname, 'dist'),
@@ -23,7 +23,7 @@ module.exports = {
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json', '.css', '.scss'],
-        modules: ['frontend', 'src', 'atoms', 'containers', 'ducks', 'components', 'node_modules']
+        modules: ['frontend', 'src', 'containers', 'ducks', 'components', 'node_modules', './lib/scripts', './lib/styles'],
     },
     plugins: [
         extractCssPlugin,
@@ -38,10 +38,13 @@ module.exports = {
                     {loader:'babel-loader'},
                     {loader: path.join(__dirname, 'loaders', 'jsx-import-sass-loader')}
                 ],
-                include: path.join(__dirname, 'frontend', 'src')
+                include: [
+                    path.join(__dirname, 'frontend', 'src'),
+                    path.join(__dirname, 'lib', 'scripts')
+                ]
             },
             {
-                test: path.join(__dirname, 'frontend', 'src', 'global.scss'),
+                test: path.join(__dirname, 'frontend', 'src', 'frontend.scss'),
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [
@@ -51,14 +54,17 @@ module.exports = {
                         },
                         {
                             loader: 'sass-loader',
-                            options: {sourceMap: true, }
+                            options: {
+                                sourceMap: true,
+                                // includePaths: path.join(__dirname, 'frontend', 'src', 'index.scss')
+                            }
                         }
                     ]
                 })
             },
             {
                 test: /\.scss$/,
-                exclude: path.join(__dirname, 'frontend', 'src', 'global.scss'),
+                exclude: path.join(__dirname, 'frontend', 'src', 'frontend.scss'),
                 use: ExtractTextPlugin.extract({
                     fallback: 'style-loader',
                     use: [
@@ -70,12 +76,11 @@ module.exports = {
                             loader: 'css-encapsulation-loader'
                         },
                         {
-                            loader: 'sass-loader',
-                            options: {sourceMap: true, }
+                            loader: 'sass-loader'
                         }
                     ]
                 })
             }
         ]
-    }
+    },
 };

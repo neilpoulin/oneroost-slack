@@ -14,7 +14,7 @@ class Clickable extends React.Component {
         onClick: PropTypes.func,
         look: PropTypes.oneOf([LOOK_BUTTON, LOOK_LINK]),
         outline: PropTypes.bool,
-        colorType: PropTypes.oneOf([COLOR_PRIMARY, COLOR_PRIMARY]),
+        colorType: PropTypes.oneOf([COLOR_PRIMARY, COLOR_SECONDARY]),
         className: PropTypes.string,
         target: PropTypes.string,
         href: PropTypes.string,
@@ -42,11 +42,11 @@ class Clickable extends React.Component {
             className,
         } = this.props
         let classes = classNames(className, {
-            [`outline-${colorType}`]: outline,
+            [`btn-outline-${colorType}`]: outline,
             'btn': look === LOOK_BUTTON,
             'link': look === LOOK_LINK,
             [`btn-${colorType}`]: !outline && look === LOOK_BUTTON,
-            [`link-${colorType}`]: !outline && look === LOOK_LINK
+            [`link-${colorType}`]: !outline && look === LOOK_LINK,
         })
         if(href){
             return <a className={classes} href={href} target={target}>{text}</a>

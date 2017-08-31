@@ -7,8 +7,8 @@ import {
 import LoginPage from 'LoginPage'
 import NavBar from 'NavBar'
 import {connect} from 'react-redux'
-import Clickable from 'Clickable'
-import HomePage from 'HomePage'
+import Clickable from 'atoms/Clickable'
+import HomePage from './HomePage'
 
 const About = () => (
   <div>

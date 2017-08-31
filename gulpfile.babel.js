@@ -23,6 +23,7 @@ gulp.task('fe:clean', () => {
 
 gulp.task('fe:webpack:watch', ['fe:webpack'], (done) => {
     gulp.watch('frontend/src/**', ['fe:webpack'])
+    gulp.watch('lib/**', ['fe:webpack'])
 })
 
 gulp.task('fe:webpack', ['fe:clean'], (done) => {
