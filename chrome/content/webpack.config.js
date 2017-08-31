@@ -4,7 +4,7 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const extractCss = new ExtractTextPlugin({
-    filename: 'content.css', allChunks: false
+    filename: '[name].css', allChunks: false
 })
 
 module.exports = {

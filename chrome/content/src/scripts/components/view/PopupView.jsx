@@ -19,31 +19,30 @@ class PopupView extends Component {
                         <div display-if={fullName} className="email">
                             {email}
                         </div>
-                        <ClickableG displayText="Log Out"
+                        <ClickableG text="Log Out"
                             onClick={logOut}
                             className="logout"
-                            styleType="link"/>
+                            look="link"/>
                     </div>
 
                     <div display-if={userId} className="content">
                         <div>
                             <ClickableG href={'https://www.oneroost.com/settings/templates'}
                                 target="_blank"
-                                styleType="btn"
-                                displayText="Manage Tempaltes"/>
+                                text="Manage Tempaltes"/>
                         </div>
 
                         <div display-if={!brandPagesLoading && pages} className="brandPages">
                             <h3>Brand Pages</h3>
                             <ul className="list-unstyled">
                                 {pages.map((page, i) =>
-                                    <li><ClickableG target="_blank" styleType="link" key={`page_${i}`} displayText={page.vanityUrl} href={`https://www.oneroost.com/${page.vanityUrl}`}/></li>
+                                    <li><ClickableG target="_blank" look="link" key={`page_${i}`} text={page.vanityUrl} href={`https://www.oneroost.com/${page.vanityUrl}`}/></li>
                                 )}
                             </ul>
                         </div>
                     </div>
                 </div>
-                <ClickableG displayText="Test Clickable"/>
+                <ClickableG text="Test Clickable"/>
             </div>
         );
     }

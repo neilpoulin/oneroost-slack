@@ -28,7 +28,7 @@ class RedirectDropdownView extends React.Component {
                 <span className="title">Send to page:</span>
                 <ul className="vanityUrls">
                     {pages.map((page, i) => {
-                        return <li key={`page_${i}`} onClick={() => insertLink(page.vanityUrl, senderName, senderEmail)}>/{page.vanityUrl}</li>
+                        return <li key={`page_${i}`} className='vanityUrl' onClick={() => insertLink(page.vanityUrl, senderName, senderEmail)}>/{page.vanityUrl}</li>
                     })}
                 </ul>
             </div>

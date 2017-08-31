@@ -22,7 +22,6 @@
                 "https://mail.google.com/*",
                 "https://inbox.google.com/*"
             ],
-            "css": [],
             "js": ["lib/inboxsdk.js", "content.js"],
             "css": ["content.css"],
             "run_at": "document_end"

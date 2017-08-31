@@ -4,11 +4,12 @@ $gmailHoverColor: gray;
     font-weight: bold;
     padding: 5px;
 }
+
 ul.vanityUrls{
     list-style: none;
     margin: 0px;
     padding: 0px;
-    li{
+    li.vanityUrl{
         padding: 10px;
         text-decoration: none;
         margin: 0px;
