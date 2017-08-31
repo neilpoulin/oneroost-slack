@@ -1,18 +1,30 @@
-import {wrapStore} from "react-chrome-redux"
-import store from "store/configureStore"
-import Parse from "parse"
-import axios from "axios"
-import {loadCachedUser} from "ducks/user"
+import {wrapStore} from 'react-chrome-redux'
+import store from 'store/configureStore'
+import Parse from 'parse'
+import axios from 'axios'
+import {loadCachedUser} from 'ducks/user'
+import {
+    SET_SERVER_URL,
+    loadServerConfigs,
+} from 'ducks/config'
 
-const oneroostDomain = process.env.HOSTNAME || "https://www.oneroost.com"
-console.log("ONEROOST DOMAIL = " + oneroostDomain)
+const oneroostDomain = process.env.HOSTNAME || 'https://dev.oneroost.com'
+console.log('ONEROOST DOMAIN = ' + oneroostDomain)
 wrapStore(store, {
-    portName: "oneroost"
+    portName: 'oneroost'
 })
 
-axios.get(`${oneroostDomain}/config`).then(({data}) => {
-    console.log(data)
-    Parse.initialize(data.applicationId);
-    Parse.serverURL = `${oneroostDomain}/parse`;
+store.dispatch({
+    type: SET_SERVER_URL,
+    payload: {
+        serverUrl: oneroostDomain
+    }
+})
+
+store.dispatch(loadServerConfigs()).then(configs => {
+    console.log(configs)
+    console.log('NODE_ENV', process.env.NODE_ENV)
+    Parse.initialize(configs.PARSE_APP_ID);
+    Parse.serverURL = configs.PARSE_PUBLIC_URL;
     store.dispatch(loadCachedUser())
 })

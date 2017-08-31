@@ -1,5 +1,5 @@
-import {fromJS} from "immutable"
-import axios from "axios"
+import {fromJS} from 'immutable'
+import axios from 'axios'
 
 import {
     CREATE_FILTER_ALIAS,
@@ -9,7 +9,7 @@ import {
     GET_FILTERS_REQUEST,
     CREATE_FILTER_SUCCESS,
     CREATE_FILTER_ERROR,
-} from "actions/gmail"
+} from 'actions/gmail'
 
 const initialState = {
     filters: [],
@@ -24,14 +24,14 @@ export default function reducer(state=initialState, action){
         case GET_FILTERS_ERROR:
             break;
         case GET_FILTERS_SUCCESS:
-            state = state.set("filters", action.payload)
+            state = state.set('filters', action.payload)
             break;
         case CREATE_FILTER_SUCCESS:
-            state = state.set("filters", state.get("filters").push(action.payload))
-            state = state.set("error", null)
+            state = state.set('filters', state.get('filters').push(action.payload))
+            state = state.set('error', null)
             break;
         case CREATE_FILTER_ERROR:
-            state = state.set("error", action.error)
+            state = state.set('error', action.error)
             break;
         default:
             break;
@@ -46,9 +46,9 @@ export const aliases = {
 
 export function getGmailFilters(){
     return (dispatch, getState) => {
-        axios.get("https://www.googleapis.com/gmail/v1/users/me/settings/filters")
+        axios.get('https://www.googleapis.com/gmail/v1/users/me/settings/filters')
             .then(({data}) => {
-                console.log("filters!", data)
+                console.log('filters!', data)
                 dispatch({
                     type: GET_FILTERS_SUCCESS,
                     payload: data.filter
@@ -95,32 +95,32 @@ export function createFilter({senderName, senderEmail, vanityUrl, ...action}){
             return null;
         }
         const labelName = `OneRoost | ${vanityUrl}`
-        axios.post("https://www.googleapis.com/gmail/v1/users/me/labels", {
+        axios.post('https://www.googleapis.com/gmail/v1/users/me/labels', {
             name: labelName
         })
             .then(({data}) => {
-                console.log("created label!", data);
+                console.log('created label!', data);
                 return data;
             })
             .catch(error => {
-                console.warn("failed to create label...trying to find it", error)
-                return axios.get("https://www.googleapis.com/gmail/v1/users/me/labels")
+                console.warn('failed to create label...trying to find it', error)
+                return axios.get('https://www.googleapis.com/gmail/v1/users/me/labels')
                     .then(({data}) => {
                         let foundLabel = data.labels.find(label => label.name === labelName)
                         if (foundLabel){
                             return foundLabel
                         }
-                        throw new Error("Failed to create or find a label with name: " + labelName)
+                        throw new Error('Failed to create or find a label with name: ' + labelName)
                     })
             })
             .then(label => {
-                return axios.post("https://www.googleapis.com/gmail/v1/users/me/settings/filters", {
+                return axios.post('https://www.googleapis.com/gmail/v1/users/me/settings/filters', {
                     criteria: {
                         from: senderEmail
                     },
                     action: {
                         addLabelIds: [label.id],
-                        removeLabelIds: ["INBOX"]
+                        removeLabelIds: ['INBOX']
                     }
                 })
             })

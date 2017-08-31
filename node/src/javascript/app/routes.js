@@ -75,7 +75,7 @@ function getChannel(channels){
 }
 
 router.get('/slack/userInfo', async (req, res) => {
-    console.log("GET: /slack/userInfo")
+    console.log('GET: /slack/userInfo')
     let accessToken = req.cookies.slack_token
     if (!accessToken){
         return res.sendStatus(401);
@@ -84,7 +84,7 @@ router.get('/slack/userInfo', async (req, res) => {
         const {team, user} = await getUserInfo(accessToken);
         try{
             await createChannel(accessToken)
-            console.log("creataed channel!")
+            console.log('creataed channel!')
         } catch(e) {
             console.error(e)
         }
@@ -103,7 +103,7 @@ router.get('/slack/userInfo', async (req, res) => {
         }
         let channel = getChannel(channels)
 
-        console.log("channel to post to = ", channel)
+        console.log('channel to post to = ', channel)
         if (channel){
             postToChannel(channel.id, `${user.name} has logged into OneRoost via Slack`)
         }

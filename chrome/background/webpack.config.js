@@ -66,7 +66,8 @@ module.exports = {
         new webpack.NoEmitOnErrorsPlugin(),
         new webpack.DefinePlugin({
             'process.env': {
-                NODE_ENV: JSON.stringify('production')
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'production'),
+                HOSTNAME: JSON.stringify(process.env.HOSTNAME),
             }
         }),
         new OptimizeCssAssetsPlugin()

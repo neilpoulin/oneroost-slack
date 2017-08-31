@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import ClickableG from 'scripts/atoms/Clickable';
+import Clickable from 'atoms/Clickable';
 import {LOG_OUT_ALIAS, LOG_IN_GOOGLE_ALIAS} from 'actions/user'
 import {getFullName} from 'selectors/user'
 
@@ -19,7 +19,7 @@ class PopupView extends Component {
                         <div display-if={fullName} className="email">
                             {email}
                         </div>
-                        <ClickableG text="Log Out"
+                        <Clickable text="Log Out"
                             onClick={logOut}
                             className="logout"
                             look="link"/>
@@ -27,8 +27,9 @@ class PopupView extends Component {
 
                     <div display-if={userId} className="content">
                         <div>
-                            <ClickableG href={'https://www.oneroost.com/settings/templates'}
+                            <Clickable href={'https://www.oneroost.com/settings/templates'}
                                 target="_blank"
+                                outline={true}
                                 text="Manage Tempaltes"/>
                         </div>
 
@@ -36,13 +37,12 @@ class PopupView extends Component {
                             <h3>Brand Pages</h3>
                             <ul className="list-unstyled">
                                 {pages.map((page, i) =>
-                                    <li><ClickableG target="_blank" look="link" key={`page_${i}`} text={page.vanityUrl} href={`https://www.oneroost.com/${page.vanityUrl}`}/></li>
+                                    <li><Clickable target="_blank" look="link" key={`page_${i}`} text={page.vanityUrl} href={`https://www.oneroost.com/${page.vanityUrl}`}/></li>
                                 )}
                             </ul>
                         </div>
                     </div>
                 </div>
-                <ClickableG text="Test Clickable"/>
             </div>
         );
     }

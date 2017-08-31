@@ -1,10 +1,10 @@
-import { createStore, applyMiddleware, compose } from 'redux'
-import {alias} from 'react-chrome-redux';
+import { createStore, applyMiddleware } from 'redux'
+import {alias} from 'react-chrome-redux'
 import reducers from './../ducks'
+import {composeWithDevTools} from 'redux-devtools-extension/developmentOnly'
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 let middlewares = []
 
-const store = createStore(reducers, composeEnhancers(applyMiddleware(...middlewares)));
+const store = createStore(reducers, composeWithDevTools(applyMiddleware(...middlewares)));
 
 export default store;

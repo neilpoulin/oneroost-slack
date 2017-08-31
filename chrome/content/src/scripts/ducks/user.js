@@ -1,24 +1,24 @@
-import Parse from "parse"
-import {fromJS} from "immutable"
-import {handleSignInClick, handleSignOutClick} from "background/googleAuth"
+import Parse from 'parse'
+import {fromJS} from 'immutable'
+import {handleSignInClick, handleSignOutClick} from 'background/googleAuth'
 
-export const LOG_IN_REQUEST = "oneroost/user/LOG_IN_REQUEST"
-export const LOG_IN_SUCCESS = "oneroost/user/LOGIN_IN_SUCCESS"
-export const LOG_IN_ERROR = "oneroost/user/LOG_IN_ERROR"
+export const LOG_IN_REQUEST = 'oneroost/user/LOG_IN_REQUEST'
+export const LOG_IN_SUCCESS = 'oneroost/user/LOGIN_IN_SUCCESS'
+export const LOG_IN_ERROR = 'oneroost/user/LOG_IN_ERROR'
 
-export const LOG_OUT_REQUEST = "oneroost/user/LOG_OUT_REQUEST"
-export const LOG_OUT_SUCCESS = "oneroost/user/LOG_OUT_SUCCESS"
+export const LOG_OUT_REQUEST = 'oneroost/user/LOG_OUT_REQUEST'
+export const LOG_OUT_SUCCESS = 'oneroost/user/LOG_OUT_SUCCESS'
 
-export const UPDATE_USER_INFO = "oneroost/user/UPDATE_USER_INFO"
+export const UPDATE_USER_INFO = 'oneroost/user/UPDATE_USER_INFO'
 
-export const GOOGLE_LOG_IN_SUCCESS = "oneroost/user/GOOGLE_LOG_IN_SUCCESS"
-export const GOOGLE_LOG_OUT_SUCCESS = "oneroost/user/GOOGLE_LOG_OUT_SUCCESS"
+export const GOOGLE_LOG_IN_SUCCESS = 'oneroost/user/GOOGLE_LOG_IN_SUCCESS'
+export const GOOGLE_LOG_OUT_SUCCESS = 'oneroost/user/GOOGLE_LOG_OUT_SUCCESS'
 
 // ALIASES
-export const LOG_IN_ALIAS = "oneroost/user/LOG_IN_ALIAS"
-export const LOG_OUT_ALIAS = "oneroost/user/LOG_OUT_ALIAS"
-export const LOG_IN_GOOGLE_ALIAS = "oneroost/user/LOG_IN_GOOGLE_ALIAS"
-export const LOG_OUT_GOOGLE_ALIAS = "oneroost/user/LOG_OUT_GOOGLE_ALIAS"
+export const LOG_IN_ALIAS = 'oneroost/user/LOG_IN_ALIAS'
+export const LOG_OUT_ALIAS = 'oneroost/user/LOG_OUT_ALIAS'
+export const LOG_IN_GOOGLE_ALIAS = 'oneroost/user/LOG_IN_GOOGLE_ALIAS'
+export const LOG_OUT_GOOGLE_ALIAS = 'oneroost/user/LOG_OUT_GOOGLE_ALIAS'
 
 const initialState = {
     isLogin: false,
@@ -83,15 +83,15 @@ export default function reducer(state=initialState, action){
 export const getFullName = (state) => {
     const user = state.user
     if (user.isLoggedIn){
-        return `${user.firstName ? user.firstName : ""} ${user.lastName ? user.lastName : ""}`.trim()
+        return `${user.firstName ? user.firstName : ''} ${user.lastName ? user.lastName : ''}`.trim()
     }
 }
 
 // Queries
 const getUserQuery = (userId) => {
-    let query = new Parse.Query("_User")
-    query.include("account")
-    query.include("accountSeat")
+    let query = new Parse.Query('_User')
+    query.include('account')
+    query.include('accountSeat')
     return query.get(userId)
 }
 
@@ -118,7 +118,7 @@ export const logInAlias = ({email, password}) => {
 export const logIn = ({email, password}) => (dispatch, getState) => {
     const state = getState()
     if (state.isLoggedIn && Parse.User.current()) {
-        console.log("user already logged in, exiting")
+        console.log('user already logged in, exiting')
         return null
     }
     dispatch({
@@ -139,7 +139,7 @@ export const logIn = ({email, password}) => (dispatch, getState) => {
 }
 
 export const logOut = () => (dispatch, getState) => {
-    console.log("Logging out")
+    console.log('Logging out')
     if (!Parse.User.current()){
         dispatch({type: LOG_OUT_SUCCESS})
         return null
@@ -151,7 +151,7 @@ export const logOut = () => (dispatch, getState) => {
 
 export const logInGoogle = () => (dispatch, getState) => {
     handleSignInClick().then(({email}) => {
-        console.log("Signed In Click finished...", email)
+        console.log('Signed In Click finished...', email)
         dispatch({type: GOOGLE_LOG_IN_SUCCESS, payload: {email}})
     })
 }

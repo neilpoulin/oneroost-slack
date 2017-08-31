@@ -42,7 +42,7 @@ module.exports = {
             'node_modules',
             'actions',
             'controllers',
-            '../../lib'
+            '../../lib/scripts'
         ]
     },
     devtool: 'source-map',
@@ -119,7 +119,12 @@ module.exports = {
         extractCss,
         new ProgressBarPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
-        new webpack.DefinePlugin({'process.env': {NODE_ENV: JSON.stringify('production')}}),
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'production'),
+                HOSTNAME: JSON.stringify(process.env.HOSTNAME),
+            }
+        }),
         new OptimizeCssAssetsPlugin()
     ],
     context: __dirname,
