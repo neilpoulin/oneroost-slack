@@ -82,7 +82,7 @@ export default function reducer(state=initialState, action){
         case LOGOUT:
             return state = initialState
         default:
-        break
+            break
     }
 
     return state;
@@ -138,39 +138,39 @@ export function loginWithSlack(code, redirectUri){
             code,
             redirectUri,
         })
-        .then( ({data: {
+            .then( ({data: {
             access_token: accessToken, user, team, channels
         }}) => {
-            dispatch({
-                type: SLACK_AUTH_SUCCESS,
-                payload: {
-                    accessToken,
-                    user,
-                    team,
-                    channels,
-                }
-            })
-            dispatch(linkUserWithProvider('slack', {
-                access_token: accessToken,
+                dispatch({
+                    type: SLACK_AUTH_SUCCESS,
+                    payload: {
+                        accessToken,
+                        user,
+                        team,
+                        channels,
+                    }
+                })
+                dispatch(linkUserWithProvider('slack', {
+                    access_token: accessToken,
                 // id_token: authData.tokenId,
-                id: user.id,
-                firstName: user.name ? user.name.split(' ')[0] : '',
-                lastName:  user.name ? user.name.split(' ')[1] : '',
-                email: user.email,
-                username: user.email,
-            }))
-        })
-        .catch( error => {
-            console.log(error);
-            dispatch({
-                type: SLACK_AUTH_ERROR,
-                payload: {
-                    ...error,
-                }
+                    id: user.id,
+                    firstName: user.name ? user.name.split(' ')[0] : '',
+                    lastName:  user.name ? user.name.split(' ')[1] : '',
+                    email: user.email,
+                    username: user.email,
+                }))
             })
-        }).then(() => {
+            .catch( error => {
+                console.log(error);
+                dispatch({
+                    type: SLACK_AUTH_ERROR,
+                    payload: {
+                        ...error,
+                    }
+                })
+            }).then(() => {
 
-        })
+            })
     }
 }
 
@@ -252,7 +252,7 @@ function linkUser(user, provider, authData){
                 default:
                     console.error('Failed to link with' + provider, error)
                     dispatch(linkUserWithProviderError(provider, error))
-                break;
+                    break;
             }
         })
     }
@@ -271,8 +271,8 @@ export function connectExistingUser({email, provider, authData}){
             console.error('Failed to link existing with' + provider, error)
             switch(error.code){
                 case 206:
-                error.message = 'If you already have an account, you must log in before you can connect via a thrid party.'
-                break
+                    error.message = 'If you already have an account, you must log in before you can connect via a thrid party.'
+                    break
             }
             dispatch(linkUserWithProviderError(provider, error))
         })

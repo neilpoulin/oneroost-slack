@@ -1,5 +1,5 @@
-import {ParseServer} from "parse-server"
-import ParseDashboard from "parse-dashboard"
+import {ParseServer} from 'parse-server'
+import ParseDashboard from 'parse-dashboard'
 // import SESParseAdapter from "./email/SESParseAdapter.js"
 // import {S3Adapter} from "parse-server"
 import path from 'path'
@@ -26,20 +26,20 @@ function getDashboardConfig(){
     let config = {
         apps: [
             {
-                "serverURL": PARSE_PUBLIC_URL,
-                "appId": PARSE_APP_ID,
-                "masterKey": PARSE_MASTER_KEY,
-                "appName": ENV
+                'serverURL': PARSE_PUBLIC_URL,
+                'appId': PARSE_APP_ID,
+                'masterKey': PARSE_MASTER_KEY,
+                'appName': ENV
             }
         ],
         users: [
             {
-                "user":"neil",
-                "pass":"OneRoost88"
+                'user':'neil',
+                'pass':'OneRoost88'
             },
             {
-                "user":"taylor",
-                "pass":"PlatformT2016"
+                'user':'taylor',
+                'pass':'PlatformT2016'
             }
         ]
     }
@@ -66,7 +66,7 @@ export function getParseServer(){
         },
         serverURL: PARSE_LOCAL_URL,
         publicServerURL: PARSE_PUBLIC_URL,
-        appName: "OneRoost",
+        appName: 'OneRoost',
         // emailAdapter: SESParseAdapter({}),
         // customPages: {
         //     verifyEmailSuccess: envUtil.getEmailVerifiedPageUrl()

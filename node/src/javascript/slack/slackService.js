@@ -2,6 +2,7 @@ import {WebClient} from '@slack/client'
 import {SLACK_OAUTH_TOKEN} from './../Environment'
 import axios from 'axios'
 import qs from 'qs'
+import {SLACK_CHANNEL_CLASSNAME} from './../models/ModelConstants'
 
 const web = new WebClient(SLACK_OAUTH_TOKEN)
 
@@ -42,9 +43,12 @@ export async function createChannel(access_token){
         token: access_token,
         name: 'oneroosttesting',
         validate: true
-    }))
-    .then(({data}) => {
+    })).then(({data}) => {
         console.log('successfully created channel', data)
-    })
-    .catch(error => console.error(error))
+    }).catch(error => console.error(error))
+}
+
+export async function saveChannel(teamId, channelId, selected=true){
+    console.log('saving channel ' + chanelId + ' as ' + (selected ? 'selected' : 'not-selected') + ' for  teamId = ' + teamId )
+
 }
