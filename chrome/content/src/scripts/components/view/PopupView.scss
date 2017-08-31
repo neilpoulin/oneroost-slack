@@ -1,6 +1,10 @@
 $googleButtonImagePath: "/images/google_signin_buttons/web/1x/";
 $googleButtonImageStyle: "btn_google_signin_dark_";
 
+.container{
+    padding: 1rem;
+}
+
 .googleLogin {
     display: inline-block;
     background: url("#{$googleButtonImagePath}#{$googleButtonImageStyle}normal_web.png");

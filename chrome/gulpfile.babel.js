@@ -24,11 +24,11 @@ function chromeWebpack(config, cb){
 }
 
 gulp.task('chrome:background-js', ['chrome:clean'], (cb) => {
-    chromeWebpack(backgroundWebpackConfig, cb)
+    return chromeWebpack(backgroundWebpackConfig, cb)
 });
 
 gulp.task('chrome:content-js', ['chrome:clean'], (cb) => {
-    chromeWebpack(contentWebpackConfig, cb)
+    return chromeWebpack(contentWebpackConfig, cb)
 });
 
 gulp.task('chrome:background-html', ['chrome:clean'], () => {
@@ -70,7 +70,7 @@ gulp.task('chrome:package:clean', (cb) => {
 });
 
 gulp.task('package:copy-manifest', ['chrome:copy-manifest'], () => {
-    gulp.src('manifest.json')
+    return gulp.src('manifest.json')
         .pipe(jeditor(manifest => {
             delete manifest.key
             return manifest
@@ -101,4 +101,5 @@ gulp.task('chrome:watch', ['chrome'], () => {
     gulp.watch('background/**/*', ['chrome']);
     gulp.watch('manifest.json', ['chrome']);
     gulp.watch('lib/**/*', ['chrome']);
+    gulp.watch('../lib/**/*', ['chrome']);
 });

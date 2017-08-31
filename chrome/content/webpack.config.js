@@ -49,7 +49,7 @@ module.exports = {
     module: {
         loaders: [
             {
-                test: /\.(jsx|js)?$/,
+                test: /^(?!.*\.test\.jsx?$).*\.jsx?$/,
                 exclude: /(node_modules)/,
                 include: [
                     path.join(__dirname, 'src', 'scripts'),

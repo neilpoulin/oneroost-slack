@@ -26,7 +26,7 @@ module.exports = {
     module: {
         loaders: [
             {
-                test: /\.(jsx|js)?$/,
+                test: /^(?!.*\.test\.jsx?$).*\.jsx?$/,
                 loader: 'babel-loader',
                 exclude: /(node_modules|lib)/,
                 include: path.join(__dirname, 'src'),
@@ -54,7 +54,7 @@ module.exports = {
                         {
                             loader: 'sass-loader',
                             options: {sourceMap: false, }
-                        }                        
+                        }
                     ]
                 })
             }

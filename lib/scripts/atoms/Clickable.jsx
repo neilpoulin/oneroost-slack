@@ -1,43 +1,57 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
+
+const LOOK_BUTTON = 'button'
+const LOOK_LINK = 'link'
+
+const COLOR_PRIMARY = 'primary'
+const COLOR_SECONDARY = 'secondary'
 
 class Clickable extends React.Component {
     static propTypes = {
-        displayText: PropTypes.string,
+        text: PropTypes.string,
         onClick: PropTypes.func,
-        styleType: PropTypes.oneOf(['btn', 'link']),
+        look: PropTypes.oneOf([LOOK_BUTTON, LOOK_LINK]),
         outline: PropTypes.bool,
-        colorType: PropTypes.oneOf(['primary', 'secondary']),
+        colorType: PropTypes.oneOf([COLOR_PRIMARY, COLOR_PRIMARY]),
         className: PropTypes.string,
         target: PropTypes.string,
         href: PropTypes.string,
     }
 
     static defaultProps = {
-        styleType: 'btn',
+        look: LOOK_BUTTON,
         outline: false,
-        colorType: 'primary',
+        colorType: COLOR_PRIMARY,
         className: '',
         target: '',
         href:'',
+        text: '',
     }
 
     render () {
         const {
-            displayText,
+            text,
             onClick,
-            styleType,
+            look,
             outline,
             colorType,
             target,
             href,
             className,
         } = this.props
-        let classNames = `${styleType} ${styleType}-${outline ? 'outline-' : ''}${colorType} ${className}`
+        let classes = classNames(className, {
+            [`outline-${colorType}`]: outline,
+            'btn': look === LOOK_BUTTON,
+            'link': look === LOOK_LINK,
+            [`btn-${colorType}`]: !outline && look === LOOK_BUTTON,
+            [`link-${colorType}`]: !outline && look === LOOK_LINK
+        })
         if(href){
-            return <a className={classNames} href={href} target={target}>{displayText}</a>
+            return <a className={classes} href={href} target={target}>{text}</a>
         }
-        return <span className={classNames} onClick={onClick}>{displayText}</span>
+        return <span className={classes} onClick={onClick}>{text}</span>
     }
 }
 

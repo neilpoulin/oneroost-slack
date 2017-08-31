@@ -1,11 +1,5 @@
 @import "./content_variables";
 @import "./../../../../lib/styles/global";
-// @import "./google";
-// @import "./popup";
-
-html, body{
-    // font-size: 100%;
-}
 
 .form-group{
     display: flex;
@@ -26,31 +20,4 @@ html, body{
     position: fixed;
     top: -99999px;
     left: -9999px;
-}
-
-h1,h2,h3,h4,h5{
-    margin: 0 0 .5rem 0;
-    padding: 0;
-}
-
-.link{
-    cursor: pointer;
-    color: $roostOrange;
-    text-decoration: none;
-    &-secondary{
-        color: $link-color;
-    }
-    &:hover{
-        color: $secondaryColor;
-    }
-}
-
-
-ul.list-unstyled{
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    li{
-        list-style: none;
-    }
 }

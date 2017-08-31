@@ -10,7 +10,7 @@ class PopupView extends Component {
     render() {
         const {userId, fullName, logOut, isLoggedIn, logInGoogle, email, pages, brandPagesLoading} = this.props
         return (
-            <div className="container-fluid PopupView">
+            <div className="container">
                 <div display-if={!isLoggedIn} className="loginContainer">
                     <div className="googleLogin" onClick={logInGoogle}></div>
                 </div>
@@ -43,9 +43,7 @@ class PopupView extends Component {
                         </div>
                     </div>
                 </div>
-                TESTING
                 <ClickableG displayText="Test Clickable"/>
-                AFTER CCLICABLE
             </div>
         );
     }

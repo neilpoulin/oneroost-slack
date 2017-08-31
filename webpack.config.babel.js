@@ -33,7 +33,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.jsx?$/,
+                test: /^(?!.*\.test\.jsx?$).*\.jsx?$/,
                 use: [
                     {loader:'babel-loader'},
                     {loader: path.join(__dirname, 'loaders', 'jsx-import-sass-loader')}
