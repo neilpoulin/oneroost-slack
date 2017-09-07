@@ -18,7 +18,7 @@ export const PARSE_APP_ID = process.env.PARSE_APP_ID || ''
 
 //ENVIRONMENT
 export const ENV_NAME = process.env.ENV_NAME || 'dev' //such as prod-green or prod-blue
-export const ENV = process.env.ENV || 'dev'
+export const ENV = process.env.ENV || 'dev' //such as dev, stage, prod
 
 //ANALYTICS
 export const GA_TRACKING_ID = process.env.GA_TRACKING_ID || 'UA-87950724-3'
@@ -43,4 +43,4 @@ export const isStage = () => {
 }
 
 export const PARSE_PUBLIC_URL = `${HOSTNAME}${PARSE_MOUNT}`
-export const PARSE_LOCAL_URL = `http://localhost:"${PORT}${PARSE_MOUNT}`
+export const PARSE_LOCAL_URL = `http://localhost:${PORT}${PARSE_MOUNT}`

@@ -1,6 +1,7 @@
 import Immutable from 'immutable'
 import axios from 'axios'
 import Parse from 'parse'
+import {loadTeam} from 'ducks/channels'
 
 export const SLACK_AUTH_REQUEST = 'oneroost/login/SLACK_AUTH_REQUEST'
 export const SLACK_AUTH_SUCCESS = 'oneroost/login/SLACK_AUTH_SUCCESS'
@@ -103,14 +104,16 @@ export function loadUser(){
 
         axios.get('slack/userInfo').then(({data}) => {
             console.log('data!', data)
-            let {user, team} = data
+            let {user, team, channels, selectedChannels} = data
+
             dispatch({
                 type: SLACK_AUTH_SUCCESS,
                 payload: {
-                    user: data.user,
-                    team: data.team,
+                    user,
+                    team,
                     accessToken: data.access_token,
-                    channels: data.channels,
+                    channels,
+                    selectedChannels,
                 }
             })
             dispatch(linkUserWithProvider('slack', {
@@ -122,6 +125,7 @@ export function loadUser(){
                 email: user.email,
                 username: user.email,
             }))
+            dispatch(loadTeam())
         }).catch(error => {
             console.error(error)
         })

@@ -57,7 +57,7 @@ artifacts:
     - .ebextensions/**/*
     - .elasticbeanstalk/**/*
     - buildspec.yml
-    - node/index.js
+    - main.js
     - node/dist/**/*
     - package.json
     - images/**/*

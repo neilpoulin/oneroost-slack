@@ -3,10 +3,13 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import qs from 'qs'
 import {loginWithSlack, postMessage} from 'ducks/login'
+import {toggleChannel} from 'ducks/channels'
+import {getSelectedChannels} from 'selectors/slack'
 import {Redirect} from 'react-router'
 import Immutable from 'immutable'
 import GoogleLoginButton from './GoogleLoginButton'
 import Parse from 'parse'
+import Checkbox from 'atoms/Checkbox'
 
 class LoginPage extends React.Component{
     static propTypes = {
@@ -45,6 +48,7 @@ class LoginPage extends React.Component{
             hasGoogle,
             hasSlack,
             postToChannel,
+            selectChannel,
         } = this.props
 
         if ((isLoggedIn || error) && location.search){
@@ -71,7 +75,7 @@ class LoginPage extends React.Component{
                             <div display-if={channels}>
                                 <h4>Channels</h4>
                                 {channels.map((c, i) => <div key={`channel_${i}`}>
-                                <a href={`slack://channel?id=${c.id}&team=${teamId}`}  onClick={() => postToChannel(c.id, 'This is a test message!')}>#{c.name}</a>
+                                <Checkbox label={`#${c.name}`} onChange={(selected) => selectChannel(c.id, selected)} selected={c.selected}/>                                
                             </div>)
                         }
                     </div>
@@ -86,6 +90,7 @@ class LoginPage extends React.Component{
             </div>
             <div display-if={!hasSlack}>
                 <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
+
                     <img alt="Sign in with Slack"
                         height="40"
                         width="172"
@@ -111,7 +116,11 @@ const mapStateToProps = (state, ownProps) => {
         params = {code, state: stateParam, error}
     }
     const parseUser = Parse.User.current()
-
+    const selectedChannels = getSelectedChannels(state)
+    let channels = login.get('channels', Immutable.List()).toJS().map(c => {
+        c.selected = selectedChannels.includes(c.id)
+        return c
+    })
     return {
         slackClientId: config.get('SLACK_CLIENT_ID'),
         ...params,
@@ -123,7 +132,7 @@ const mapStateToProps = (state, ownProps) => {
         userImageUrl: login.getIn(['slackUser', 'image_72']),
         userName: login.get('firstName') + ' ' + login.get('lastName'),
         userEmail: login.get('email'),
-        channels: login.get('channels', Immutable.List()).toJS(),
+        channels,
         teamId: login.getIn(['slackTeam', 'id']),
         redirectUri: 'https://dev.oneroost.com/login',
         parseUserId: parseUser ? parseUser.id : null,
@@ -138,6 +147,9 @@ const mapDispatchToprops = (dispatch, ownProps) => {
         postToChannel: (channelId, message) => {
             dispatch(postMessage(channelId, message))
         },
+        selectChannel: (channelId, selected) => {
+            dispatch(toggleChannel(channelId, selected))
+        }
     }
 }
 

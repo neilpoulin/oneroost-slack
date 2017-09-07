@@ -2,7 +2,7 @@ import path from 'path'
 import express from 'express'
 import {
     isProd,
-} from './../Environment'
+} from 'util/Environment'
 
 module.exports = function(app){
     if (isProd()){
@@ -24,5 +24,5 @@ module.exports = function(app){
             log: console.log,
         }));
     }
-    app.use("/static/images", express.static(__dirname + "./../../../../images"));
+    app.use('/static/images', express.static(__dirname + './../../../../images'));
 }

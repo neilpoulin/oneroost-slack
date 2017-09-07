@@ -11,12 +11,14 @@ import {
     ENV,
     ENV_NAME,
     GOOGLE_CLIENT_ID,
-} from './../Environment'
+} from 'util/Environment'
 import {
     postToChannel,
     getUserInfo,
     createChannel,
-} from './../slack/slackService'
+    saveChannel,
+    getSlackTeamByTeamId,
+} from 'slack/slackService'
 
 router.post('/tokens/slack', async (req, res) => {
     console.log('POST: /tokens/slack')
@@ -95,17 +97,20 @@ router.get('/slack/userInfo', async (req, res) => {
             exclude_members: true,
         }))
         let channels = channelResponse.data.channels
+        let slackTeamInfo = await getSlackTeamByTeamId(team.id)
+
         let info = {
             access_token: accessToken,
             team,
             user,
             channels,
+            selectedChannels: slackTeamInfo.get('selectedChannels')
         }
         let channel = getChannel(channels)
 
-        console.log('channel to post to = ', channel)
+        console.log('channel to post to = ', channel.id)
         if (channel){
-            postToChannel(channel.id, `${user.name} has logged into OneRoost via Slack`)
+            // postToChannel(channel.id, `${user.name} has logged into OneRoost via Slack`)
         }
 
         return res.send(info)
@@ -129,6 +134,26 @@ router.get('/configs', (req, res) => {
         SLACK_CLIENT_ID,
         GOOGLE_CLIENT_ID,
     })
+})
+
+router.post('/slackTeams', async (req, res) => {
+    console.log('posting to slack teams', req.body)
+    try{
+        const {
+            channelId,
+            selected=false,
+            teamId
+        } = req.body
+        var slackTeam = await saveChannel(teamId, channelId, selected)
+        res.send({
+            success: true,
+            slackTeam: slackTeam.toJSON(),
+        })
+    } catch (e){
+        console.error('Failed to save the channel', e)
+        res.status(500)
+        res.send({success: false, error: e})
+    }
 })
 
 router.get('*', function(req, res) {

@@ -11,7 +11,21 @@ import sourcemaps from 'gulp-sourcemaps'
 const nodeBabelOptions = {
     presets: ['es2015', 'stage-0'],
     plugins: [
-        'transform-async-to-generator'
+        'transform-async-to-generator',
+        ['module-resolver', {
+            'root': ['./node/src/javascript'],
+            'alias': {
+                'models': './node/dist/lib/models',
+                'util': './node/dist/lib/util',
+            }
+        }]
+    ]
+}
+
+const nodeLibBabelOptions = {
+    presets: ['es2015', 'stage-0'],
+    plugins: [
+        'transform-async-to-generator',
     ]
 }
 
@@ -36,7 +50,10 @@ gulp.task('install', ['fe:clean', 'fe:webpack', 'node:build'])
 const nodePaths = {
     outputRoot: 'node/dist',
     sourceRoot: 'node/src',
-    root: 'node'
+    root: 'node',
+    models: 'lib/scripts/models',
+    util: 'lib/scripts/util',
+    lib: 'lib/scripts'
 }
 
 const sharedProps = {
@@ -47,6 +64,7 @@ const sharedProps = {
     PARSE_MASTER_KEY: process.env.ONEROOST_PARSE_MASTER_KEY_DEV,
     PARSE_APP_ID: process.env.ONEROOST_PARSE_APP_ID_DEV,
     DATABASE_URL: 'mongodb://localhost:27017/oneroost-db',
+    // VERBOSE: 1, //used for parse server verbose mode
 }
 
 var devEnvProps = {
@@ -62,7 +80,8 @@ var prodEnvProps = {
     GA_TRACKING_CODE: 'UA-87950724-3',
     NODE_ENV: 'production',
     ENV: 'prod',
-    ENV_NAME: 'prod-dev'
+    ENV_NAME: 'prod-dev',
+    // JSON_LOGS: '1'
 }
 
 gulp.task('node:clean', () => {
@@ -91,9 +110,31 @@ gulp.task('node:start:prod', ['node:build'], (done) => {
     return startServer(prodEnvProps)
 })
 
+function transpileNodeLib(){
+    console.log('transpile node lib')
+    return gulp.src([nodePaths.lib + '/**/*.js', '!**/*.test.js'])
+        .pipe(plumber({
+            handleErrors: function(error){
+                console.error(error);
+                this.emit('end');
+            }
+        }))
+        .pipe(sourcemaps.init())
+        .pipe(babel(nodeLibBabelOptions))
+        .on('error', function (err) {
+            gutil.log(gutil.colors.red('[Task "transpile:node"][Babel Error]'));
+            gutil.log(gutil.colors.red(err.message));
+        })
+        .pipe(sourcemaps.write('.', { sourceRoot: nodePaths.lib }))
+        .pipe(plumber.stop())
+        .pipe(gulp.dest(nodePaths.outputRoot + '/lib'));
+
+}
+
 function transpileNode(){
+    transpileNodeLib()
     console.log('transpile src = ' + nodePaths.sourceRoot + '/javascript/**')
-    return gulp.src(nodePaths.sourceRoot + '/javascript/**')
+    return gulp.src([nodePaths.sourceRoot + '/javascript/**', '!**/*.test.js'])
         .pipe(plumber({
             handleErrors: function(error){
                 console.error(error);
@@ -116,7 +157,7 @@ function startServer(props){
     gutil.log('starting the server');
     return nodemon({
         exec: 'node --inspect',
-        script: nodePaths.root + '/index.js',
+        script: 'main.js',
         watch: [nodePaths.sourceRoot],
         tasks: ['node:build'],
         ext: 'js html ejs json',

@@ -15,7 +15,7 @@ import {
     DATABASE_URL,
     LINKEDIN_CLIENT_ID,
     GOOGLE_CLIENT_ID,
-} from './../Environment'
+} from 'util/Environment'
 
 
 export function getParseDashboard(){
@@ -55,9 +55,11 @@ export function getLiveQueryServer(httpServer){
 }
 
 export function getParseServer(){
+    let cloudPath = path.join(__dirname, '..', 'app.js');
+    console.log('coud path = ', cloudPath)
     return new ParseServer({
         databaseURI: DATABASE_URL,
-        cloud: path.join(__dirname, '..', 'app.js'),
+        cloud: cloudPath,
         appId: PARSE_APP_ID,
         // fileKey: "myFileKey",
         masterKey: PARSE_MASTER_KEY,

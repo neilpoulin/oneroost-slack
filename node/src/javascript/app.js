@@ -2,14 +2,16 @@ var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser')
-var setup = require('./app/setup');
-import {getParseServer, getParseDashboard, getLiveQueryServer} from './app/parseServer'
+import setup from 'app/setup'
+import {getParseServer, getParseDashboard, getLiveQueryServer} from 'app/parseServer'
 var router = express.Router()
-import routes from './app/routes';
+import routes from 'app/routes';
 import {
     PORT,
     HOSTNAME,
-} from './Environment'
+    PARSE_LOCAL_URL,
+    PARSE_PUBLIC_URL,
+} from 'util/Environment'
 
 var app = express();
 setup(app);
@@ -23,5 +25,5 @@ app.listen(PORT, function(err) {
     if (err) {
         return console.error(err);
     }
-    console.log(`Listening on ${HOSTNAME}:${PORT}`);
+    console.log(`Listening on public server url: ${PARSE_PUBLIC_URL} and local url: ${PARSE_LOCAL_URL}`);
 });
