@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux'
-import login from './ducks/login'
+import user from './ducks/user'
 import config from './ducks/config'
-import channels from './ducks/channels'
+import slack from './ducks/slack'
 
 const reducers = combineReducers({
-    channels,
     config,
-    login
+    slack,
+    user
 })
 
 export default reducers

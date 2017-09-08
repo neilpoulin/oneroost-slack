@@ -2,14 +2,14 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import qs from 'qs'
-import {loginWithSlack, postMessage} from 'ducks/login'
-import {toggleChannel} from 'ducks/channels'
-import {getSelectedChannels} from 'selectors/slack'
+import {loginWithSlack, postMessage, refreshChannels} from 'ducks/slack'
+import {toggleChannel} from 'ducks/slack'
+import {getChannels} from 'selectors/slack'
 import {Redirect} from 'react-router'
-import Immutable from 'immutable'
 import GoogleLoginButton from './GoogleLoginButton'
 import Parse from 'parse'
 import Checkbox from 'atoms/Checkbox'
+import Clickable from 'atoms/Clickable'
 
 class LoginPage extends React.Component{
     static propTypes = {
@@ -36,7 +36,6 @@ class LoginPage extends React.Component{
             error,
             isLoading,
             userName,
-            userEmail,
             teamName,
             teamId,
             teamImageUrl,
@@ -47,8 +46,8 @@ class LoginPage extends React.Component{
             parseUserId,
             hasGoogle,
             hasSlack,
-            postToChannel,
             selectChannel,
+            refreshSlack,
         } = this.props
 
         if ((isLoggedIn || error) && location.search){
@@ -59,28 +58,29 @@ class LoginPage extends React.Component{
         }
 
         return (
-                <div>
-                    <h1>OneRoost</h1>
-                    <div display-if={isLoggedIn} className="">
-                        <p>Welcome, {userName} @ {teamName}</p>
-                        <div className="userInfo">
-                            <div className="images">
-                                <div display-if={userImageUrl}>
-                                    <img src={userImageUrl} />
-                                </div>
-                                <div display-if={teamImageUrl}>
-                                    <img src={teamImageUrl} />
-                                </div>
-                            </div>
-                            <div display-if={channels}>
-                                <h4>Channels</h4>
-                                {channels.map((c, i) => <div key={`channel_${i}`}>
-                                <Checkbox label={`#${c.name}`} onChange={(selected) => selectChannel(c.id, selected)} selected={c.selected}/>                                
+            <div>
+            <h1>OneRoost</h1>
+            <div display-if={isLoggedIn} className="">
+                <p>Welcome, {userName} @ {teamName}</p>
+                <div className="userInfo">
+                    <div className="images">
+                        <div display-if={userImageUrl}>
+                            <img src={userImageUrl} />
+                        </div>
+                        <div display-if={teamImageUrl}>
+                            <img src={teamImageUrl} />
+                        </div>
+                    </div>
+                    <div display-if={channels}>
+                        <h4>Channels</h4>
+                        {channels.map((c, i) =>
+                            <div key={`channel_${i}`}>
+                                <Checkbox label={`#${c.name}`} onChange={(selected) => selectChannel(c.id, selected)} selected={c.selected}/>
                             </div>)
                         }
+                        <Clickable onClick={refreshSlack} text='Refresh Channels'/>
                     </div>
                 </div>
-
             </div>
             <div display-if={error}>
                 Something went wrong while authenticating with Slack: {error}
@@ -101,14 +101,19 @@ class LoginPage extends React.Component{
             <div display-if={!hasGoogle}>
                 <GoogleLoginButton/>
             </div>
-            ParseUserId = {parseUserId}
+            <div>
+                ParseUserId = {parseUserId}
+            </div>
+            <div>
+                Slack Team Id = {teamId}
+            </div>
 
         </div>)
     }
 }
 
 const mapStateToProps = (state, ownProps) => {
-    const {config, login} = state
+    const {config, user} = state
     const {location} = ownProps
     let params = {}
     if (location.search){
@@ -116,28 +121,24 @@ const mapStateToProps = (state, ownProps) => {
         params = {code, state: stateParam, error}
     }
     const parseUser = Parse.User.current()
-    const selectedChannels = getSelectedChannels(state)
-    let channels = login.get('channels', Immutable.List()).toJS().map(c => {
-        c.selected = selectedChannels.includes(c.id)
-        return c
-    })
+    let channels = getChannels(state)
     return {
         slackClientId: config.get('SLACK_CLIENT_ID'),
         ...params,
-        isLoggedIn: login.get('isLoggedIn'),
-        isLoading: login.get('isLoading'),
-        error: login.get('error'),
-        teamName: login.getIn(['slackTeam', 'name']),
-        teamImageUrl: login.getIn(['slackTeam', 'image_230']),
-        userImageUrl: login.getIn(['slackUser', 'image_72']),
-        userName: login.get('firstName') + ' ' + login.get('lastName'),
-        userEmail: login.get('email'),
+        isLoggedIn: user.get('isLoggedIn'),
+        isLoading: user.get('isLoading'),
+        error: user.get('error'),
+        teamName: user.get('teamName'),
+        teamImageUrl: user.getIn(['slackTeam', 'image_230']),
+        userImageUrl: user.getIn(['slackUser', 'image_72']),
+        userName: user.get('firstName') + ' ' + user.get('lastName'),
+        userEmail: user.get('email'),
         channels,
-        teamId: login.getIn(['slackTeam', 'id']),
+        teamId: user.get('teamId'),
         redirectUri: 'https://dev.oneroost.com/login',
         parseUserId: parseUser ? parseUser.id : null,
-        hasGoogle: login.get('hasGoogle', false),
-        hasSlack: login.get('hasSlack', false)
+        hasGoogle: user.get('hasGoogle', false),
+        hasSlack: user.get('hasSlack', false)
     }
 }
 
@@ -149,6 +150,10 @@ const mapDispatchToprops = (dispatch, ownProps) => {
         },
         selectChannel: (channelId, selected) => {
             dispatch(toggleChannel(channelId, selected))
+            dispatch(postMessage(channelId, `This channel has been ${selected ? 'added to' : 'removed from'} OneRoost`))
+        },
+        refreshSlack: () => {
+            dispatch(refreshChannels())
         }
     }
 }

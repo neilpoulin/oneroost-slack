@@ -1,7 +1,7 @@
 import React from 'react'
 // import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import {logout} from 'ducks/login'
+import {logout} from 'ducks/user'
 import {Link} from 'react-router-dom'
 
 class LogoutLink extends React.Component {

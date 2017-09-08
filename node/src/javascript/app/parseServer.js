@@ -5,18 +5,14 @@ import ParseDashboard from 'parse-dashboard'
 import path from 'path'
 import {
     ENV,
-    PORT,
-    HOSTNAME,
     PARSE_MASTER_KEY,
     PARSE_APP_ID,
-    PARSE_MOUNT,
     PARSE_PUBLIC_URL,
     PARSE_LOCAL_URL,
     DATABASE_URL,
     LINKEDIN_CLIENT_ID,
     GOOGLE_CLIENT_ID,
 } from 'util/Environment'
-
 
 export function getParseDashboard(){
     return new ParseDashboard(getDashboardConfig());
@@ -64,7 +60,7 @@ export function getParseServer(){
         // fileKey: "myFileKey",
         masterKey: PARSE_MASTER_KEY,
         liveQuery: {
-            // classNames: ["DealComment", "Deal", "Stakeholder", "NextStep"]
+            classNames: ['SlackTeam', '_User']
         },
         serverURL: PARSE_LOCAL_URL,
         publicServerURL: PARSE_PUBLIC_URL,

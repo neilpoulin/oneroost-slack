@@ -1,18 +1,16 @@
-var path = require('path');
-var express = require('express');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser')
+import express from 'express'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
 import setup from 'app/setup'
-import {getParseServer, getParseDashboard, getLiveQueryServer} from 'app/parseServer'
+import * as cloud from 'app/cloud'
+import {getParseServer, getParseDashboard} from 'app/parseServer'
 var router = express.Router()
 import routes from 'app/routes';
 import {
     PORT,
-    HOSTNAME,
     PARSE_LOCAL_URL,
     PARSE_PUBLIC_URL,
 } from 'util/Environment'
-
 var app = express();
 setup(app);
 app.use(bodyParser.json());
@@ -27,3 +25,5 @@ app.listen(PORT, function(err) {
     }
     console.log(`Listening on public server url: ${PARSE_PUBLIC_URL} and local url: ${PARSE_LOCAL_URL}`);
 });
+
+cloud.initialize()

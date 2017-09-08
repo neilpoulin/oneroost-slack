@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import {
     linkUserWithProvider,
     linkUserWithProviderError
-} from 'ducks/login'
+} from 'ducks/user'
 
 class GoogleLoginButton extends React.Component {
     static propTypes = {

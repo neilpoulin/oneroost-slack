@@ -56,6 +56,21 @@ export async function createChannel(access_token){
     }).catch(error => console.error(error))
 }
 
+export async function getChannels(token){
+    return new Timeout((resolve, reject) => web.channels.list({
+        token,
+        exclude_archived: true,
+        exclude_members: true,
+    }, async (error, res) => {
+        if (error){
+            console.error('Error getting channel list: ', error)
+            return reject(error)
+        }
+        console.log('successfully got channel list', res)
+        return resolve(res)
+    }))
+}
+
 export async function getChannelInfo(channelId){
     console.log('getting channel info')
     return new Timeout((resolve, reject) => {
@@ -74,8 +89,15 @@ export async function saveChannel(teamId, channelId, selected=true){
     try{
         let channelInfo = await getChannelInfo(channelId)
         let {channel} = channelInfo
+        console.log('looking for slack team')
+        let slackTeam = await getSlackTeamByTeamId(teamId)
+        if (!slackTeam){
+            throw 'Can not save channel... teamId = ' + teamId + ' does not exist'
+        }
+        slackTeam.addChannel(channel, selected)
         console.log('saving channel ' + channelId + ' as ' + (selected ? 'selected' : 'not-selected') + ' for  teamId = ' + teamId )
-        let saved = await createOrUpdateTeam(teamId, channel, selected);
+        let saved = await slackTeam.save()
+        console.log('successfully saved slack team', saved.toJSON())
         return saved
     } catch (e){
         console.error('Failed to save the slack team: ', e)

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './components/containers/App';
 import { Provider } from 'react-redux'
 import {getStore} from './store'
-import {loadUser} from 'ducks/login'
+import {loadUser} from 'ducks/user'
 import {loadServerConfigs} from 'ducks/config'
 import Parse from 'parse'
 

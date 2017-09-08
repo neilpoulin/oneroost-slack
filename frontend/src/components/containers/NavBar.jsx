@@ -1,7 +1,5 @@
 import React from 'react'
-import {
-    BrowserRouter as Router,
-    Route,
+import {    
     Link,
     NavLink
 } from 'react-router-dom'
@@ -30,8 +28,8 @@ class NavBar extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        hasSlack: state.login.get('hasSlack'),
-        isLoggedIn: state.login.get('isLoggedIn'),
+        hasSlack: state.user.get('hasSlack'),
+        isLoggedIn: state.user.get('isLoggedIn'),
     }
 }
 

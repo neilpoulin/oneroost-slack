@@ -2,7 +2,6 @@ import Immutable from 'immutable'
 import axios from 'axios'
 import Parse from 'parse'
 import SlackTeam from 'models/SlackTeam'
-import {loadTeam} from 'ducks/channels'
 
 export const SLACK_AUTH_REQUEST = 'oneroost/login/SLACK_AUTH_REQUEST'
 export const SLACK_AUTH_SUCCESS = 'oneroost/login/SLACK_AUTH_SUCCESS'
@@ -23,8 +22,8 @@ const initialState = Immutable.Map({
     firstName: null,
     lastName: null,
     email: null,
-    slackUser: null,
-    slackTeam: null,
+    teamName: null,
+    teamId: null,
     parseUserId: null,
     hasSlack: false,
     hasGoogle: false,
@@ -40,7 +39,6 @@ export default function reducer(state=initialState, action){
             state = state.set('error', null)
             state = state.set('isLoggedIn', true)
             let slackUser = action.payload.get('user')
-            state = state.set('slackUser', slackUser)
             if (slackUser){
                 if ( slackUser.name){
                     let splitName = slackUser.name.split(' ')
@@ -51,8 +49,6 @@ export default function reducer(state=initialState, action){
                 }
                 state = state.set('email', slackUser.email)
             }
-            state = state.set('slackTeam', action.payload.get('team'))
-            state = state.set('channels', action.payload.get('channels', Immutable.List()))
             state = state.set('hasSlack', true)
             return state
         case SLACK_AUTH_ERROR:
@@ -61,10 +57,12 @@ export default function reducer(state=initialState, action){
             return state
         case LOGIN_SUCCESS:
             state = state.set('isLoggedIn', true)
-            state = state.set('parseUserId', action.payload.get('objectId'))
+            state = state.set('userId', action.payload.get('objectId'))
             state = state.set('firstName', action.payload.get('firstName'))
             state = state.set('lastName', action.payload.get('lastName'))
             state = state.set('email', action.payload.get('email'))
+            state = state.set('teamName', action.payload.getIn(['slackTeam', 'name']))
+            state = state.set('teamId', action.payload.getIn(['slackTeam', 'teamId']))
             return state;
         case SET_PROVIDER_ERROR:
             state = state.set('error', action.payload)
@@ -92,44 +90,17 @@ export default function reducer(state=initialState, action){
 
 export function loadUser(){
     return dispatch => {
-        if (!document.cookie || document.cookie.indexOf('slack_token=') === -1)
-        {
-            console.log('user is not logged in, not fetching data')
-            return null;
-        }
-
         let parseUser = Parse.User.current()
+
         if (parseUser){
-            dispatch(userLoggedIn(parseUser))
+            let slackTeam = parseUser.get('slackTeam')
+            if (slackTeam){
+                slackTeam.fetch().then(fetched => {
+                    dispatch(userLoggedIn(parseUser))
+                })
+            }
+
         }
-
-        axios.get('slack/userInfo').then(({data}) => {
-            console.log('data!', data)
-            let {user, team, channels, selectedChannels} = data
-
-            dispatch({
-                type: SLACK_AUTH_SUCCESS,
-                payload: {
-                    user,
-                    team,
-                    accessToken: data.access_token,
-                    channels,
-                    selectedChannels,
-                }
-            })
-            dispatch(linkUserWithProvider('slack', {
-                access_token: data.access_token,
-                // id_token: authData.tokenId,
-                id: user.id,
-                firstName: user.name ? user.name.split(' ')[0] : '',
-                lastName:  user.name ? user.name.split(' ')[1] : '',
-                email: user.email,
-                username: user.email,
-            }))
-            dispatch(loadTeam())
-        }).catch(error => {
-            console.error(error)
-        })
     }
 }
 
@@ -288,7 +259,6 @@ export function connectExistingUser({email, provider, authData}){
     }
 }
 
-
 export function linkUserWithProviderError(providerName, error){
     return (dispatch, getState) => {
         console.error('Failed to link ' + providerName, error)
@@ -312,17 +282,5 @@ export function logout(){
                 })
             }).catch(console.error)
         }
-    }
-}
-
-export function postMessage(channelId, message){
-    return dispatch => {
-        axios.post(`/slack/channels/${channelId}`, {
-            message,
-        }).then(({data}) => {
-            console.log('successfully posted message')
-        }).catch(response => {
-            console.error('failed to post message', response)
-        })
     }
 }

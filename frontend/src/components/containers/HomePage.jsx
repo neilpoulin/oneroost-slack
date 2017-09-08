@@ -1,7 +1,7 @@
 import React from 'react'
 import Clickable from 'atoms/Clickable'
 import {connect} from 'react-redux'
-import {postTeam} from 'ducks/channels'
+import {postTeam} from 'ducks/slack'
 
 class HomePage extends React.Component {
     render () {

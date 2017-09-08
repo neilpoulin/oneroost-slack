@@ -3,6 +3,7 @@ import axios from 'axios'
 import Parse from 'parse'
 import {getTeamId} from 'selectors/slack'
 import {SLACK_TEAM_CLASSNAME} from 'models/ModelConstants'
+import {LOGIN_SUCCESS} from 'ducks/user'
 
 export const LOAD_CHANNELS_REQUEST = 'oneroost/channels/LOAD_CHANNELS_REQUEST'
 export const LOAD_CHANNELS_SUCCESS = 'oneroost/channels/LOAD_CHANNELS_SUCCESS'
@@ -13,7 +14,7 @@ export const REMOVE_SELECTED_CHANNEL = 'oneroost/channels/REMOVE_SELECTED_CHANNE
 const initialState = Immutable.fromJS({
     isLoading: false,
     selectedChannels: [],
-    slackChannels: [],
+    channels: [],
 })
 
 export default function reducer(state=initialState, action){
@@ -23,8 +24,7 @@ export default function reducer(state=initialState, action){
             break;
         case LOAD_CHANNELS_SUCCESS:
             state = state.set('isLoading', false)
-            state = state.set('slackChannels', action.payload.get('channels', Immutable.Map()))
-            state = state.set('selectedChannels', action.payload.get('selectedChannels', Immutable.List()))
+            state = state.set('channels', action.payload.get('channels', Immutable.Map()))
             break;
         case ADD_SELECTED_CHANNEL:
             state = state.set('selectedChannels', state.get('selectedChannels').push(action.payload.get('channelId')))
@@ -34,6 +34,10 @@ export default function reducer(state=initialState, action){
             break;
         case LOAD_CHANNELS_ERROR:
             state = state.set('isLoading', false)
+            break;
+        case LOGIN_SUCCESS:
+            state = state.set('channels', action.payload.getIn(['slackTeam', 'channels'], Immutable.Map()).toList())
+            state = state.set('selectedChannels', action.payload.getIn(['slackTeam', 'selectedChannels'], Immutable.List()))
             break;
         default:
             break;
@@ -92,4 +96,42 @@ export function getSlackTeamByTeamId(teamId){
     let query = new Parse.Query(SLACK_TEAM_CLASSNAME)
     query.equalTo('teamId', teamId)
     return query.first()
+}
+
+
+export function postMessage(channelId, message){
+    return dispatch => {
+        axios.post(`/slack/channels/${channelId}`, {
+            message,
+        }).then(({data}) => {
+            console.log('successfully posted message')
+        }).catch(response => {
+            console.error('failed to post message', response)
+        })
+    }
+}
+
+export function refreshChannels(){
+    return dispatch => {
+        dispatch({
+            type: LOAD_CHANNELS_REQUEST
+        })
+        Parse.Cloud.run('refreshSlackChannels').then(({channels}) => {
+            console.log('refreshed channels')
+            dispatch({
+                type: LOAD_CHANNELS_SUCCESS,
+                payload: {
+                    channels
+                }
+            })
+        }).catch(error => {
+            dispatch({
+                type: LOAD_CHANNELS_ERROR,
+                payload: {
+                    error,
+                },
+                error,
+            })
+        })
+    }
 }
