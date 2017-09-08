@@ -48,7 +48,11 @@ export async function createChannel(access_token){
         name: 'oneroosttesting',
         validate: true
     })).then(({data}) => {
-        console.log('successfully created channel', data)
+        if (data.ok){
+            console.log('successfully created channel', data)
+        } else {
+            throw data.error
+        }
     }).catch(error => console.error(error))
 }
 
@@ -107,7 +111,7 @@ export async function createSlackTeam(teamId, channel, selected=false){
         throw new Error('A SlackTeam with teamId = ' + teamId + ' already exists')
     }
 
-    let slackTeam = new SlackTeam(teamId)
+    let slackTeam = new SlackTeam({teamId})
     slackTeam.set('name', 'Test Name')
 
     slackTeam.addChannel(channel)

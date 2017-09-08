@@ -24,6 +24,9 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx', '.json', '.css', '.scss'],
         modules: ['frontend', 'src', 'containers', 'ducks', 'components', 'node_modules', './lib/scripts', './lib/styles'],
+        alias: {
+            models: path.join(__dirname, 'lib/scripts/models/frontend/')
+        }
     },
     plugins: [
         extractCssPlugin,

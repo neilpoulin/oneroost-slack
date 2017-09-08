@@ -19,6 +19,7 @@ import {
     saveChannel,
     getSlackTeamByTeamId,
 } from 'slack/slackService'
+import SlackTeam from 'models/SlackTeam'
 
 router.post('/tokens/slack', async (req, res) => {
     console.log('POST: /tokens/slack')
@@ -44,17 +45,28 @@ router.post('/tokens/slack', async (req, res) => {
             exclude_members: true,
         }))
         let channels = channelResponse.data.channels
+        let slackTeam = await getSlackTeamByTeamId(team.id)
+        if (!slackTeam){
+            slackTeam = new SlackTeam({
+                teamId: team.id,
+                selectedChannels: []
+            })
+            slackTeam.setChannels(channels)
+            slacKTeam = await slackTeam.save()
+        }
         const info = {
             access_token,
             scope,
             team,
             user,
             channels,
+            slackTeam
         }
-        let channel = getChannel(channels)
-        if (channel){
-            postToChannel(channel.id, `${user.name} has logged into OneRoost via Slack`)
-        }
+        // let channel = getChannel(channels)
+        // if (channel){
+        //     postToChannel(channel.id, `${user.name} has logged into OneRoost via Slack`)
+        // }
+
 
         res.cookie('slack_token', access_token)
         return res.send(info)
@@ -86,7 +98,7 @@ router.get('/slack/userInfo', async (req, res) => {
         const {team, user} = await getUserInfo(accessToken);
         try{
             await createChannel(accessToken)
-            console.log('creataed channel!')
+            console.log('created channel!')
         } catch(e) {
             console.error(e)
         }
@@ -98,7 +110,7 @@ router.get('/slack/userInfo', async (req, res) => {
         }))
         let channels = channelResponse.data.channels
         let slackTeamInfo = await getSlackTeamByTeamId(team.id)
-
+        console.log('got slack team info: ', slackTeamInfo.toJSON())
         let info = {
             access_token: accessToken,
             team,
@@ -115,6 +127,7 @@ router.get('/slack/userInfo', async (req, res) => {
 
         return res.send(info)
     } catch(e){
+        console.error('somethign went wrong on the getUserInfo endpoint', e)
         return res.send({error: e})
     }
 })

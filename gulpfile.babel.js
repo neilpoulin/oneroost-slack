@@ -15,7 +15,7 @@ const nodeBabelOptions = {
         ['module-resolver', {
             'root': ['./node/src/javascript'],
             'alias': {
-                'models': './node/dist/lib/models',
+                'models': './node/dist/lib/models/server',
                 'util': './node/dist/lib/util',
             }
         }]

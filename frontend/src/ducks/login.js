@@ -1,6 +1,7 @@
 import Immutable from 'immutable'
 import axios from 'axios'
 import Parse from 'parse'
+import SlackTeam from 'models/SlackTeam'
 import {loadTeam} from 'ducks/channels'
 
 export const SLACK_AUTH_REQUEST = 'oneroost/login/SLACK_AUTH_REQUEST'
@@ -141,40 +142,43 @@ export function loginWithSlack(code, redirectUri){
         axios.post('/tokens/slack', {
             code,
             redirectUri,
-        })
-            .then( ({data: {
-            access_token: accessToken, user, team, channels
-        }}) => {
-                dispatch({
-                    type: SLACK_AUTH_SUCCESS,
-                    payload: {
-                        accessToken,
-                        user,
-                        team,
-                        channels,
-                    }
-                })
-                dispatch(linkUserWithProvider('slack', {
-                    access_token: accessToken,
+        }).then( ({data: {access_token: accessToken, user, team, channels, slackTeam}}) => {
+            dispatch({
+                type: SLACK_AUTH_SUCCESS,
+                payload: {
+                    accessToken,
+                    user,
+                    team,
+                    channels,
+                    slackTeam,
+                }
+            })
+            dispatch(linkUserWithProvider('slack', {
+                access_token: accessToken,
                 // id_token: authData.tokenId,
-                    id: user.id,
-                    firstName: user.name ? user.name.split(' ')[0] : '',
-                    lastName:  user.name ? user.name.split(' ')[1] : '',
-                    email: user.email,
-                    username: user.email,
-                }))
-            })
-            .catch( error => {
-                console.log(error);
-                dispatch({
-                    type: SLACK_AUTH_ERROR,
-                    payload: {
-                        ...error,
-                    }
+                id: user.id,
+                firstName: user.name ? user.name.split(' ')[0] : '',
+                lastName:  user.name ? user.name.split(' ')[1] : '',
+                email: user.email,
+                username: user.email,
+            })).then(parseUser => {
+                parseUser.set('slackTeamId', team.id)
+                let parseTeam = new SlackTeam()
+                parseTeam.id = slackTeam.objectId
+                parseUser.set('slackTeam', parseTeam)
+                parseUser.save().then(savedUser => {
+                    dispatch(userLoggedIn(savedUser))
                 })
-            }).then(() => {
-
             })
+        }).catch( error => {
+            console.log(error);
+            dispatch({
+                type: SLACK_AUTH_ERROR,
+                payload: {
+                    ...error,
+                }
+            })
+        })
     }
 }
 
@@ -193,7 +197,7 @@ export function linkUserWithProvider(provider, authData){
             lastName,
             username: email
         });
-        dispatch(linkUser(user, provider, authData))
+        return dispatch(linkUser(user, provider, authData))
     }
 }
 
@@ -242,6 +246,7 @@ function linkUser(user, provider, authData){
             // Parse.Cloud.run('checkEmailAfterOAuth').then((response) => {
             //     dispatch(userLoggedIn(savedUser))
             // }).catch(error => console.error)
+            return savedUser
         }).catch(error => {
             switch (error.code){
                 case 202:
