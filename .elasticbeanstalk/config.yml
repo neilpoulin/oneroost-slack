@@ -1,12 +1,10 @@
 branch-defaults:
-  flexbox-updates:
-    environment: prod-app-elb-blue
   master:
     environment: stage
 global:
-  application_name: oneroost
-  default_ec2_keyname: oneroost-aws-eb
-  default_platform: Node.js
+  application_name: Oneroost Slack
+  default_ec2_keyname: poulin_rsa
+  default_platform: 64bit Amazon Linux 2017.03 v4.2.2 running Node.js
   default_region: us-east-1
-  profile: oneroost
+  profile: null
   sc: git

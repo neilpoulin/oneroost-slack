@@ -9,7 +9,7 @@ export const DATABASE_URL = process.env.DATABASE_URL || 'mongodb://localhost:270
 
 //SERVER
 export const PORT = process.env.SERVER_PORT || 8081;
-export const HOSTNAME = process.env.HOSTNAME || 'https://dev.oneroost.com'
+export const HOSTNAME = process.env.ONEROOST_HOSTNAME || 'https://dev.oneroost.com'
 
 //PARSE
 export const PARSE_MASTER_KEY = process.env.PARSE_MASTER_KEY || ''

@@ -61,3 +61,8 @@ node/dist
 /dist
 chrome/build
 chrome/dist
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
