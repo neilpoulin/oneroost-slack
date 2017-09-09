@@ -60,7 +60,7 @@ artifacts:
     - .elasticbeanstalk/**/*
     - buildspec.yml
     - main.js
-    - node_modules
+    - node_modules/**/*
     - node/dist/**/*
     - dist/**/*
     - package.json
