@@ -2086,9 +2086,9 @@ debug-fabulous@>=0.1.1:
     memoizee "^0.4.5"
     object-assign "4.1.0"
 
-debug@2, debug@2.6.7, debug@^2.1.1, debug@^2.2.0, debug@^2.4.5:
-  version "2.6.7"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.7.tgz#92bad1f6d05bbb6bba22cca88bcd0ec894c2861e"
+debug@2, debug@2.6.8, debug@^2.1.1, debug@^2.2.0, debug@^2.4.5, debug@^2.6.3, debug@^2.6.6, debug@^2.6.8:
+  version "2.6.8"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.8.tgz#e731531ca2ede27d188222427da17821d68ff4fc"
   dependencies:
     ms "2.0.0"
 
@@ -2098,9 +2098,9 @@ debug@2.3.0:
   dependencies:
     ms "0.7.2"
 
-debug@2.6.8, debug@^2.6.3, debug@^2.6.6, debug@^2.6.8:
-  version "2.6.8"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.8.tgz#e731531ca2ede27d188222427da17821d68ff4fc"
+debug@2.6.7:
+  version "2.6.7"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.7.tgz#92bad1f6d05bbb6bba22cca88bcd0ec894c2861e"
   dependencies:
     ms "2.0.0"
 
@@ -2704,7 +2704,7 @@ express@4.15.3:
     utils-merge "1.0.0"
     vary "~1.1.1"
 
-express@^4.13.3, express@^4.13.4:
+express@^4.13.3, express@^4.13.4, express@^4.15.4:
   version "4.15.4"
   resolved "https://registry.yarnpkg.com/express/-/express-4.15.4.tgz#032e2253489cf8fce02666beca3d11ed7a2daed1"
   dependencies:
