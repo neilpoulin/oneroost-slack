@@ -14,32 +14,33 @@ phases:
     #   - echo putting CODEBUILD_BUILD_ID=$CODEBUILD_BUILD_ID into file
     #   - echo "export const build_id = \"$CODEBUILD_BUILD_ID\"" > codebuild_build.js
       - echo "NODE_ENV = $NODE_ENV"
-      - echo putting pipeline info into file
-      - aws codepipeline --region us-east-1 get-pipeline-state --name $PIPELINE --output json > pipeline.json
-      - cat pipeline.json
+    #   - echo putting pipeline info into file
+    #   - aws codepipeline --region us-east-1 get-pipeline-state --name $PIPELINE --output json > pipeline.json
+    #   - cat pipeline.json
       - echo Installing Yarn...
       - npm install -g yarn
-      - npm install -g node-sass
+      - echo Installing source Yarn dependencies...
+      - yarn install --production=false
+    #   - npm install -g node-sass
       - echo Installing gulp...
       - yarn global add gulp
       - which gulp && gulp -v
-      - yarn global add webpack
-      - yarn global add babel-loader
-      - yarn global add babel-preset-react
-      - yarn global add babel-preset-es2015
-      - yarn global add babel-preset-stage-3
-      - webpack -v
-      - echo installing jest...
-      - yarn global add jest
-      - pwd
+    #   - yarn global add webpack
+    #   - yarn global add babel-loader
+    #   - yarn global add babel-preset-react
+    #   - yarn global add babel-preset-es2015
+    #   - yarn global add babel-preset-stage-3
+    #   - webpack -v
+    #   - echo installing jest...
+    #   - yarn global add jest
+    #   - pwd
     #   - echo install sentry-cli
     #   - curl -sL https://sentry.io/get-cli/ | bash
     #   - echo checking sentry installed correctly at
     #   - which sentry-cli
   pre_build:
     commands:
-      - echo Installing source Yarn dependencies...
-      - yarn install --production=false
+
     #   - echo log into sentry with auth token
     #   - sentry-cli info
   build:
@@ -52,6 +53,7 @@ phases:
     commands:
       - echo Build completed on `date`
       - ls dist
+      - ls node
 artifacts:
   files:
     - .ebextensions/**/*
@@ -59,6 +61,7 @@ artifacts:
     - buildspec.yml
     - main.js
     - node/dist/**/*
+    - dist/**/*
     - package.json
     - images/**/*
     - yarn.lock
