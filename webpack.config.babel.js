@@ -1,5 +1,4 @@
 var path = require('path');
-var webpack = require('webpack');
 var ProgressBarPlugin = require('progress-bar-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -7,8 +6,6 @@ var extractCssPlugin = new ExtractTextPlugin({
     filename: 'styles.css',
     allChunks: true,
 });
-
-
 
 module.exports = {
     devtool: 'eval-source-map',
