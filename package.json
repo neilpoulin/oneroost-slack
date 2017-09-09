@@ -6,7 +6,7 @@
     "author": "Neil Poulin <neil.j.poulin@gmail.com>",
     "license": "MIT",
     "scripts": {
-        "start": "NODE_ENV=dev nodemon main.js",
+        "start": "node main.js oneroost-slack",
         "start:prod": "NODE_ENV=production nodemon main.js",
         "prod": "NODE_ENV=production webpack && NODE_ENV=production nodemon main.js",
         "dev:server": "NODE_ENV=production webpack && NODE_ENV=production nodemon main.js",
