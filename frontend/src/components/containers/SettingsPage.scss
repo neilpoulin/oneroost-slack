@@ -1,8 +1,21 @@
+@import "~variables.scss";
 .userInfo{
     display: flex;
     justify-content: space-around;
 }
 
-.channels{    
+.channels{
     margin: 2rem 0
+}
+
+.action{
+    margin-bottom: 2rem;
+}
+
+a {
+    text-decoration: none;
+    color: $roostOrange;
+    &:hover{
+        color: darken($roostOrange, 10)
+    }
 }

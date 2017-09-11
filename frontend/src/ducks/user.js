@@ -24,6 +24,7 @@ const initialState = Immutable.Map({
     email: null,
     teamName: null,
     teamId: null,
+    slackTeamId: null,
     parseUserId: null,
     hasSlack: false,
     hasGoogle: false,
@@ -62,7 +63,8 @@ export default function reducer(state=initialState, action){
             state = state.set('lastName', action.payload.get('lastName'))
             state = state.set('email', action.payload.get('email'))
             state = state.set('teamName', action.payload.getIn(['slackTeam', 'name']))
-            state = state.set('teamId', action.payload.getIn(['slackTeam', 'teamId']))
+            state = state.set('teamId', action.payload.getIn(['slackTeam', 'objectId']))
+            state = state.set('slackTeamId', action.payload.getIn(['slackTeam', 'teamId']))
             return state;
         case SET_PROVIDER_ERROR:
             state = state.set('error', action.payload)

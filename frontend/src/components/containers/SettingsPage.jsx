@@ -1,15 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import qs from 'qs'
 import {postMessage, refreshChannels} from 'ducks/slack'
-import {loginWithSlack} from 'ducks/user'
 import {toggleChannel} from 'ducks/slack'
 import {getChannels} from 'selectors/slack'
 import GoogleLoginButton from './GoogleLoginButton'
 import Parse from 'parse'
 import Checkbox from 'atoms/Checkbox'
 import Clickable from 'atoms/Clickable'
+import {Link} from 'react-router-dom'
 
 class SettingsPage extends React.Component {
     static propTypes = {
@@ -27,6 +26,7 @@ class SettingsPage extends React.Component {
             userName,
             teamName,
             teamId,
+            slackTeamId,
             channels,
             redirectUri,
             parseUserId,
@@ -41,10 +41,13 @@ class SettingsPage extends React.Component {
                 <h1>Settings</h1>
                 <p>Welcome, {userName} @ {teamName}</p>
                 <div>
-                    ParseUserId = {parseUserId}
+                    Parse User Id = {parseUserId}
                 </div>
                 <div>
-                    Slack Team Id = {teamId}
+                    Parse Team Id = {teamId}
+                </div>
+                <div>
+                    Slack Team Id = {slackTeamId}
                 </div>
                 <div display-if={channels} className='channels'>
                     <h4>Channels</h4>
@@ -54,8 +57,12 @@ class SettingsPage extends React.Component {
                         </div>)
                     }
                 </div>
-                <Clickable inline={true} outline={true} onClick={refreshSlack} text='Refresh Channels'/>
-
+                <div className='action'>
+                    <Clickable inline={true} outline={true} onClick={refreshSlack} text='Refresh Channels'/>
+                </div>
+                <div clasName='action'>
+                    <Link to={`/teams/${teamId}`} className=''>Vendor Inbound Flow</Link>
+                </div>
                 <div display-if={!hasSlack}>
                     <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
 
@@ -89,6 +96,7 @@ const mapStateToProps = (state, ownProps) => {
         userEmail: user.get('email'),
         channels,
         teamId: user.get('teamId'),
+        slackTeamId: user.get('slackTeamId'),
         redirectUri: 'https://dev.oneroost.com/login',
         parseUserId: parseUser ? parseUser.id : null,
         hasGoogle: user.get('hasGoogle', false),
