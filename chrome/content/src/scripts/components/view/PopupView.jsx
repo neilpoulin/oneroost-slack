@@ -8,7 +8,7 @@ import {getFullName} from 'selectors/user'
 
 class PopupView extends Component {
     render() {
-        const {userId, fullName, logOut, isLoggedIn, logInGoogle, email} = this.props
+        const {userId, fullName, logOut, isLoggedIn, logInGoogle, email, settingsUrl,} = this.props
         return (
             <div className="container">
                 <div display-if={!isLoggedIn} className="loginContainer">
@@ -27,10 +27,10 @@ class PopupView extends Component {
 
                     <div display-if={userId} className="content">
                         <div>
-                            <Clickable href={'https://www.oneroost.com/settings/templates'}
+                            <Clickable href={settingsUrl}
                                 target="_blank"
                                 outline={true}
-                                text="Manage Tempaltes"/>
+                                text="Team Settings"/>
                         </div>
                     </div>
                 </div>
@@ -41,13 +41,15 @@ class PopupView extends Component {
 
 const mapStateToProps = (state) => {
     const user = state.user
+    const domain = state.config.serverUrl
     const {email, isLoggedIn, userId} = user
-
+    const settingsUrl = `${domain}/settings`
     return {
         userId,
         fullName: getFullName(state),
         isLoggedIn,
         email,
+        settingsUrl,
     }
 }
 

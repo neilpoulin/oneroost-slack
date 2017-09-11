@@ -18,6 +18,7 @@ class Clickable extends React.Component {
         className: PropTypes.string,
         target: PropTypes.string,
         href: PropTypes.string,
+        inline: PropTypes.bool,
     }
 
     static defaultProps = {
@@ -28,6 +29,7 @@ class Clickable extends React.Component {
         target: '',
         href:'',
         text: '',
+        inline: false,
     }
 
     render () {
@@ -40,6 +42,7 @@ class Clickable extends React.Component {
             target,
             href,
             className,
+            inline,
         } = this.props
         let classes = classNames(className, {
             [`btn-outline-${colorType}`]: outline,
@@ -47,6 +50,7 @@ class Clickable extends React.Component {
             'link': look === LOOK_LINK,
             [`btn-${colorType}`]: !outline && look === LOOK_BUTTON,
             [`link-${colorType}`]: !outline && look === LOOK_LINK,
+            'inline': inline,
         })
         if(href){
             return <a className={classes} href={href} target={target}>{text}</a>

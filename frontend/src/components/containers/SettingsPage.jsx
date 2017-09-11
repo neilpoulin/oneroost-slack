@@ -2,59 +2,60 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import qs from 'qs'
+import {postMessage, refreshChannels} from 'ducks/slack'
 import {loginWithSlack} from 'ducks/user'
-import {Redirect} from 'react-router'
+import {toggleChannel} from 'ducks/slack'
+import {getChannels} from 'selectors/slack'
 import GoogleLoginButton from './GoogleLoginButton'
+import Parse from 'parse'
+import Checkbox from 'atoms/Checkbox'
+import Clickable from 'atoms/Clickable'
 
-class LoginPage extends React.Component{
+class SettingsPage extends React.Component {
     static propTypes = {
         code: PropTypes.string,
         slackClientId: PropTypes.string.isRequired,
         error: PropTypes.any,
         isLoggedIn: PropTypes.bool,
         //actions
-        getToken: PropTypes.func.isRequired,
-    }
-
-    componentDidMount(){
-        const {code, redirectUri} = this.props
-        if (code){
-            this.props.getToken(code, redirectUri)
-        }
+        postToChannel: PropTypes.func.isRequired,
     }
 
     render () {
         const {
             slackClientId,
-            isLoggedIn,
-            error,
-            isLoading,
             userName,
             teamName,
-            location,
+            teamId,
+            channels,
+            redirectUri,
+            parseUserId,
             hasGoogle,
             hasSlack,
-            redirectUri
+            selectChannel,
+            refreshSlack,
         } = this.props
-
-        if ((isLoggedIn || error) && location.search){
-            return <Redirect to={{
-                pathname: '/login',
-                state: { from: location }
-            }}/>
-        }
 
         return (
             <div>
-                <div display-if={isLoggedIn} className="">
-                    Successfully logged in as {userName} @ {teamName}
+                <h1>Settings</h1>
+                <p>Welcome, {userName} @ {teamName}</p>
+                <div>
+                    ParseUserId = {parseUserId}
                 </div>
-                <div display-if={error}>
-                    Something went wrong while authenticating with Slack: {error}
+                <div>
+                    Slack Team Id = {teamId}
                 </div>
-                <div display-if={isLoading}>
-                    Loading...
+                <div display-if={channels} className='channels'>
+                    <h4>Channels</h4>
+                    {channels.map((c, i) =>
+                        <div key={`channel_${i}`} className='channel'>
+                            <Checkbox label={`#${c.name}`} onChange={(selected) => selectChannel(c.id, selected)} selected={c.selected}/>
+                        </div>)
+                    }
                 </div>
+                <Clickable inline={true} outline={true} onClick={refreshSlack} text='Refresh Channels'/>
+
                 <div display-if={!hasSlack}>
                     <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
 
@@ -74,12 +75,9 @@ class LoginPage extends React.Component{
 
 const mapStateToProps = (state, ownProps) => {
     const {config, user} = state
-    const {location} = ownProps
     let params = {}
-    if (location.search){
-        const {code, state: stateParam, error} = qs.parse(location.search, { ignoreQueryPrefix: true })
-        params = {code, state: stateParam, error}
-    }
+    const parseUser = Parse.User.current()
+    let channels = getChannels(state)
     return {
         slackClientId: config.get('SLACK_CLIENT_ID'),
         ...params,
@@ -89,7 +87,10 @@ const mapStateToProps = (state, ownProps) => {
         teamName: user.get('teamName'),
         userName: user.get('firstName') + ' ' + user.get('lastName'),
         userEmail: user.get('email'),
+        channels,
+        teamId: user.get('teamId'),
         redirectUri: 'https://dev.oneroost.com/login',
+        parseUserId: parseUser ? parseUser.id : null,
         hasGoogle: user.get('hasGoogle', false),
         hasSlack: user.get('hasSlack', false)
     }
@@ -97,8 +98,16 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        getToken: (code, redirectUri) => dispatch(loginWithSlack(code, redirectUri)),
+        postToChannel: (channelId, message) => {
+            dispatch(postMessage(channelId, message))
+        },
+        selectChannel: (channelId, selected) => {
+            dispatch(toggleChannel(channelId, selected))
+            dispatch(postMessage(channelId, `This channel has been ${selected ? 'added to' : 'removed from'} OneRoost`))
+        },
+        refreshSlack: () => {
+            dispatch(refreshChannels())
+        }
     }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage)
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsPage);

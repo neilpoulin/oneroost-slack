@@ -1,14 +1,12 @@
 import React from 'react'
-import Clickable from 'atoms/Clickable'
+// import Clickable from 'atoms/Clickable'
 import {connect} from 'react-redux'
-import {postTeam} from 'ducks/slack'
 
 class HomePage extends React.Component {
     render () {
-        const {createTeam} = this.props
         return <div className="content">
           <h2>Home</h2>
-          <Clickable text={'Button Primary!'} onClick={createTeam}/>
+          <h2>Welcome to OneRoost!</h2>
         </div>
     }
 }
@@ -21,7 +19,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        createTeam: () => dispatch(postTeam)
+
     }
 }
 
