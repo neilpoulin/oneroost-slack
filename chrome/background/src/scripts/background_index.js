@@ -1,7 +1,6 @@
 import {wrapStore} from 'react-chrome-redux'
 import store from 'store/configureStore'
 import Parse from 'parse'
-import axios from 'axios'
 import {loadCachedUser} from 'ducks/user'
 import {
     SET_SERVER_URL,

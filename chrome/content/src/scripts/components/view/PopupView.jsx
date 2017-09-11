@@ -8,7 +8,7 @@ import {getFullName} from 'selectors/user'
 
 class PopupView extends Component {
     render() {
-        const {userId, fullName, logOut, isLoggedIn, logInGoogle, email, pages, brandPagesLoading} = this.props
+        const {userId, fullName, logOut, isLoggedIn, logInGoogle, email} = this.props
         return (
             <div className="container">
                 <div display-if={!isLoggedIn} className="loginContainer">
@@ -32,15 +32,6 @@ class PopupView extends Component {
                                 outline={true}
                                 text="Manage Tempaltes"/>
                         </div>
-
-                        <div display-if={!brandPagesLoading && pages} className="brandPages">
-                            <h3>Brand Pages</h3>
-                            <ul className="list-unstyled">
-                                {pages.map((page, i) =>
-                                    <li><Clickable target="_blank" look="link" key={`page_${i}`} text={page.vanityUrl} href={`https://www.oneroost.com/${page.vanityUrl}`}/></li>
-                                )}
-                            </ul>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -51,15 +42,12 @@ class PopupView extends Component {
 const mapStateToProps = (state) => {
     const user = state.user
     const {email, isLoggedIn, userId} = user
-    const brandPages = state.brandPages
 
     return {
         userId,
         fullName: getFullName(state),
         isLoggedIn,
         email,
-        brandPagesLoading: brandPages.isLoading,
-        pages: brandPages.pages,
     }
 }
 

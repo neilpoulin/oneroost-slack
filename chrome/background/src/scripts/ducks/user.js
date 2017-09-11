@@ -2,18 +2,18 @@ import Parse from 'parse'
 import {fromJS} from 'immutable'
 import {handleSignInClick, handleSignOutClick, loadUserFromCache} from 'googleAuth'
 import * as UserActions from 'actions/user'
-import {LOAD_PAGES_ALIAS} from 'actions/brandPages'
 
 const initialState = {
     isLogin: false,
     userId: null,
-    accountId: null,
     firstName: null,
     lastName: null,
     isLoading: false,
-    role: null,
     email: null,
     error: null,
+    teamId: null,
+    channels: {},
+    selectedChannels: []
 }
 
 const getUserIdFromAction = (action) => {
@@ -37,12 +37,10 @@ export default function reducer(state=initialState, action){
             state.firstName = payload.firstName;
             state.lastName = payload.lastName;
             state.email = payload.email;
-            if (payload.account){
-                state.accountId = payload.account.objectId;
-                state.accountName = payload.account.accountName;
-            }
-            if (payload.accountSeat){
-                state.role = payload.accountSeat.role
+            if (payload.slackTeam){
+                state.channels = payload.slackTeam.channels || {}
+                state.selectedChannels = payload.slackTeam.selectedChannels || []
+                state.teamId = payload.slackTeam.objectId
             }
             break;
         case UserActions.LOG_OUT_SUCCESS:
@@ -65,6 +63,7 @@ const getUserQuery = (userId) => {
     let query = new Parse.Query('_User')
     query.include('account')
     query.include('accountSeat')
+    query.include('slackTeam')
     return query.get(userId)
 }
 
@@ -74,9 +73,6 @@ export const loadUserDetails = (userId) => (dispatch, getState) => {
         dispatch({
             type: UserActions.UPDATE_USER_INFO,
             payload: user.toJSON()
-        })
-        dispatch({
-            type: LOAD_PAGES_ALIAS,
         })
     }).catch(error => {
         console.error(error)
@@ -170,9 +166,6 @@ export function refreshUserData(){
                     userId: user.id,
                     payload: updatedUser.toJSON()
                 })
-                dispatch({
-                    type: LOAD_PAGES_ALIAS
-                })
             })
         }
     }
@@ -191,9 +184,9 @@ function linkUser(user, provider, authData){
                 userId: user.id,
                 payload: savedUser.toJSON()
             })
-            Parse.Cloud.run('checkEmailAfterOAuth').then((response) => {
-                dispatch(refreshUserData())
-            }).catch(error => console.error)
+            // Parse.Cloud.run('checkEmailAfterOAuth').then((response) => {
+            //     dispatch(refreshUserData())
+            // }).catch(error => console.error)
             dispatch(refreshUserData())
         }).catch(error => {
             switch (error.code){
