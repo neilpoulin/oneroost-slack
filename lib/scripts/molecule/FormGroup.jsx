@@ -19,16 +19,12 @@ class FormGroup extends React.Component {
             inline,
         })
         return <div className={classes} >
-            <label display-if={label}>
-                <span className='label'>{label}</span>
+            <label>
+                <span className='label' display-if={label}>{label}</span>
                 <div className='input'>
                     {children}
                 </div>
-
             </label>
-            <div display-if={!label}>
-                {children}
-            </div>
         </div>
     }
 }

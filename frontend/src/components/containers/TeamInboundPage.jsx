@@ -30,7 +30,7 @@ class TeamInboundPage extends React.Component {
                     teamName={teamName}
                     nextRoute={`${match.url}/company`}/>}
             />
-            <Route path={`${match.url}/company`} component={CompanyInfo} />
+        <Route path={`${match.url}/company`} render={() => <CompanyInfo teamName={teamName}/>} />
         </div>
     }
 }

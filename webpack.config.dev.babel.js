@@ -1,13 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
 var ProgressBarPlugin = require('progress-bar-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-var extractCssPlugin = new ExtractTextPlugin({
-    filename: 'styles.css',
-    allChunks: true,
-});
-
 
 module.exports = {
     devtool: 'eval-source-map',
@@ -25,7 +18,8 @@ module.exports = {
         extensions: ['.js', '.jsx', '.json', '.css', '.scss'],
         modules: ['frontend', 'src', 'containers', 'ducks', 'components', 'node_modules', './lib/scripts', './lib/styles'],
         alias: {
-            models: path.resolve(__dirname, 'lib/scripts/models/frontend/')
+            models: path.resolve(__dirname, 'lib/scripts/models/frontend/'),
+            'react-select-css': path.join(__dirname, 'node_modules', 'react-select/dist/react-select.css')
         }
     },
     plugins: [
@@ -81,6 +75,19 @@ module.exports = {
                         loader: 'sass-loader',
                         options: {sourceMap: true, }
                     }
+                ]
+            },
+            {
+                test: /\.css$/,
+                exclude: path.join(__dirname, 'frontend', 'src', 'frontend.scss'),
+                use: [
+                    {
+                        loader:  'style-loader',
+                    },
+                    {
+                        loader: 'css-loader',
+                        options: {sourceMap: true, }
+                    },
                 ]
             }
         ]

@@ -15,7 +15,7 @@ class TextInput extends React.Component {
         this._handleChange = this._handleChange.bind(this);
     }
 
-    _handleChange() {
+    _handleChange(e) {
         const target = e.target
         const value = target.type === 'checkbox' ? target.checked : target.value;
         if (this.props.onChange){
