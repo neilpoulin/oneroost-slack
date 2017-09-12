@@ -60,7 +60,7 @@ class SettingsPage extends React.Component {
                 <div className='action'>
                     <Clickable inline={true} outline={true} onClick={refreshSlack} text='Refresh Channels'/>
                 </div>
-                <div clasName='action'>
+                <div className='action'>
                     <Link to={`/teams/${teamId}`} className=''>Vendor Inbound Flow</Link>
                 </div>
                 <div display-if={!hasSlack}>

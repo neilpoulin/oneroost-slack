@@ -1,0 +1,51 @@
+.formGroup{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+    &.inline{
+        display: flex;
+        .label, .input{
+            display: inline-block;
+        }
+        .label{
+            margin-right: 1rem;
+            width: 5rem;
+            flex-grow: 1;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            text-align: right;
+        }
+        .input{
+            align-self: flex-start;
+            flex-grow: 2;
+        }
+        flex-direction: column;
+    }
+}
+
+.input{
+    display: block;
+}
+
+.label{
+    font-size: .8rem;
+    font-weight: 600;
+    display: block;
+    text-align: left;
+    margin-bottom: .5rem;
+
+}
+.inline label{
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: .4rem 0;
+}
+
+label{
+    cursor: pointer;
+    padding: .4rem 0;
+    display: block;
+    width: 100%;
+}

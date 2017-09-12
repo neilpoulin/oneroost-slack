@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
+import {Link} from 'react-router-dom'
 
 const LOOK_BUTTON = 'button'
 const LOOK_LINK = 'link'
@@ -19,6 +20,7 @@ class Clickable extends React.Component {
         target: PropTypes.string,
         href: PropTypes.string,
         inline: PropTypes.bool,
+        to: PropTypes.string,
     }
 
     static defaultProps = {
@@ -30,6 +32,7 @@ class Clickable extends React.Component {
         href:'',
         text: '',
         inline: false,
+        to: null,
     }
 
     render () {
@@ -43,6 +46,7 @@ class Clickable extends React.Component {
             href,
             className,
             inline,
+            to,
         } = this.props
         let classes = classNames(className, {
             [`btn-outline-${colorType}`]: outline,
@@ -52,6 +56,9 @@ class Clickable extends React.Component {
             [`link-${colorType}`]: !outline && look === LOOK_LINK,
             'inline': inline,
         })
+        if(to){
+            return <Link className={classes} to={to}>{text}</Link>
+        }
         if(href){
             return <a className={classes} href={href} target={target}>{text}</a>
         }
