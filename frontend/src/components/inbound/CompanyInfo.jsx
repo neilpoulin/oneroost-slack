@@ -56,7 +56,7 @@ class CompanyInfo extends React.Component {
                           value={tags}
                           options={tagOptions}
                           clearable={false}
-                          onChange={(tags) => createSetter('tags')(tags.map(tag => tag.value))}
+                          onChange={createSetter('tags')}
                         />
                     </div>
                 </section>

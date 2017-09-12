@@ -2,6 +2,7 @@ import Immutable from 'immutable'
 import Parse from 'parse'
 import {SLACK_TEAM_CLASSNAME} from 'models/ModelConstants'
 import Inbound from 'models/Inbound'
+import SlackTeam from 'models/SlackTeam'
 
 export const LOAD_TEAM_REQUEST = 'oneroost/inbound/LOAD_TEAM_REQUEST'
 export const LOAD_TEAM_SUCCESS = 'oneroost/inbound/LOAD_TEAM_SUCCESS'
@@ -18,7 +19,7 @@ const initialState = Immutable.fromJS({
     channels: [],
     tagOptions: [],
     formInput: {
-
+        tags: [],
     }
 })
 
@@ -99,8 +100,11 @@ export function loadTagOptions(){
 
 export function saveInbound(){
     return (dispatch, getState) => {
-        let form = getState().inbound.get('formInput').toJS()
+        let inboundState = getState().inbound
+        let form = inboundState.get('formInput').toJS()
+        form.tags = form.tags.map(tag => tag.value)
         let inbound = new Inbound(form)
+        inbound.set('slackTeam', SlackTeam.createWithoutData(inboundState.get('teamId')))
         inbound.save().then(savedInbound => {
             dispatch({
                 type: SET_FORM_VALUE,
