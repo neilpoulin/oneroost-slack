@@ -2,6 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {loadTeam} from 'ducks/inbound'
 import CompanyInfo from 'inbound/CompanyInfo'
+import ProductService from 'inbound/ProductService'
 import ProcessOverview from 'inbound/ProcessOverview'
 import {
   Route,
@@ -30,7 +31,8 @@ class TeamInboundPage extends React.Component {
                     teamName={teamName}
                     nextRoute={`${match.url}/company`}/>}
             />
-        <Route path={`${match.url}/company`} render={() => <CompanyInfo teamName={teamName}/>} />
+        <Route path={`${match.url}/company`} render={() => <CompanyInfo teamName={teamName} nextRoute={`${match.url}/product`}/>}/>
+        <Route path={`${match.url}/product`} render={()=> <ProductService teamName={teamName} nextRoute={`${match.url}/not-set`}/>}/>
         </div>
     }
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import BackButton from 'molecule/BackButton'
 import TextInput from 'atoms/form/TextInput'
@@ -7,8 +8,15 @@ import {setFormValue, saveInbound} from 'ducks/inbound'
 import {Creatable as Select} from 'react-select'
 import Immutable from 'immutable'
 import Clickable from 'atoms/Clickable'
+import {withRouter} from 'react-router-dom'
+import Header from './Header'
+import FlexBoxes from 'molecule/FlexBoxes'
 
 class CompanyInfo extends React.Component {
+    static propTypes = {
+        nextRoute: PropTypes.string.isRequired,
+        teamName: PropTypes.string.isRequired
+    }
     render () {
         const {
             teamName,
@@ -18,71 +26,61 @@ class CompanyInfo extends React.Component {
             selectedChannel,
             //actions
             createSetter,
-            save,
+            saveAndContinue,
         } = this.props
         return <div>
             <BackButton/>
-            <div className='header'>
-                <h2>Company Information</h2>
-                <p className='subtitle'>Share a bit about your orginization</p>
-            </div>
-            <div className='sections'>
-                <section className='section'>
-                    <div className='content'>
-                        <h3>Basics</h3>
-                        <FormGroup label='Company Name'>
-                            <TextInput onChange={createSetter('companyName')}/>
-                        </FormGroup>
-                        <FormGroup label='Your Name'>
-                            <TextInput placeholder="Jon Doe" onChange={createSetter('fullName')}/>
-                        </FormGroup>
-                        <FormGroup label='Email' >
-                            <TextInput placeholder="name@company.com" onChange={createSetter('email')} type='email'/>
-                        </FormGroup>
-                        <FormGroup label='Phone Number'>
-                            <TextInput placeholder="555-122-5329" onChange={createSetter('phoneNumber')}/>
-                        </FormGroup>
-                    </div>
-                </section>
-                <section className='section'>
-                    <div className='content'>
-                        <h3>Categories</h3>
-                        <p className='description'>
-                            Which categories best represent your offering, e.g. CRM, applicant tracking, etc.
-                        </p>
-                        <Select
-                          name="form-field-name"
-                          multi={true}
-                          value={tags}
-                          options={tagOptions}
-                          clearable={false}
-                          onChange={createSetter('tags')}
-                        />
-                    </div>
-                </section>
-                <section className='section'>
-                    <div className='content'>
-                        <h3>Target Buyer</h3>
-                        <p className='description'>
-                            Which Team at {teamName} will be most interested in your offering?
-                        </p>
-                        <FormGroup label='Team'>
+            <Header title="Company Information" subtitle={'Share a bit about your orginazation'}/>
+            <FlexBoxes>
+                <div>
+                    <h3>Basics</h3>
+                    <FormGroup label='Company Name'>
+                        <TextInput onChange={createSetter('companyName')}/>
+                    </FormGroup>
+                    <FormGroup label='Your Name'>
+                        <TextInput placeholder="Jon Doe" onChange={createSetter('fullName')}/>
+                    </FormGroup>
+                    <FormGroup label='Email' >
+                        <TextInput placeholder="name@company.com" onChange={createSetter('email')} type='email'/>
+                    </FormGroup>
+                    <FormGroup label='Phone Number'>
+                        <TextInput placeholder="555-122-5329" onChange={createSetter('phoneNumber')}/>
+                    </FormGroup>
+                </div>
+                <div>
+                    <h3>Categories</h3>
+                    <p className='description'>
+                        Which categories best represent your offering, e.g. CRM, applicant tracking, etc.
+                    </p>
+                    <Select
+                      name="form-field-name"
+                      multi={true}
+                      value={tags}
+                      options={tagOptions}
+                      clearable={false}
+                      onChange={createSetter('tags')}
+                    />
+                </div>
+                <div >
+                    <h3>Target Buyer</h3>
+                    <p className='description'>
+                        Which Team at {teamName} will be most interested in your offering?
+                    </p>
+                    <FormGroup label='Team'>
 
-                        </FormGroup>
-                        <Select
-                          name="form-field-name"
-                          multi={false}
-                          value={selectedChannel}
-                          options={channelOptions}
-                          clearable={true}
-                          onChange={({value}) => createSetter('channelId')(value)}
-                        />
-
-                    </div>
-                </section>
-            </div>
+                    </FormGroup>
+                    <Select
+                      name="form-field-name"
+                      multi={false}
+                      value={selectedChannel}
+                      options={channelOptions}
+                      clearable={true}
+                      onChange={({value}) => createSetter('channelId')(value)}
+                    />
+                </div>
+            </FlexBoxes>        
             <div>
-                <Clickable onClick={save} text={'Save'}/>
+                <Clickable onClick={saveAndContinue} text={'Continue'}/>
             </div>
         </div>
 
@@ -107,10 +105,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         createSetter: (name) => (value) => {
             dispatch(setFormValue(name, value))
         },
-        save: () => {
-            dispatch(saveInbound())
+        saveAndContinue: () => {
+            dispatch(saveInbound()).then(saved => {
+                ownProps.history.push(ownProps.nextRoute)
+            })
         }
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CompanyInfo);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CompanyInfo));

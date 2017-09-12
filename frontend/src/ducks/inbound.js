@@ -105,7 +105,7 @@ export function saveInbound(){
         form.tags = form.tags.map(tag => tag.value)
         let inbound = new Inbound(form)
         inbound.set('slackTeam', SlackTeam.createWithoutData(inboundState.get('teamId')))
-        inbound.save().then(savedInbound => {
+        return inbound.save().then(savedInbound => {
             dispatch({
                 type: SET_FORM_VALUE,
                 payload: {
@@ -113,6 +113,7 @@ export function saveInbound(){
                     value: savedInbound.id
                 }
             })
+            return savedInbound
         })
     }
 }
