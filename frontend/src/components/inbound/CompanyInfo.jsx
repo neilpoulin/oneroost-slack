@@ -3,9 +3,10 @@ import {connect} from 'react-redux'
 import BackButton from 'molecule/BackButton'
 import TextInput from 'atoms/form/TextInput'
 import FormGroup from 'molecule/FormGroup'
-import {setFormValue} from 'ducks/inbound'
+import {setFormValue, saveInbound} from 'ducks/inbound'
 import {Creatable as Select} from 'react-select'
 import Immutable from 'immutable'
+import Clickable from 'atoms/Clickable'
 
 class CompanyInfo extends React.Component {
     render () {
@@ -17,6 +18,7 @@ class CompanyInfo extends React.Component {
             selectedChannel,
             //actions
             createSetter,
+            save,
         } = this.props
         return <div>
             <BackButton/>
@@ -79,6 +81,9 @@ class CompanyInfo extends React.Component {
                     </div>
                 </section>
             </div>
+            <div>
+                <Clickable onClick={save} text={'Save'}/>
+            </div>
         </div>
 
     }
@@ -102,6 +107,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         createSetter: (name) => (value) => {
             dispatch(setFormValue(name, value))
         },
+        save: () => {
+            dispatch(saveInbound())
+        }
     }
 }
 

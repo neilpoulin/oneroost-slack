@@ -1,6 +1,7 @@
 import Immutable from 'immutable'
 import Parse from 'parse'
 import {SLACK_TEAM_CLASSNAME} from 'models/ModelConstants'
+import Inbound from 'models/Inbound'
 
 export const LOAD_TEAM_REQUEST = 'oneroost/inbound/LOAD_TEAM_REQUEST'
 export const LOAD_TEAM_SUCCESS = 'oneroost/inbound/LOAD_TEAM_SUCCESS'
@@ -16,7 +17,9 @@ const initialState = Immutable.fromJS({
     teamName: null,
     channels: [],
     tagOptions: [],
-    formInput: {}
+    formInput: {
+
+    }
 })
 
 export default function reducer(state=initialState, action){
@@ -90,6 +93,22 @@ export function loadTagOptions(){
                     { value: 'APPLICANT_TRACKING', label: 'Applicant Tracking' },
                 ]
             }
+        })
+    }
+}
+
+export function saveInbound(){
+    return (dispatch, getState) => {
+        let form = getState().inbound.get('formInput').toJS()
+        let inbound = new Inbound(form)
+        inbound.save().then(savedInbound => {
+            dispatch({
+                type: SET_FORM_VALUE,
+                payload: {
+                    name: 'objectId',
+                    value: savedInbound.id
+                }
+            })
         })
     }
 }
