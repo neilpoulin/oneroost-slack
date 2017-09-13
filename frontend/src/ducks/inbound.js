@@ -13,6 +13,9 @@ export const SET_FORM_VALUE = 'oneroost/inbound/SET_FORM_VALUE'
 export const UPDATE_TESTIMONIAL = 'oneroost/inbound/UPDATE_TESTIMONIAL'
 export const DELETE_TESTIMONIAL = 'oneroost/inbound/DELETE_TESTIMONIAL'
 export const ADD_NEW_TESTIMONIAL = 'oneroost/inbound/ADD_NEW_TESTIMONIAL'
+export const SUBMIT_SUCCESS = 'oneroost/inbound/SUBMIT_SUCCESS'
+export const SUBMIT_ERROR = 'oneroost/inbound/SUBMIT_ERROR'
+export const SUBMIT_REQUEST = 'oneroost/inbound/SUBMIT_REQUEST'
 
 const initialState = Immutable.fromJS({
     isLoading: false,
@@ -22,6 +25,8 @@ const initialState = Immutable.fromJS({
     teamName: null,
     channels: [],
     tagOptions: [],
+    submitted: false,
+    saving: false,
     formInput: {
         tags: [],
         testimonials: [],
@@ -57,6 +62,18 @@ export default function reducer(state=initialState, action){
             break
         case ADD_NEW_TESTIMONIAL:
             state = state.setIn(['formInput', 'testimonials'], state.getIn(['formInput', 'testimonials']).push(Immutable.fromJS({customerName: '', comment: ''})))
+            break;
+        case SUBMIT_REQUEST:
+            state = state.set('saving', true)
+            break;
+        case SUBMIT_SUCCESS:
+            state = state.set('saving', false)
+            state = state.set('submitted', true)
+            break;
+        case SUBMIT_ERROR:
+            state = state.set('saving', false)
+            state = state.set('submitted', false)
+            break;
         default:
             break
     }
@@ -159,6 +176,27 @@ export function saveInbound(){
 
 export function submitInbound(){
     return (dispatch, getState) => {
-        
+        dispatch({
+            type: SUBMIT_REQUEST
+        })
+        dispatch(saveInbound()).then(inbound => {
+            Parse.Cloud.run('submitInboundProposal', {inboundId: inbound.id}).then((result) => {
+                console.log(result)
+                inbound.set('submitted', true)
+                inbound.set('submittedDate', new Date())
+                return inbound.save()
+            }).then(() => {
+                dispatch({
+                    type: SUBMIT_SUCCESS
+                })
+            }).catch((error) => {
+                console.error(error)
+                dispatch({
+                    type: SUBMIT_ERROR
+                })
+            })
+        }).catch(error => {
+            console.error(error)
+        })
     }
 }
