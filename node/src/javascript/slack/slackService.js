@@ -110,9 +110,7 @@ export async function saveChannel(teamId, channelId, selected=true){
 
 export async function getSlackTeamByTeamId(teamId){
     let query = new Parse.Query(SLACK_TEAM_CLASSNAME)
-    query.equalTo('teamId', teamId)
-    let result = await query.first()
-    return result
+    return await query.get(teamId)    
 }
 
 export async function createOrUpdateTeam(teamId, channel, selected=false){

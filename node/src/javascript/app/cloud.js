@@ -5,6 +5,8 @@ import {
 } from 'slack/slackService'
 import Inbound from 'models/Inbound'
 
+const roostOrange = '#ef5b25'
+
 export function initialize(){
     console.log('setting up cloud functions')
     Parse.Cloud.define('refreshSlackChannels', async function(request, response) {
@@ -74,14 +76,60 @@ export function initialize(){
 
 function buildSubmitMessage(inbound){
     let message = `${inbound.get('fullName')} at ${inbound.get('companyName')} has submitted a proposal`
+
+    let fields = [
+        {
+            title: 'Company',
+            value: inbound.get('companyName'),
+            short: true
+        },
+        {
+            title: 'Name',
+            value: inbound.get('fullName'),
+            short: true
+        },
+        {
+            title: 'Email',
+            value: inbound.get('email'),
+        },
+        {
+            title: 'Phone Number',
+            value: inbound.get('phoneNumber'),
+            short: true
+        },
+        {
+            title: 'Elevator Pitch',
+            value: inbound.get('elevatorPitch'),
+            short: true
+        },
+        {
+            title: 'Relevancy',
+            value: inbound.get('Relevancy'),
+            short: true
+        },
+        {
+            title: 'Tags',
+            value: inbound.get('tags').join(', ')
+        }
+    ];
+
+    inbound.get('testimonials').forEach(testimonial => {
+        fields.push({
+            title: `${testimonial.customerName} Testimonial`,
+            value: testimonial.comment
+        })
+    })
+
+
     let payload = {
         'attachments': [
             {
-                'text': 'Select an interest level',
+                'text': 'Are you interested?',
                 'fallback': 'You are unable to set your company\'s interest level',
                 'callback_id': `interest_level::${inbound.id}`,
-                'color': '#3AA3E3',
+                'color': roostOrange,
                 'attachment_type': 'default',
+                'fields': fields,
                 'actions': [
                     {
                         'name': 'interest',
