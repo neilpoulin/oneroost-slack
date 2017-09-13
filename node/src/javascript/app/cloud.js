@@ -91,6 +91,7 @@ function buildSubmitMessage(inbound){
         {
             title: 'Email',
             value: inbound.get('email'),
+            short: true,
         },
         {
             title: 'Phone Number',
@@ -100,12 +101,10 @@ function buildSubmitMessage(inbound){
         {
             title: 'Elevator Pitch',
             value: inbound.get('elevatorPitch'),
-            short: true
         },
         {
             title: 'Relevancy',
-            value: inbound.get('Relevancy'),
-            short: true
+            value: inbound.get('relevancy'),
         },
         {
             title: 'Tags',
