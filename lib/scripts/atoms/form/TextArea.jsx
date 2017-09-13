@@ -7,6 +7,12 @@ class TextArea extends React.Component {
         value: PropTypes.string,
         placeholder: PropTypes.string,
         onChange: PropTypes.func,
+        maxLength: PropTypes.number,
+        rows: PropTypes.number,
+    }
+
+    static defaultProps = {
+        rows: 4,
     }
 
     constructor(props){
@@ -23,10 +29,23 @@ class TextArea extends React.Component {
     }
 
     render () {
-        const {value, placeholder, className} = this.props
+        const {
+            value,
+            placeholder,
+            className,
+            maxLength,
+            rows,
+        } = this.props
         let classes = classNames(className, 'inset')
         return <div className='container'>
-            <textarea className={classes} value={value} placeholder={placeholder} onChange={this._handleChange}/>
+            <textarea
+                className={classes}
+                value={value}
+                placeholder={placeholder}
+                onChange={this._handleChange}
+                maxLength={maxLength}
+                rows={rows}
+                />
         </div>
 
     }

@@ -6,6 +6,7 @@ class FormGroup extends React.Component {
     static propTypes = {
         label: PropTypes.string,
         inline: PropTypes.bool,
+        helperText: PropTypes.string,
     }
 
     static defaultProps = {
@@ -14,7 +15,12 @@ class FormGroup extends React.Component {
     }
 
     render () {
-        const {label, inline, children} = this.props
+        const {
+            label,
+            inline,
+            children,
+            helperText
+        } = this.props
         const classes = classNames('formGroup', {
             inline,
         })
@@ -23,6 +29,7 @@ class FormGroup extends React.Component {
                 <span className='label' display-if={label}>{label}</span>
                 <div className='input'>
                     {children}
+                    <p className='helper' display-if={helperText}>{helperText}</p>
                 </div>
             </label>
         </div>

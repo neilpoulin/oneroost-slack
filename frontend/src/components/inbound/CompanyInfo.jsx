@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import BackButton from 'molecule/BackButton'
 import TextInput from 'atoms/form/TextInput'
 import FormGroup from 'molecule/FormGroup'
 import {setFormValue, saveInbound} from 'ducks/inbound'
@@ -29,9 +28,8 @@ class CompanyInfo extends React.Component {
             saveAndContinue,
         } = this.props
         return <div>
-            <BackButton/>
             <Header title="Company Information" subtitle={'Share a bit about your orginazation'}/>
-            <FlexBoxes>
+            <FlexBoxes defaultContentStyles={true}>
                 <div>
                     <h3>Basics</h3>
                     <FormGroup label='Company Name'>
@@ -67,18 +65,17 @@ class CompanyInfo extends React.Component {
                         Which Team at {teamName} will be most interested in your offering?
                     </p>
                     <FormGroup label='Team'>
-
+                        <Select
+                          name="form-field-name"
+                          multi={false}
+                          value={selectedChannel}
+                          options={channelOptions}
+                          clearable={true}
+                          onChange={({value}) => createSetter('channelId')(value)}
+                        />
                     </FormGroup>
-                    <Select
-                      name="form-field-name"
-                      multi={false}
-                      value={selectedChannel}
-                      options={channelOptions}
-                      clearable={true}
-                      onChange={({value}) => createSetter('channelId')(value)}
-                    />
                 </div>
-            </FlexBoxes>        
+            </FlexBoxes>
             <div>
                 <Clickable onClick={saveAndContinue} text={'Continue'}/>
             </div>

@@ -1,0 +1,60 @@
+@import "~variables";
+$borderThickness: 3px;
+$transitionDuration: .2s;
+.tabs{
+    display: flex;
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+    justify-content: space-around;
+    .tab{
+        margin: 0rem 1rem;
+        .link{
+            text-decoration: none;
+            color: $primaryTextColor;
+            padding: .5rem 0.25rem;
+            transition: border $transitionDuration;
+            display: inline-block;
+            text-align: center;
+            &:visited{
+
+            }
+            &:hover, &.active{
+                border-bottom: $borderThickness solid $roostOrange;
+            }
+            &.active{
+                color: $roostOrange;
+            }
+        }
+
+    }
+}
+
+
+@media (max-width: $screen-sm-min) {
+    .tabs{
+        flex-direction: column;
+        .tab{
+            margin: .5rem 0rem;
+            .link{
+                text-decoration: none;
+                color: $primaryTextColor;
+                padding: .25rem 0.5rem;
+                margin-left: 0px;
+                // transition: left $transitionDuration;
+                &:visited{
+
+                }
+                &:hover, &.active{
+                    border-left: $borderThickness solid $roostOrange;
+                    border-bottom: 0px;
+                    position: relative;
+                    left: -1 * $borderThickness;
+                }
+
+                &.active{
+                    color: $roostOrange;
+                }
+            }
+        }
+    }
+}

@@ -1,3 +1,4 @@
+@import "~variables";
 .formGroup{
     display: flex;
     flex-direction: row;
@@ -42,6 +43,11 @@
     flex-direction: row;
     align-items: center;
     padding: .4rem 0;
+}
+
+.helper{
+    font-size: .8rem;
+    color: lighten($primaryTextColor, 60);
 }
 
 label{

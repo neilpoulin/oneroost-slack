@@ -10,6 +10,10 @@ export const LOAD_TEAM_ERROR = 'oneroost/inbound/LOAD_TEAM_ERROR'
 export const SET_TAG_OPTIONS = 'oneroost/inbound/SET_TAG_OPTIONS'
 export const ADD_TAG_OPTION = 'onerost/inbound/ADD_TAG_OPTION'
 export const SET_FORM_VALUE = 'oneroost/inbound/SET_FORM_VALUE'
+export const UPDATE_TESTIMONIAL = 'oneroost/inbound/UPDATE_TESTIMONIAL'
+export const DELETE_TESTIMONIAL = 'oneroost/inbound/DELETE_TESTIMONIAL'
+export const ADD_NEW_TESTIMONIAL = 'oneroost/inbound/ADD_NEW_TESTIMONIAL'
+
 const initialState = Immutable.fromJS({
     isLoading: false,
     hasLoaded: false,
@@ -20,6 +24,7 @@ const initialState = Immutable.fromJS({
     tagOptions: [],
     formInput: {
         tags: [],
+        testimonials: [],
     }
 })
 
@@ -44,19 +49,53 @@ export default function reducer(state=initialState, action){
         case ADD_TAG_OPTION:
             state = state.set('tagOptions', state.get('tagOptions').push(action.payload))
             break;
+        case UPDATE_TESTIMONIAL:
+            state = state.setIn(['formInput', 'testimonials', action.payload.get('index'), action.payload.get('name')], action.payload.get('value'))
+            break
+        case DELETE_TESTIMONIAL:
+            state = state.setIn(['formInput', 'testimonials'], state.getIn(['formInput', 'testimonials']).delete(action.payload.get('index')))
+            break
+        case ADD_NEW_TESTIMONIAL:
+            state = state.setIn(['formInput', 'testimonials'], state.getIn(['formInput', 'testimonials']).push(Immutable.fromJS({customerName: '', comment: ''})))
         default:
             break
     }
     return state
 }
 
-//User dot-delimited to nest values
+//Use dot-delimited to nest values
 export function setFormValue(name, value){
     return {
         type: SET_FORM_VALUE,
         payload: {
             name,
             value,
+        }
+    }
+}
+
+export function updateTestimonal({index, name, value}){
+    return {
+        type: UPDATE_TESTIMONIAL,
+        payload: {
+            index,
+            name,
+            value,
+        }
+    }
+}
+
+export function createTestimonial(){
+    return {
+        type: ADD_NEW_TESTIMONIAL
+    }
+}
+
+export function deleteTestimonial(index){
+    return {
+        type: DELETE_TESTIMONIAL,
+        payload: {
+            index,
         }
     }
 }
@@ -115,5 +154,11 @@ export function saveInbound(){
             })
             return savedInbound
         })
+    }
+}
+
+export function submitInbound(){
+    return (dispatch, getState) => {
+        
     }
 }

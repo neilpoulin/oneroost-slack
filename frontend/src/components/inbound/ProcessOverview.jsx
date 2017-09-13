@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Clickable from 'atoms/Clickable'
+import Header from './Header'
 
 class ProcessOverview extends React.Component {
     static propTypes = {
@@ -10,9 +11,9 @@ class ProcessOverview extends React.Component {
     }
 
     render () {
-        const {teamId, teamName, nextRoute} = this.props
-        return <div>
-            <h1>Team Page for {teamId}</h1>
+        const {teamName, nextRoute} = this.props
+        return <div className='content'>
+            <Header title='Welcome to OneRoost' subtitle='Opportunity Management for Decision Makers' />
             <p className=''>
                 You’re here because <span className='bold'>{teamName}</span> uses OneRoost to simplify how they review opportunities from vendors and prospective partners.  OneRoost collects, organizes and shares information in Slack on behalf of the company - generating significant time savings.
             </p>
