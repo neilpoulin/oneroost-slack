@@ -15,7 +15,7 @@ import {
     postToChannel,
     getChannels,
     saveChannel,
-    getSlackTeamByTeamId,
+    getSlackTeamBySlackTeamId,
 } from 'slack/slackService'
 import SlackTeam from 'models/SlackTeam'
 
@@ -44,7 +44,7 @@ router.post('/tokens/slack', async (req, res) => {
         // }))
         // let channels = channelResponse.data.channels
         let channels = await getChannels(access_token)
-        let slackTeam = await getSlackTeamByTeamId(team.id)
+        let slackTeam = await getSlackTeamBySlackTeamId(team.id)
         if (!slackTeam){
             slackTeam = new SlackTeam({
                 teamId: team.id,
