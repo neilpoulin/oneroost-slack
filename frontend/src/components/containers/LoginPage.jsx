@@ -89,7 +89,7 @@ const mapStateToProps = (state, ownProps) => {
         teamName: user.get('teamName'),
         userName: user.get('firstName') + ' ' + user.get('lastName'),
         userEmail: user.get('email'),
-        redirectUri: 'https://dev.oneroost.com/login',
+        redirectUri: window.location,
         hasGoogle: user.get('hasGoogle', false),
         hasSlack: user.get('hasSlack', false)
     }
