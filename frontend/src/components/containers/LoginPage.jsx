@@ -89,7 +89,7 @@ const mapStateToProps = (state, ownProps) => {
         teamName: user.get('teamName'),
         userName: user.get('firstName') + ' ' + user.get('lastName'),
         userEmail: user.get('email'),
-        redirectUri: window.location,
+        redirectUri: `${config.get('HOSTNAME')}/login`,
         hasGoogle: user.get('hasGoogle', false),
         hasSlack: user.get('hasSlack', false)
     }

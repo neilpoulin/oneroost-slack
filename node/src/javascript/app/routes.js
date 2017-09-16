@@ -10,6 +10,7 @@ import {
     ENV,
     ENV_NAME,
     GOOGLE_CLIENT_ID,
+    HOSTNAME,
 } from 'util/Environment'
 import {
     postToChannel,
@@ -86,6 +87,7 @@ router.get('/configs', (req, res) => {
         ENV_NAME,
         SLACK_CLIENT_ID,
         GOOGLE_CLIENT_ID,
+        HOSTNAME,
     })
 })
 
