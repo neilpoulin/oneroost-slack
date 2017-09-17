@@ -39,7 +39,7 @@ class LoginPage extends React.Component{
 
         if ((isLoggedIn || error) && location.search){
             return <Redirect to={{
-                pathname: '/login',
+                pathname: '/settings',
                 state: { from: location }
             }}/>
         }
