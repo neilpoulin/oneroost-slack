@@ -70,7 +70,8 @@ export async function getChannels(token){
             return reject(error)
         }
         console.log('successfully got channel list', res)
-        return resolve(res)
+        const {channels} = res
+        return resolve(channels)
     }))
 }
 
