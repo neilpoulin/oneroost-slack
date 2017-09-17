@@ -52,7 +52,7 @@ router.post('/tokens/slack', async (req, res) => {
                 selectedChannels: []
             })
             slackTeam.setChannels(channels)
-            slacKTeam = await slackTeam.save()
+            slackTeam = await slackTeam.save()
         }
         const info = {
             access_token,
