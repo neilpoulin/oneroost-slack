@@ -1,11 +1,11 @@
 import path from 'path'
 import express from 'express'
 import {
-    isProd,
+    isDev,
 } from 'util/Environment'
 
 module.exports = function(app){
-    if (isProd()){
+    if (!isDev()){
         console.log('****PRODUCTION*****')
         let bundlePath = path.join(process.cwd(), './dist')
         app.use('/static', express.static(bundlePath));
