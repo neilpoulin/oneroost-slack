@@ -20,7 +20,7 @@ export function initialize(){
                 })
             }
             const accessToken = user.get('authData').slack.access_token
-            let {channels} = await getChannels(accessToken)
+            let channels = await getChannels(accessToken)
             let slackTeam = user.get('slackTeam')
             if( slackTeam ){
                 slackTeam.setChannels(channels)

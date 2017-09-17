@@ -140,7 +140,7 @@ export function loginWithSlack(code, redirectUri){
                 parseTeam.id = slackTeam.objectId
                 parseUser.set('slackTeam', parseTeam)
                 parseUser.save().then(savedUser => {
-                    dispatch(userLoggedIn(savedUser))
+                    dispatch(loadUser())
                 })
             })
         }).catch( error => {
