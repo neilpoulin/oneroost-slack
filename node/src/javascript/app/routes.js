@@ -112,7 +112,7 @@ router.post('/slackTeams', async (req, res) => {
 })
 
 router.post('/webhooks/slack', async (req, res) => {
-    console.log('Slack webhook:', req)
+    console.log('Slack webhook body:', req.body)
     res.send();
 })
 
