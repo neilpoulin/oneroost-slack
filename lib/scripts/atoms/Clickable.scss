@@ -19,7 +19,10 @@ a {
     text-align: center;
     display: flex;
     justify-content: center;
-    &:hover{
+    &.disabled{
+        background-color: lightgray;
+    }
+    &:hover:not(.disabled){
         cursor: pointer;
         box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.3);
     }
@@ -29,6 +32,11 @@ a {
     }
 }
 
+.dispatch{
+    &:hover{
+        cursor: default;
+    }
+}
 
 .link{
     cursor: pointer;
@@ -50,7 +58,7 @@ a {
     color: $textColor;
     background-color: $btnColor;
     padding: $padding + $borderWeight;
-    &:hover{
+    &:hover:not(.disabled){
         cursor: pointer;
         $darkenedColor: darken($btnColor, $hoverDarken);
         border-color: $darkenedColor;
@@ -67,7 +75,7 @@ a {
 @mixin button-outline-style ($btnColor) {
     color: $btnColor;
     border: $borderWeight solid $btnColor;
-    &:hover{
+    &:hover:not(.disabled){
         $darkenedColor: darken($btnColor, $hoverDarken);
         color: $darkenedColor;
         border-color: $darkenedColor;

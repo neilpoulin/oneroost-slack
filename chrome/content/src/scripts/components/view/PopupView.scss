@@ -5,6 +5,23 @@ $googleButtonImageStyle: "btn_google_signin_dark_";
     padding: 1rem;
 }
 
+.admin{
+    margin-bottom: 1rem;
+    border: 1px solid gray;
+    position: relative;
+    padding: 1rem;
+    .label{
+        position: absolute;
+        top: -1rem;
+        background-color: white;
+        font-weight: bold;
+        padding: 4px;
+    }
+    select{
+        display: block;
+    }
+}
+
 .googleLogin {
     display: inline-block;
     background: url("#{$googleButtonImagePath}#{$googleButtonImageStyle}normal_web.png");

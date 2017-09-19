@@ -4,6 +4,7 @@ import {
     postToChannel,
 } from 'slack/slackService'
 import Inbound from 'models/Inbound'
+import Timeout from 'util/Timeout'
 
 const roostOrange = '#ef5b25'
 
@@ -41,36 +42,44 @@ export function initialize(){
     console.log('added refreshSlackChannels to cloud code')
 
     Parse.Cloud.define('submitInboundProposal', async function (request, response) {
-        try{
-            console.log('attempting to run cloud function submintInboundProposal')
-            let inboundId = request.params.inboundId
-            let inbound = new Inbound()
-            inbound.id = inboundId
-            await inbound.fetch()
-            if (!inbound){
+        new Timeout(async (resolve, reject) => {
+            try{
+                console.log('attempting to run cloud function submintInboundProposal')
+                let inboundId = request.params.inboundId
+                let inbound = new Inbound()
+                inbound.id = inboundId
+                await inbound.fetch()
+                if (!inbound){
+                    return response.error({
+                        message: 'no Inbound was found'
+                    })
+                }
+
+                console.log('fetched inbound', inbound.toJSON())
+                let team = inbound.get('slackTeam')
+                await team.fetch()
+                console.log('team fetched successfully')
+                let inboundChannelId = inbound.get('channelId')
+                if (team.get('selectedChannels').indexOf(inboundChannelId) !== -1){
+                    let messageInfo = buildSubmitMessage(inbound)
+                    await postToChannel(inboundChannelId, messageInfo.message, messageInfo.payload)
+                    return response.success({
+                        message: 'Successfully posted message'
+                    })
+                }
                 return response.error({
-                    message: 'no Inbound was found'
+                    friendlyText: 'You must select a team to submit the proposal to.'                    
+                })
+
+            } catch (e){
+                console.error('something unexpected happened running submitInboundProposal', e)
+                return response.error({
+                    message: 'failed to process request'
                 })
             }
-
-            console.log('fetched inbound', inbound.toJSON())
-            let team = inbound.get('slackTeam')
-            await team.fetch()
-            let inboundChannelId = inbound.get('channelId')
-            if (team.get('selectedChannels').indexOf(inboundChannelId) !== -1){
-                let messageInfo = buildSubmitMessage(inbound)
-                await postToChannel(inboundChannelId, messageInfo.message, messageInfo.payload)
-                return response.success({
-                    message: 'Successfully posted message'
-                })
-            }
-
-        } catch (e){
-            console.error('something unexpected happened running submitInboundProposal', e)
-            return response.error({
-                message: 'failed to process request'
-            })
-        }
+        }, 5000).catch(error => {
+            return response.error({error})
+        })
     })
 }
 

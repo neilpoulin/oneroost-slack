@@ -14,6 +14,8 @@ import {
 var app = express();
 setup(app);
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }))
+
 app.use(cookieParser());
 app.use('/parse', getParseServer());
 app.use('/admin/dashboard', getParseDashboard());

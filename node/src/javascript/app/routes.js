@@ -5,6 +5,7 @@ var viewRoot = path.join(__dirname, '..', '..', 'view')
 import {
     SLACK_CLIENT_ID,
     SLACK_CLIENT_SECRET,
+    SLACK_VERIFICATION_TOKEN,
     PARSE_PUBLIC_URL,
     PARSE_APP_ID,
     ENV,
@@ -19,6 +20,9 @@ import {
     getSlackTeamBySlackTeamId,
 } from 'slack/slackService'
 import SlackTeam from 'models/SlackTeam'
+import {
+    INBOUND_CLASSNAME
+} from 'models/ModelConstants'
 
 router.post('/tokens/slack', async (req, res) => {
     console.log('POST: /tokens/slack')
@@ -113,8 +117,62 @@ router.post('/slackTeams', async (req, res) => {
 })
 
 router.post('/webhooks/slack', async (req, res) => {
-    console.log('Slack webhook body:', req.body)
-    res.send();
+    // console.log('Slack webhook body:', req.body)
+    const body = req.body
+
+    console.log('request body.payload', body.payload)
+    const payload = JSON.parse(body.payload)
+    const {
+        actions,
+        callback_id,
+        team: {id: teamId},
+        channel: {id: channelId},
+        user: {id: userId},
+        token,
+        original_message,
+        response_url,
+    } = payload
+
+    if (SLACK_VERIFICATION_TOKEN !== token){
+        return res.send({
+            'response_type': 'ephemeral',
+            'replace_original': false,
+            'text': 'Could not validate the message authenticity'
+        });
+    }
+
+    const [actionType, inboundId] = callback_id.split('::')
+    console.log('actionType', actionType)
+    console.log('inboundId', inboundId)
+    switch (actionType){
+        case 'interest_level':
+            break;
+        default:
+            return res.send({
+                'response_type': 'ephemeral',
+                'replace_original': false,
+                'text': 'Unknown action type'
+            });
+            break;
+    }
+
+    let inboundQuery = new Parse.Query(INBOUND_CLASSNAME)
+    let inbound = await inboundQuery.get(inboundId)
+    if (!inbound){
+        return res.send({
+            'response_type': 'ephemeral',
+            'replace_original': false,
+            'text': 'this inbound is no loger valid'
+        });
+    }
+    console.log('inbound = ', inbound.toJSON())
+
+    return res.send({
+        response_type: 'ephemeral',
+        replace_original: true,
+        text: 'Success!',
+        attachments: original_message.attachments,
+    })
 })
 
 router.get('*', function(req, res) {

@@ -6,6 +6,7 @@ import * as UserActions from 'actions/user'
 const initialState = {
     isLogin: false,
     userId: null,
+    isAdmin: false,
     firstName: null,
     lastName: null,
     isLoading: false,
@@ -37,6 +38,7 @@ export default function reducer(state=initialState, action){
             state.firstName = payload.firstName;
             state.lastName = payload.lastName;
             state.email = payload.email;
+            state.isAdmin = payload.admin;
             if (payload.slackTeam){
                 state.channels = payload.slackTeam.channels || {}
                 state.selectedChannels = payload.slackTeam.selectedChannels || []

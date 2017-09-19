@@ -5,11 +5,13 @@ import logger from './middleware/logger'
 import reducers from './../ducks'
 import {aliases as userAliases} from './../ducks/user'
 import {aliases as gmailAliases} from './../ducks/gmail'
+import {aliases as configAliases} from './../ducks/config'
 import {composeWithDevTools} from 'redux-devtools-extension/developmentOnly'
 
 const aliases = {
     ...userAliases,
     ...gmailAliases,
+    ...configAliases,
 }
 let middlewares = [alias(aliases),
     thunkMiddleware,

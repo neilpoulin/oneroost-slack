@@ -17,6 +17,8 @@ export const SUBMIT_SUCCESS = 'oneroost/inbound/SUBMIT_SUCCESS'
 export const SUBMIT_ERROR = 'oneroost/inbound/SUBMIT_ERROR'
 export const SUBMIT_REQUEST = 'oneroost/inbound/SUBMIT_REQUEST'
 
+const DEFAULT_SAVE_ERROR_MESSAGE = 'Something went wrong submitting the form. Please try again later.'
+
 const initialState = Immutable.fromJS({
     isLoading: false,
     hasLoaded: false,
@@ -27,6 +29,7 @@ const initialState = Immutable.fromJS({
     tagOptions: [],
     submitted: false,
     saving: false,
+    error: null,
     formInput: {
         tags: [],
         testimonials: [],
@@ -47,6 +50,7 @@ export default function reducer(state=initialState, action){
             break;
         case SET_FORM_VALUE:
             state = state.setIn(['formInput', ...action.payload.get('name', '').split('.')], action.payload.get('value'))
+            state = state.set('error', null)
             break;
         case SET_TAG_OPTIONS:
             state = state.set('tagOptions', action.payload.get('tags', Immutable.List()))
@@ -65,14 +69,19 @@ export default function reducer(state=initialState, action){
             break;
         case SUBMIT_REQUEST:
             state = state.set('saving', true)
+            state = state.set('error', null)
             break;
         case SUBMIT_SUCCESS:
             state = state.set('saving', false)
             state = state.set('submitted', true)
+            state = state.set('error', null)
             break;
         case SUBMIT_ERROR:
             state = state.set('saving', false)
             state = state.set('submitted', false)
+            state = state.set('error', Immutable.Map({
+                friendlyText: action.payload.getIn(['message', 'friendlyText'], DEFAULT_SAVE_ERROR_MESSAGE)
+            }))
             break;
         default:
             break
@@ -192,7 +201,10 @@ export function submitInbound(){
             }).catch((error) => {
                 console.error(error)
                 dispatch({
-                    type: SUBMIT_ERROR
+                    type: SUBMIT_ERROR,
+                    payload: {
+                        message: error.message,
+                    }
                 })
             })
         }).catch(error => {
