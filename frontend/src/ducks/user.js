@@ -132,10 +132,12 @@ export function loginWithSlack(code, redirectUri){
                 id: user.id,
                 firstName: user.name ? user.name.split(' ')[0] : '',
                 lastName:  user.name ? user.name.split(' ')[1] : '',
+                slackUserId: user.id,
                 email: user.email,
                 username: user.email,
             })).then(parseUser => {
                 parseUser.set('slackTeamId', team.id)
+                parseUser.set('slackUserId', user.id)
                 let parseTeam = new SlackTeam()
                 parseTeam.id = slackTeam.objectId
                 parseUser.set('slackTeam', parseTeam)

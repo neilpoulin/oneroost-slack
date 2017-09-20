@@ -41,6 +41,9 @@ class CompanyInfo extends React.Component {
                     <FormGroup label='Email' >
                         <TextInput placeholder="name@company.com" onChange={createSetter('email')} type='email'/>
                     </FormGroup>
+                    <FormGroup label='Website' >
+                        <TextInput placeholder="https://www.company.com" onChange={createSetter('website')} type='url'/>
+                    </FormGroup>
                     <FormGroup label='Phone Number'>
                         <TextInput placeholder="555-122-5329" onChange={createSetter('phoneNumber')}/>
                     </FormGroup>

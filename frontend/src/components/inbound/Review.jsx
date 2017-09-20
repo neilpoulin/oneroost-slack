@@ -25,7 +25,7 @@ class Review extends React.Component {
 
         return <div className='content'>
             <Header title="Review the Opportunity" subtitle={`This is your last chance to add, modify, or remove any of the information before OneRoost packages and shares the opportunity with ${teamName}`}/>
-            <div display-if={!submitted}>
+            <div display-if={!submitted || true}>
                 <div className='instructions' >
                     <p>
                         Click on each of the sections above to review.  Once you’re satisfied with the information, click submit below.  We encourage our companies to indicate level of interest within one week.  If {teamName} finds your opportunity interesting, OneRoost will send an email to your supplied email.

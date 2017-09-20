@@ -50,7 +50,7 @@ export function initialize(){
                 inbound.id = inboundId
                 await inbound.fetch()
                 if (!inbound){
-                    return response.error({
+                    reject({
                         message: 'no Inbound was found'
                     })
                 }
@@ -63,28 +63,30 @@ export function initialize(){
                 if (team.get('selectedChannels').indexOf(inboundChannelId) !== -1){
                     let messageInfo = buildSubmitMessage(inbound)
                     await postToChannel(inboundChannelId, messageInfo.message, messageInfo.payload)
-                    return response.success({
+                    resolve({
                         message: 'Successfully posted message'
                     })
                 }
-                return response.error({
-                    friendlyText: 'You must select a team to submit the proposal to.'                    
+                reject({
+                    friendlyText: 'You must select a team to submit the proposal to.'
                 })
 
             } catch (e){
                 console.error('something unexpected happened running submitInboundProposal', e)
-                return response.error({
+                reject({
                     message: 'failed to process request'
                 })
             }
-        }, 5000).catch(error => {
+        }, 5000).then(body => {
+            return response.success(body)
+        }).catch(error => {
             return response.error({error})
         })
     })
 }
 
 function buildSubmitMessage(inbound){
-    let message = `${inbound.get('fullName')} at ${inbound.get('companyName')} has submitted a proposal`
+    let message = ''
 
     let fields = [
         {
@@ -108,6 +110,11 @@ function buildSubmitMessage(inbound){
             short: true
         },
         {
+            title: 'Website',
+            value: inbound.get('website'),
+            short: true
+        },
+        {
             title: 'Elevator Pitch',
             value: inbound.get('elevatorPitch'),
         },
@@ -121,6 +128,8 @@ function buildSubmitMessage(inbound){
         }
     ];
 
+    fields = fields.filter(field => !!field.value)
+
     inbound.get('testimonials').forEach(testimonial => {
         fields.push({
             title: `${testimonial.customerName} Testimonial`,
@@ -132,16 +141,23 @@ function buildSubmitMessage(inbound){
     let payload = {
         'attachments': [
             {
-                'text': 'Are you interested?',
+                'text': '',
+                'title': `${inbound.get('fullName')} at ${inbound.get('companyName')} has submitted a proposal`,
                 'fallback': 'You are unable to set your company\'s interest level',
-                'callback_id': `interest_level::${inbound.id}`,
+                'callback_id': `inbound::${inbound.id}`,
                 'color': roostOrange,
                 'attachment_type': 'default',
                 'fields': fields,
+                'actions': []
+            },
+            {
+                'text': 'Are you interested?',
+                'callback_id': `interest_level::${inbound.id}`,
+                'color': roostOrange,
                 'actions': [
                     {
                         'name': 'interest',
-                        'text': 'Yes!',
+                        'text': 'Interested!',
                         'type': 'button',
                         'style': 'primary',
                         'value': 'YES'

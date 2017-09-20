@@ -21,8 +21,10 @@ import {
 } from 'slack/slackService'
 import SlackTeam from 'models/SlackTeam'
 import {
-    INBOUND_CLASSNAME
+    INBOUND_CLASSNAME,
+    USER_CLASSNAME,
 } from 'models/ModelConstants'
+import {getInterestLevelDisplayText, getEmoji} from 'slack/InterestLevel'
 
 router.post('/tokens/slack', async (req, res) => {
     console.log('POST: /tokens/slack')
@@ -127,9 +129,9 @@ router.post('/webhooks/slack', async (req, res) => {
         callback_id,
         team: {id: teamId},
         channel: {id: channelId},
-        user: {id: userId},
+        user: {id: slackUserId, name: userName},
         token,
-        original_message,
+        original_message: original_message,
         response_url,
     } = payload
 
@@ -144,8 +146,10 @@ router.post('/webhooks/slack', async (req, res) => {
     const [actionType, inboundId] = callback_id.split('::')
     console.log('actionType', actionType)
     console.log('inboundId', inboundId)
+    let interestLevel = null;
     switch (actionType){
         case 'interest_level':
+            interestLevel = actions[0].value
             break;
         default:
             return res.send({
@@ -155,7 +159,7 @@ router.post('/webhooks/slack', async (req, res) => {
             });
             break;
     }
-
+    let interestLevelDisplayText = getInterestLevelDisplayText(interestLevel)
     let inboundQuery = new Parse.Query(INBOUND_CLASSNAME)
     let inbound = await inboundQuery.get(inboundId)
     if (!inbound){
@@ -167,11 +171,30 @@ router.post('/webhooks/slack', async (req, res) => {
     }
     console.log('inbound = ', inbound.toJSON())
 
+    let [opportunityInfo, actionsAttachment] = original_message.attachments
+
+    delete actionsAttachment.actions;
+    actionsAttachment.text = `${getEmoji(interestLevel)} *${userName}* said ${interestLevelDisplayText.toLowerCase()} to ${inbound.get('companyName')}.`
+    actionsAttachment.mrkdwn_in = ['text', 'footer']
+    let slackUserQuery = new Parse.Query(USER_CLASSNAME)
+    slackUserQuery.equalTo('slackUserId', slackUserId)
+    let user = await slackUserQuery.first()
+
+    inbound.set({
+        replies: original_message.replies,
+        interestLevel,
+        responseFromSlackUserId: slackUserId,
+        responseFrom: user,
+    })
+
     return res.send({
         response_type: 'ephemeral',
         replace_original: true,
-        text: 'Success!',
-        attachments: original_message.attachments,
+        text: '',
+        attachments: [
+            opportunityInfo,
+            actionsAttachment
+        ],
     })
 })
 
