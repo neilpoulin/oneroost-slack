@@ -186,6 +186,7 @@ router.post('/webhooks/slack', async (req, res) => {
         responseFromSlackUserId: slackUserId,
         responseFrom: user,
     })
+    inbound.save()
 
     return res.send({
         response_type: 'ephemeral',
