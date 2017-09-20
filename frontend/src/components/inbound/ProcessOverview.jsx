@@ -10,6 +10,10 @@ class ProcessOverview extends React.Component {
         nextRoute: PropTypes.string.isRequired,
     }
 
+    componentDidMount() {
+        window.scrollTo(0, 0)
+    }
+
     render () {
         const {teamName, nextRoute} = this.props
         return <div className='content'>

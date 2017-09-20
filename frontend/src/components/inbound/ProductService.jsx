@@ -12,6 +12,11 @@ import Immutable from 'immutable'
 const MAX_CHARACTERS = 300
 
 class ProductService extends React.Component {
+
+    componentDidMount() {
+        window.scrollTo(0, 0)
+    }
+    
     render () {
         const {
             teamName,

@@ -16,6 +16,11 @@ class CompanyInfo extends React.Component {
         nextRoute: PropTypes.string.isRequired,
         teamName: PropTypes.string.isRequired
     }
+
+    componentDidMount() {
+        window.scrollTo(0, 0)
+    }
+
     render () {
         const {
             teamName,
@@ -23,6 +28,11 @@ class CompanyInfo extends React.Component {
             tagOptions,
             channelOptions,
             selectedChannel,
+            companyName,
+            website,
+            fullName,
+            email,
+            phoneNumber,
             //actions
             createSetter,
             saveAndContinue,
@@ -33,19 +43,19 @@ class CompanyInfo extends React.Component {
                 <div>
                     <h3>Basics</h3>
                     <FormGroup label='Company Name'>
-                        <TextInput onChange={createSetter('companyName')}/>
+                        <TextInput onChange={createSetter('companyName')} value={companyName}/>
                     </FormGroup>
                     <FormGroup label='Your Name'>
-                        <TextInput placeholder="Jon Doe" onChange={createSetter('fullName')}/>
+                        <TextInput placeholder="Jon Doe" onChange={createSetter('fullName')} value={fullName}/>
                     </FormGroup>
                     <FormGroup label='Email' >
-                        <TextInput placeholder="name@company.com" onChange={createSetter('email')} type='email'/>
+                        <TextInput placeholder="name@company.com" onChange={createSetter('email')} type='email' value={email}/>
                     </FormGroup>
                     <FormGroup label='Website' >
-                        <TextInput placeholder="https://www.company.com" onChange={createSetter('website')} type='url'/>
+                        <TextInput placeholder="https://www.company.com" onChange={createSetter('website')} type='url' value={website}/>
                     </FormGroup>
                     <FormGroup label='Phone Number'>
-                        <TextInput placeholder="555-122-5329" onChange={createSetter('phoneNumber')}/>
+                        <TextInput placeholder="555-122-5329" onChange={createSetter('phoneNumber')} value={phoneNumber}/>
                     </FormGroup>
                 </div>
                 <div>
@@ -92,11 +102,23 @@ const mapStateToProps = (state, ownProps) => {
         label: `#${c.name}`,
         value: c.id,
     }))
+    const {
+        companyName,
+        website,
+        fullName,
+        email,
+        phoneNumber,
+    } = state.inbound.get('formInput').toJS()
     return {
         tagOptions: state.inbound.get('tagOptions').toJS(),
         tags: state.inbound.getIn(['formInput', 'tags'], Immutable.List()).toJS(),
         channelOptions,
-        selectedChannel: state.inbound.getIn(['formInput', 'channelId'])
+        selectedChannel: state.inbound.getIn(['formInput', 'channelId']),
+        companyName,
+        website,
+        fullName,
+        email,
+        phoneNumber,
     }
 }
 

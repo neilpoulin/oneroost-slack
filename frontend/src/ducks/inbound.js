@@ -3,6 +3,7 @@ import Parse from 'parse'
 import {SLACK_TEAM_CLASSNAME} from 'models/ModelConstants'
 import Inbound from 'models/Inbound'
 import SlackTeam from 'models/SlackTeam'
+import Vendor from 'models/Vendor'
 
 export const LOAD_TEAM_REQUEST = 'oneroost/inbound/LOAD_TEAM_REQUEST'
 export const LOAD_TEAM_SUCCESS = 'oneroost/inbound/LOAD_TEAM_SUCCESS'
@@ -16,7 +17,9 @@ export const ADD_NEW_TESTIMONIAL = 'oneroost/inbound/ADD_NEW_TESTIMONIAL'
 export const SUBMIT_SUCCESS = 'oneroost/inbound/SUBMIT_SUCCESS'
 export const SUBMIT_ERROR = 'oneroost/inbound/SUBMIT_ERROR'
 export const SUBMIT_REQUEST = 'oneroost/inbound/SUBMIT_REQUEST'
-
+export const VENDOR_SIGNUP_REQUEST = 'oneroost/inbound/VENDOR_SIGNUP_REQUEST'
+export const VENDOR_SIGNUP_SUCCESS = 'oneroost/inbound/VENDOR_SIGNUP_SUCCESS'
+export const VENDOR_SIGNUP_ERROR = 'oneroost/inbound/VENDOR_SIGNUP_ERROR'
 const DEFAULT_SAVE_ERROR_MESSAGE = 'Something went wrong submitting the form. Please try again later.'
 
 const initialState = Immutable.fromJS({
@@ -30,6 +33,10 @@ const initialState = Immutable.fromJS({
     submitted: false,
     saving: false,
     error: null,
+    vendorSignupSaving: false,
+    vendorSignupSuccess: false,
+    vendorSignupError: null,
+    submittedInbound: null,
     formInput: {
         tags: [],
         testimonials: [],
@@ -75,11 +82,29 @@ export default function reducer(state=initialState, action){
             state = state.set('saving', false)
             state = state.set('submitted', true)
             state = state.set('error', null)
+            state = state.set('submittedInbound', action.payload)
             break;
         case SUBMIT_ERROR:
             state = state.set('saving', false)
             state = state.set('submitted', false)
             state = state.set('error', Immutable.Map({
+                friendlyText: action.payload.getIn(['message', 'friendlyText'], DEFAULT_SAVE_ERROR_MESSAGE)
+            }))
+            break;
+        case VENDOR_SIGNUP_REQUEST:
+            state = state.set('vendorSignupSaving', true)
+            state = state.set('vendorSignupSuccess', false)
+            state = state.set('vendorSignupError', null)
+            break;
+        case VENDOR_SIGNUP_SUCCESS:
+            state = state.set('vendorSignupSaving', false)
+            state = state.set('vendorSignupSuccess', true)
+            state = state.set('vendorSignupError', null)
+            break;
+        case VENDOR_SIGNUP_ERROR:
+            state = state.set('vendorSignupSaving', false)
+            state = state.set('vendorSignupSuccess', false)
+            state = state.set('vendorSignupError',  Immutable.Map({
                 friendlyText: action.payload.getIn(['message', 'friendlyText'], DEFAULT_SAVE_ERROR_MESSAGE)
             }))
             break;
@@ -194,21 +219,52 @@ export function submitInbound(){
                 inbound.set('submitted', true)
                 inbound.set('submittedDate', new Date())
                 return inbound.save()
-            }).then(() => {
+            }).then((saved) => {
                 dispatch({
-                    type: SUBMIT_SUCCESS
+                    type: SUBMIT_SUCCESS,
+                    payload: saved.toJSON(),
                 })
             }).catch((error) => {
                 console.error(error)
                 dispatch({
                     type: SUBMIT_ERROR,
                     payload: {
-                        message: error.message,
+                        message: error.message.error,
                     }
                 })
             })
         }).catch(error => {
             console.error(error)
+        })
+    }
+}
+
+export function submitVendor(){
+    return (dispatch, getState) => {
+        dispatch({
+            type: VENDOR_SIGNUP_REQUEST
+        })
+        const {formInput: {name, email}, submittedInbound} = getState().inbound.toJS()
+        let inbound = Inbound.createWithoutData(submittedInbound.objectId)
+
+        let vendor = new Vendor()
+        vendor.set({
+            name,
+            email,
+            inbound,
+        })
+        vendor.save().then(savedVendor => {
+            dispatch({
+                type: VENDOR_SIGNUP_SUCCESS
+            })
+        }).catch(error => {
+            dispatch({
+                type: VENDOR_SIGNUP_ERROR,
+                error,
+                payload: {
+                    friendlyText: 'Something went wrong while signing up. Please try again later.',
+                    ...error},
+            })
         })
     }
 }

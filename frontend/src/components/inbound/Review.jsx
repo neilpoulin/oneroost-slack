@@ -1,15 +1,21 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import {submitInbound} from 'ducks/inbound'
+import {submitInbound, submitVendor} from 'ducks/inbound'
 import Header from './Header'
 import {withRouter} from 'react-router-dom'
 import Clickable from 'atoms/Clickable'
+import TextInput from 'atoms/form/TextInput'
+import FormGroup from 'molecule/FormGroup'
 
 
 class Review extends React.Component {
     static propTypes = {
         teamName: PropTypes.string.isRequired,
+    }
+
+    componentDidMount() {
+        window.scrollTo(0, 0)
     }
 
     render () {
@@ -19,12 +25,14 @@ class Review extends React.Component {
             saving,
             hasError,
             errorText,
+            email,
             //actions
             submit,
+            vendorSignUp,
         } = this.props
 
         return <div className='content'>
-            <Header title="Review the Opportunity" subtitle={`This is your last chance to add, modify, or remove any of the information before OneRoost packages and shares the opportunity with ${teamName}`}/>
+            <Header display-if={!submitted} title="Review the Opportunity" subtitle={`This is your last chance to add, modify, or remove any of the information before OneRoost packages and shares the opportunity with ${teamName}`}/>
             <div display-if={!submitted}>
                 <div className='instructions' >
                     <p>
@@ -40,7 +48,33 @@ class Review extends React.Component {
             </div>
             <div display-if={submitted}>
                 <div className='instructions'>
-                    Success!
+                    <div className='success'>
+                        <h3>Success!</h3>
+                        <div>Your proposal has been submitted to {teamName}</div>
+                    </div>
+                    <section>
+                        <h3>What now?</h3>
+                        <p>
+                            If there is interest, they will click "Yes!" and you will be notified via email.  Additionally, your email address will get unblocked, allowing you to commence your sales process.
+                        </p>
+                        <p>
+                            If you have any questions, feel free to email <a href="mailto:help@oneroost.com">help@oneroost.com</a> or use the live chat below.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h3>Want to know if they say "No"?</h3>
+                        <p>
+                            OneRoost is testing a new product that provides sellers insights into why they didn’t get the deal.  If you’re interested in learning more, click below
+                        </p>
+                        <div>
+                            <FormGroup label='Your Email'>
+                                <TextInput placeholder={email} value={email}/>
+                            </FormGroup>
+                            <Clickable text='Sign Up' onClick={vendorSignUp}/>
+                        </div>
+                    </section>
+
                 </div>
             </div>
             <div display-if={hasError} className='error'>
@@ -51,13 +85,22 @@ class Review extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-    const {submitted, saving, error,} = state.inbound.toJS()
+    const {
+        submitted,
+        saving,
+        error,
+        formInput: {email},
+        vendorSignupSuccess
+    } = state.inbound.toJS()
     const errorText = (error && error.friendlyText ) ? error.friendlyText : 'Something went wrong, please try again later.';
+
     return {
         submitted,
         saving,
         hasError: !!error,
         errorText,
+        email,
+        vendorSignupSuccess,
     }
 }
 
@@ -70,6 +113,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         submit: () => {
             dispatch(submitInbound())
+        },
+        vendorSignUp: () => {
+            dispatch(submitVendor())
         }
     }
 }
