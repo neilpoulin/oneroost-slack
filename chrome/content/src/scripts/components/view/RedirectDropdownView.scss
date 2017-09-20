@@ -1,8 +1,11 @@
-$gmailHoverColor: gray;
+$gmailHoverColor: #dddddd;
+$padding: 10px;
 
 .title{
     font-weight: bold;
-    padding: 5px;
+    padding: $padding;
+    margin-top: 1rem;
+    font-size: 1.1rem;
 }
 
 ul.vanityUrls{
@@ -10,7 +13,7 @@ ul.vanityUrls{
     margin: 0px;
     padding: 0px;
     li.vanityUrl{
-        padding: 10px;
+        padding: $padding;
         text-decoration: none;
         margin: 0px;
         &:hover{

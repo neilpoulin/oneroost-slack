@@ -13,6 +13,6 @@ export default (arg, className) => {
     else if (typeof arg == 'string'){
         modelId = arg
     }
-    const Account = Parse.Object.extend(className || modelClass);
-    return Account.createWithoutData(modelId);
+    const Pointer = Parse.Object.extend(className || modelClass);
+    return Pointer.createWithoutData(modelId);
 }

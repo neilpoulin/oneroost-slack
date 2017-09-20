@@ -176,15 +176,15 @@ export function loadTeam(teamId){
 
 export function loadTagOptions(){
     return dispatch => {
-        dispatch({
-            type: SET_TAG_OPTIONS,
-            payload: {
-                tags: [
-                    { value: 'CRM', label: 'CRM' },
-                    { value: 'APPLICANT_TRACKING', label: 'Applicant Tracking' },
-                ]
-            }
+        Parse.Config.get().then(config => {
+            dispatch({
+                type: SET_TAG_OPTIONS,
+                payload: {
+                    tags: config.get('inboundTagOptions') || []
+                }
+            })
         })
+
     }
 }
 

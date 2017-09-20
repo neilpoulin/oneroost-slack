@@ -23,7 +23,6 @@ class RedirectDropdownView extends React.Component {
             insertLink,
             senderName,
             senderEmail,
-            channels,
             teamUrl,
         } = this.props
         return <div className="RedirectDropdownView">
@@ -31,18 +30,11 @@ class RedirectDropdownView extends React.Component {
                 Loading....
             </div>
             <div display-if={!isLoading}>
-                <span className="title">Redirect User</span>
+                <span className="title">Vendor Interceptor</span>
                 <ul className="vanityUrls">
-                    <li className='vanityUrl' onClick={() => insertLink(teamUrl, senderName, senderEmail, true)}>Block</li>
-                    <li className='vanityUrl' onClick={() => insertLink(teamUrl, senderName, senderEmail, false)}>Do Not Block</li>
+                    <li className='vanityUrl' onClick={() => insertLink(teamUrl, senderName, senderEmail, true)}>Redirect and Block</li>
+                    <li className='vanityUrl' onClick={() => insertLink(teamUrl, senderName, senderEmail, false)}>Redirect and Do Not Block</li>
                 </ul>
-                <span className="title">Send to channel</span>
-                <ul className="vanityUrls">
-                    {channels.map((channel, i) => {
-                        return <li key={`channel_${i}`} className='vanityUrl' onClick={() => insertLink(teamUrl, senderName, senderEmail)}>#{channel.name}</li>
-                    })}
-                </ul>
-
             </div>
         </div>
     }
@@ -80,14 +72,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         insertLink: (vanityUrl, senderName, senderEmail, doBlock) => {
             console.log('TODO: Adding filter')
             ownProps.composeView.insertHTMLIntoBodyAtCursor(buildHtmlLink(vanityUrl, senderName))
-            if(doBlock){
-                dispatch({
-                    type: CREATE_FILTER_ALIAS,
-                    senderName,
-                    senderEmail,
-                    vanityUrl,
-                })
-            }
+            dispatch({
+                type: CREATE_FILTER_ALIAS,
+                senderName,
+                senderEmail,
+                vanityUrl,
+                blocked: doBlock,
+            })        
         }
     }
 }

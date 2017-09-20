@@ -2,6 +2,7 @@ import Parse from 'parse'
 import {fromJS} from 'immutable'
 import {handleSignInClick, handleSignOutClick, loadUserFromCache} from 'googleAuth'
 import * as UserActions from 'actions/user'
+import {syncTeamRedirects} from 'ducks/gmail'
 
 const initialState = {
     isLogin: false,
@@ -31,7 +32,6 @@ export default function reducer(state=initialState, action){
         case UserActions.LOG_IN_SUCCESS:
             state.userId = getUserIdFromAction(action);
             state.isLoading = false;
-            state.accountId = action.payload.account.objectId;
             state.isLoggedIn = true;
             break;
         case UserActions.UPDATE_USER_INFO:
@@ -63,8 +63,6 @@ export default function reducer(state=initialState, action){
 // Queries
 const getUserQuery = (userId) => {
     let query = new Parse.Query('_User')
-    query.include('account')
-    query.include('accountSeat')
     query.include('slackTeam')
     return query.get(userId)
 }
@@ -76,6 +74,7 @@ export const loadUserDetails = (userId) => (dispatch, getState) => {
             type: UserActions.UPDATE_USER_INFO,
             payload: user.toJSON()
         })
+        dispatch(syncTeamRedirects())
     }).catch(error => {
         console.error(error)
     })

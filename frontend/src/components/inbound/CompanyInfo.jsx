@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import TextInput from 'atoms/form/TextInput'
 import FormGroup from 'molecule/FormGroup'
 import {setFormValue, saveInbound} from 'ducks/inbound'
-import {Creatable as Select} from 'react-select'
+import Select, {Creatable} from 'react-select'
 import Immutable from 'immutable'
 import Clickable from 'atoms/Clickable'
 import {withRouter} from 'react-router-dom'
@@ -63,12 +63,14 @@ class CompanyInfo extends React.Component {
                     <p className='description'>
                         Which categories best represent your offering, e.g. CRM, applicant tracking, etc.
                     </p>
-                    <Select
+                    <Creatable
                       name="form-field-name"
                       multi={true}
                       value={tags}
                       options={tagOptions}
                       clearable={false}
+                      placeholder={'Enter tags...'}
+                      noResultsText={'Enter a new tag...'}
                       onChange={createSetter('tags')}
                     />
                 </div>
@@ -84,6 +86,7 @@ class CompanyInfo extends React.Component {
                           value={selectedChannel}
                           options={channelOptions}
                           clearable={true}
+                          placeholder={'Select a team...'}
                           onChange={({value}) => createSetter('channelId')(value)}
                         />
                     </FormGroup>

@@ -5,6 +5,8 @@ import {
 } from 'slack/slackService'
 import Inbound from 'models/Inbound'
 import Timeout from 'util/Timeout'
+import {USER_CLASSNAME, REDIRECT_CLASSNAME} from 'models/ModelConstants'
+import Redirect from 'models/Redirect'
 
 const roostOrange = '#ef5b25'
 
@@ -78,6 +80,68 @@ export function initialize(){
                 })
             }
         }, 5000).then(body => {
+            return response.success(body)
+        }).catch(error => {
+            return response.error({error})
+        })
+    })
+
+    Parse.Cloud.define('logRedirect', async (request, response) => {
+        new Timeout(async (resolve, reject) => {
+            console.log('attempting to save the redirect')
+            let user = request.user;
+            if (!user){
+                reject({message: 'user must be logged in to save filters'})
+            }
+            let userQuery = new Parse.Query(USER_CLASSNAME)
+            userQuery.include('slackTeam')
+            user = await userQuery.get(user.id)
+
+            let slackTeam = user.get('slackTeam')
+            if (!slackTeam){
+                reject({message: 'no slack team could be found for user ' + user.id})
+            }
+            const {
+                senderName,
+                senderEmail,
+                blocked,
+                destinationUrl
+            } = request.params
+            let redirectQuery = new Parse.Query(REDIRECT_CLASSNAME);
+            redirectQuery.include('slackTeam')
+            redirectQuery.include('createdBy')
+            redirectQuery.equalTo('senderEmail', senderEmail)
+            redirectQuery.equalTo('slackTeam', slackTeam)
+
+
+            let existingRedirect = await redirectQuery.first()
+            if (existingRedirect){
+                existingRedirect.set({
+                    updatedBy: user,
+                    blocked,
+                    destinationUrl
+                })
+                await existingRedirect.save()
+                resolve({success: 'successfully updated existing redirect'})
+            }
+            else {
+                let redirect = new Redirect()
+                redirect.set({
+                    createdBy: user,
+                    slackTeam,
+                    senderName,
+                    senderEmail,
+                    blocked,
+                    destinationUrl,
+                    updatedBy: user,
+                })
+                await redirect.save()
+                resolve({success: 'successfully saved new the redirect'})
+            }
+
+
+
+        }, 10000).then(body => {
             return response.success(body)
         }).catch(error => {
             return response.error({error})
