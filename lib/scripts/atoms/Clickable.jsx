@@ -37,10 +37,21 @@ class Clickable extends React.Component {
         disabled: false,
     }
 
+    constructor(props){
+        super(props)
+        this._handleClick = this._handleClick.bind(this)
+    }
+
+    _handleClick() {
+        const {disabled, onClick} = this.props
+        if (!disabled && onClick){
+            onClick()
+        }
+    }
+
     render () {
         const {
             text,
-            onClick,
             look,
             outline,
             colorType,
@@ -66,7 +77,7 @@ class Clickable extends React.Component {
         if(href){
             return <a className={classes} href={href} target={target}>{text}</a>
         }
-        return <span className={classes} onClick={() => disabled ? null : onClick()} disabled={disabled}>{text}</span>
+        return <span className={classes} onClick={this._handleClick} disabled={disabled}>{text}</span>
     }
 }
 

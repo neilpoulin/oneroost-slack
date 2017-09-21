@@ -1,0 +1,48 @@
+.dropzone{
+    &.active{
+        .dropTarget{
+            background-color: yellow;
+        }
+    }
+
+    &.accepted{
+        .dropTarget{
+            background-color: red;
+        }
+    }
+
+    .dropTarget{
+        height: 10rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .progressContainer{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 1rem;
+        .progressbar{
+            width: 100%;
+        }
+        .fileInfo{
+            margin-bottom: 1rem;
+            text-align: center;
+            .filename{
+                padding-bottom: .2rem;
+            }
+            .link-small{
+                font-size: .7rem;
+            }
+        }
+    }
+}
+
+.error{
+    font-size: .75rem;
+    color: red;
+}

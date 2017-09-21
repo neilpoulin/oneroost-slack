@@ -64,6 +64,7 @@ const sharedProps = {
     PARSE_MASTER_KEY: process.env.ONEROOST_PARSE_MASTER_KEY_DEV,
     PARSE_APP_ID: process.env.ONEROOST_PARSE_APP_ID_DEV,
     DATABASE_URL: 'mongodb://localhost:27017/oneroost-db',
+    DOCUMENT_BUCKET: 'oneroost-documents',
     // VERBOSE: 1, //used for parse server verbose mode
 }
 

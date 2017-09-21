@@ -9,6 +9,7 @@ import TextInput from 'atoms/form/TextInput'
 import TextArea from 'atoms/form/TextArea'
 import FormGroup from 'molecule/FormGroup'
 import Immutable from 'immutable'
+import FileUploadForm from 'organisms/FileUploadForm'
 import {setFormValue, saveInbound, updateTestimonal, deleteTestimonial, createTestimonial} from 'ducks/inbound'
 
 class CustomerValidation extends React.Component {
@@ -32,6 +33,7 @@ class CustomerValidation extends React.Component {
             createTestimonialSetter,
             addTestimonial,
             removeTestimonial,
+            setCaseStudyFilePath
         } = this.props
 
         return <div className='container'>
@@ -39,7 +41,11 @@ class CustomerValidation extends React.Component {
             <FlexBoxes defaultContentStyles={false}>
                 <div className='content'>
                     <h3>Case Study</h3>
-                    <Clickable text={'Upload Case Study'} outline={true}/>
+                    <FileUploadForm buttonText={'Upload a Case Study'}
+                        fileKeyPrefix={'inbound/pitches'}
+                        onCompleted={setCaseStudyFilePath}
+                        buttonOutline={true}
+                        />
                 </div>
                 {testimonials.map((testimonial, i) => {
                     return <div key={`testimonial-${i}`} className='content'>
@@ -95,8 +101,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         removeTestimonial: (i) => {
             dispatch(deleteTestimonial(i))
+        },
+        setCaseStudyFilePath: ({filePath}) => {
+            dispatch(setFormValue('caseStudyFilePath', filePath))
         }
-
     }
 }
 

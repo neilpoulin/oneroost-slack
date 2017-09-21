@@ -8,6 +8,7 @@ import TextArea from 'atoms/form/TextArea'
 import Clickable from 'atoms/Clickable'
 import {setFormValue, saveInbound} from 'ducks/inbound'
 import Immutable from 'immutable'
+import FileUploadForm from 'organisms/FileUploadForm'
 
 const MAX_CHARACTERS = 300
 
@@ -16,7 +17,7 @@ class ProductService extends React.Component {
     componentDidMount() {
         window.scrollTo(0, 0)
     }
-    
+
     render () {
         const {
             teamName,
@@ -28,6 +29,7 @@ class ProductService extends React.Component {
             //actions
             saveAndContinue,
             createSetter,
+            setPitchFilePath,
         } = this.props
         return <div>
             <Header title="Product / Service Information" subtitle={`Tell us more about what you’re offering and how it helps ${teamName}`}/>
@@ -63,7 +65,11 @@ class ProductService extends React.Component {
                 <div>
                     <h3>Pitch Material</h3>
                     <p className='description'>Upload the most recent pitch deck.  Ideally it includes features, benefits, and pricing!</p>
-                    <Clickable text='Upload Document' outline={true}/>
+                    <FileUploadForm buttonText={'Upload Document'}
+                        fileKeyPrefix={'inbound/pitches'}
+                        onCompleted={setPitchFilePath}
+                        buttonOutline={true}
+                        />
                 </div>
             </FlexBoxes>
             <div>
@@ -95,6 +101,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             dispatch(saveInbound()).then(saved => {
                 ownProps.history.push(ownProps.nextRoute)
             })
+        },
+        setPitchFilePath: ({filePath}) => {
+            console.log('got the file path!', filePath)
+            dispatch(setFormValue('pitchDeckFilePath', filePath))
         }
     }
 }

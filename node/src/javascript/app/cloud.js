@@ -7,8 +7,14 @@ import Inbound from 'models/Inbound'
 import Timeout from 'util/Timeout'
 import {USER_CLASSNAME, REDIRECT_CLASSNAME} from 'models/ModelConstants'
 import Redirect from 'models/Redirect'
+import AWS from 'aws-sdk'
+import {
+    DOCUMENT_BUCKET
+} from 'util/Environment'
+import uuid from 'uuid'
 
 const roostOrange = '#ef5b25'
+var s3Client = new AWS.S3({computeChecksums: true, signatureVersion: 'v4'}); // this is the default setting
 
 export function initialize(){
     console.log('setting up cloud functions')
@@ -83,6 +89,33 @@ export function initialize(){
             return response.success(body)
         }).catch(error => {
             return response.error({error})
+        })
+    })
+
+    Parse.Cloud.define('getPresignedUploadUrl', async (request, response) => {
+        new Timeout(async (resolve, reject) => {
+            console.log(`getPresignedUploadUrl: params: ${request.params}`);
+            const {filename, contentType, pathPrefix} = request.params
+            const id = uuid.v4()
+            const s3Key = `${pathPrefix}/${id}/${filename}`
+
+            var params = {
+                Bucket: DOCUMENT_BUCKET,
+                Key: s3Key,
+                ContentType: contentType
+            };
+
+            console.log('generating s3 key with params:', params);
+            let signedUrl = s3Client.getSignedUrl('putObject', params);
+            resolve({
+                signedUrl,
+                s3Key
+            })
+        }, 2000).then(({signedUrl, s3Key}) => {
+            return response.success({
+                signedUrl,
+                filePath: s3Key
+            })
         })
     })
 

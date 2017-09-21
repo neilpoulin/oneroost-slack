@@ -29,6 +29,9 @@ export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
 //LINKEDIN
 export const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID || '78v10otstxnu8h'
 
+//AWS
+export const DOCUMENT_BUCKET = process.env.DOCUMENT_BUCKET || 'oneroost-documents'
+
 //Helper Methods
 export const isProd = () => {
     return ENV.toLowerCase() === 'prod'

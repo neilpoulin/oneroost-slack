@@ -20,7 +20,7 @@ module.exports = {
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json', '.css', '.scss'],
-        modules: ['frontend', 'src', 'containers', 'ducks', 'components', 'node_modules', './lib/scripts', './lib/styles'],
+        modules: ['frontend', 'src', 'containers', 'ducks', 'components', 'actions', 'organisms', 'node_modules', './lib/scripts', './lib/styles'],
         alias: {
             models: path.join(__dirname, 'lib/scripts/models/frontend/'),
             'react-select-css': path.join(__dirname, 'node_modules', 'react-select/dist/react-select.css')
