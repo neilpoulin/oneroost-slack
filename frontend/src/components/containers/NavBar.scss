@@ -1,7 +1,10 @@
 @import "~variables";
 
 .navContainer{
-    position: fixed;
+    position: absolute;
+    &.fixed{
+        position: fixed;
+    }
     z-index: 9000;
     top: 0;
     left: 0;

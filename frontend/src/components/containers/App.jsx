@@ -14,12 +14,15 @@ import PrivateRoute from './PrivateRoute'
 const App = ({hasLoaded}) => (
   <Router>
     <div className="container">
-      <NavBar/>
+      <NavBar/>      
       <div className="pageBase" display-if={hasLoaded}>
           <Route exact path="/" component={HomePage}/>
-          <Route path="/login" component={LoginPage}/>
-          <Route path={'/teams/:teamId'} component={TeamInboundPage}/>
-          <PrivateRoute path='/settings' component={SettingsPage}/>
+          <div className='padded'>
+              <Route path="/login" component={LoginPage}/>
+              <Route path={'/teams/:teamId'} component={TeamInboundPage}/>
+              <PrivateRoute path='/settings' component={SettingsPage}/>
+          </div>
+
       </div>
       <div display-if={!hasLoaded}>
           Loading!

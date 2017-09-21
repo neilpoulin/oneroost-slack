@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {
     Link,
     NavLink,
@@ -8,9 +9,17 @@ import LogoutLink from './LogoutLink'
 import {connect} from 'react-redux'
 
 class NavBar extends React.Component {
+    static propTypes = {
+        fixed: PropTypes.bool,
+    }
+
+    static defaultProps = {
+        fixed: true,
+    }
+
     render () {
-        const {isLoggedIn, hasSlack} = this.props
-        return <div className="navContainer">
+        const {isLoggedIn, hasSlack, fixed} = this.props
+        return <div className={`navContainer ${fixed ? 'fixed' : ''}`}>
             <ul className="nav">
                 <li className='navLink'><Link to="/">OneRoost</Link></li>
             </ul>
