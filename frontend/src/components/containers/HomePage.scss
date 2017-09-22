@@ -29,6 +29,11 @@
         margin-bottom: 5rem;
     }
 
+    .error{
+        padding: 1rem;
+        color: $secondaryColor;
+    }
+
     .tagline{
         font-size: $baseFontSize;
         line-height: 1.5* $baseFontSize;

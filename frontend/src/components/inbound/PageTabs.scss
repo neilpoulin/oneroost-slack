@@ -8,6 +8,8 @@ $transitionDuration: .2s;
     justify-content: space-around;
     .tab{
         margin: 0rem 1rem;
+        flex-grow: 1;
+        align-self: baseline;
         .link{
             text-decoration: none;
             color: $primaryTextColor;
@@ -33,6 +35,7 @@ $transitionDuration: .2s;
 @media (max-width: $screen-sm-min) {
     .tabs{
         flex-direction: column;
+        align-self: baseline;
         .tab{
             margin: .5rem 0rem;
             .link{

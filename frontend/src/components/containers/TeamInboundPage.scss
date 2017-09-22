@@ -6,11 +6,38 @@
     align-items: center;
     padding-left: 4rem;
     padding-right: 4rem;
+    padding-top: 4rem;
+}
+
+.backContainer{
+    display: none;
+}
+
+footer{
+    margin-bottom: 5rem;
+    .link{
+        text-decoration: none;
+        color: black;
+        &:hover{
+            color: $roostOrange;
+            text-decoration: none;
+        }
+    }
 }
 
 @media (max-width: $screen-sm-min) {
     .container{
         padding-left: .5rem;
         padding-right: .5rem;
+        padding-top: 0;
+        .tabs{
+            display: none;
+        }
+        .backContainer{
+            display: block;
+            padding: 1rem;
+            align-self: flex-start;
+        }
     }
+
 }

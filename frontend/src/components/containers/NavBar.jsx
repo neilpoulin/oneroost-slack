@@ -8,6 +8,7 @@ import {
 import LogoutLink from './LogoutLink'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
+import Logo from 'atoms/Logo'
 
 class NavBar extends React.Component {
     static propTypes = {
@@ -36,7 +37,7 @@ class NavBar extends React.Component {
 
         return <div className={containerClasses}>
             <ul className="nav">
-                <li className='navLink' display-if={showHome}><Link to="/">OneRoost</Link></li>
+                <li className='navLink' display-if={showHome}><Link to="/"><Logo/></Link></li>
             </ul>
             <ul className='nav'>
                 <li className='navLink' display-if={isLoggedIn}><NavLink to="/settings">Settings</NavLink></li>

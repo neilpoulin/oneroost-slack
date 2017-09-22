@@ -12,11 +12,15 @@ import {
   Route,
 } from 'react-router-dom'
 import BasePage from './BasePage'
+import BackButton from 'molecule/BackButton'
+import Logo from 'atoms/Logo'
+import {Link, withRouter} from 'react-router-dom'
 
 class TeamInboundPage extends React.Component {
     static propTypes = {
         teamName: PropTypes.string,
         match: PropTypes.any,
+        location: PropTypes.any,
         isLoading: PropTypes.bool,
         teamId: PropTypes.string,
         //actions
@@ -31,6 +35,7 @@ class TeamInboundPage extends React.Component {
     render () {
         const {
             match,
+            location,
             isLoading,
             teamId,
             teamName,
@@ -42,8 +47,13 @@ class TeamInboundPage extends React.Component {
 
         return <BasePage showNav={false}>
             <div className="container">
-                <PageTabs/>
-                <Route exact path={`${match.url}`} render={() => <ProcessOverview
+                <div className='tabs'>
+                    <PageTabs className=''/>
+                </div>
+                <div className='backContainer' display-if={match.url !== location.pathname}>
+                    <BackButton/>
+                </div>
+                <Route onChange={() => window.scrollTo(0,0)} exact path={`${match.url}`} render={() => <ProcessOverview
                     teamId={teamId}
                     teamName={teamName}
                     nextRoute={`${match.url}/company`}/>}
@@ -53,6 +63,9 @@ class TeamInboundPage extends React.Component {
                 <Route path={`${match.url}/case-studies`} render={()=> <CustomerValidation nextRoute={`${match.url}/review`}/>}/>
                 <Route path={`${match.url}/review`} render={()=> <Review teamName={teamName}/>}/>
             </div>
+            <footer>
+                <Link to='/' className='link'>Powered by <Logo/></Link>
+            </footer>
         </BasePage>
     }
 }
@@ -80,4 +93,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TeamInboundPage);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(TeamInboundPage))

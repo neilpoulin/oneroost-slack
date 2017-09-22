@@ -19,6 +19,11 @@ class CustomerValidation extends React.Component {
             review: PropTypes.string,
         })),
         nextRoute: PropTypes.any,
+        saveAndContinue: PropTypes.func,
+        addTestimonial: PropTypes.func,
+        createTestimonialSetter: PropTypes.func,
+        removeTestimonial: PropTypes.func,
+        setCaseStudyFilePath: PropTypes.func,
     }
 
     componentDidMount() {
@@ -38,35 +43,37 @@ class CustomerValidation extends React.Component {
 
         return <div className='container'>
             <Header title={'Customer Validation'} subtitle={'Let us know what previous customers are saying.  Optional but highly recommended!'}/>
-            <FlexBoxes defaultContentStyles={false}>
-                <div className='content'>
-                    <h3>Case Study</h3>
-                    <FileUploadForm buttonText={'Upload a Case Study'}
-                        fileKeyPrefix={'inbound/pitches'}
-                        onCompleted={setCaseStudyFilePath}
-                        buttonOutline={true}
-                        />
-                </div>
-                {testimonials.map((testimonial, i) => {
-                    return <div key={`testimonial-${i}`} className='content'>
-                        <h3>Testimonials</h3>
-                        <FormGroup label='Customer Name'>
-                            <TextInput onChange={createTestimonialSetter(i, 'customerName')} value={testimonial.customerName}/>
-                        </FormGroup>
-                        <FormGroup label='Comments'>
-                            <TextArea rows={6} onChange={createTestimonialSetter(i, 'comment')} value={testimonial.comment}/>
-                        </FormGroup>
-                        <div>
-                            <Clickable look='link' onClick={() => removeTestimonial(i)} text='remove'/>
+            <div className='flexboxes'>
+                <FlexBoxes defaultContentStyles={false}>
+                    <div className='content'>
+                        <h3>Case Study</h3>
+                        <FileUploadForm buttonText={'Upload a Case Study'}
+                            fileKeyPrefix={'inbound/pitches'}
+                            onCompleted={setCaseStudyFilePath}
+                            buttonOutline={true}
+                            />
+                    </div>
+                    {testimonials.map((testimonial, i) => {
+                        return <div key={`testimonial-${i}`} className='content'>
+                            <h3>Testimonials</h3>
+                            <FormGroup label='Customer Name'>
+                                <TextInput onChange={createTestimonialSetter(i, 'customerName')} value={testimonial.customerName}/>
+                            </FormGroup>
+                            <FormGroup label='Comments'>
+                                <TextArea rows={6} onChange={createTestimonialSetter(i, 'comment')} value={testimonial.comment}/>
+                            </FormGroup>
+                            <div>
+                                <Clickable look='link' onClick={() => removeTestimonial(i)} text='remove'/>
+                            </div>
+                        </div>
+                    })}
+                    <div className='addTestimonial'>
+                        <div className='actions'>
+                            <Clickable inline={true} onClick={addTestimonial} outline={true} text='Add New Testimonial'/>
                         </div>
                     </div>
-                })}
-                <div className='addTestimonial'>
-                    <div className='actions'>
-                        <Clickable inline={true} onClick={addTestimonial} outline={true} text='Add New Testimonial'/>
-                    </div>
-                </div>
-            </FlexBoxes>
+                </FlexBoxes>
+            </div>
             <div>
                 <Clickable onClick={saveAndContinue} text={'Continue'}/>
             </div>

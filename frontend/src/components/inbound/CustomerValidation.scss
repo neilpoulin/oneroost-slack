@@ -5,9 +5,15 @@
     min-height: 15rem;
 }
 
+.flexboxes{
+    margin-bottom: 4rem;
+}
+
 .addTestimonial{
     display: flex;
     height: 100%;
+    align-self: center;
+    justify-content: center;
     .actions{
         align-self: center;
     }
