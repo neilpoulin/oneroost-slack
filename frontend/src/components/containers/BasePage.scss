@@ -1,0 +1,13 @@
+.pageBase{
+    &.horizontalPadding{
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    &.bottomPadding{
+        padding-bottom: 5rem;
+    }
+
+    &.navPadding{
+        margin-top: 4rem;
+    }
+}

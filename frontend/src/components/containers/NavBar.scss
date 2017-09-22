@@ -2,9 +2,6 @@
 
 .navContainer{
     position: absolute;
-    &.fixed{
-        position: fixed;
-    }
     z-index: 9000;
     top: 0;
     left: 0;
@@ -15,16 +12,31 @@
     justify-content: space-between;
     border-bottom: 1px solid gray;
     background-color: $globalBg;
+    &.fixed{
+        position: fixed;
+    }
+    &.transparent{
+        background-color: transparent;
+        border-bottom: 0px;
+    }
+    &.color-white{
+        color: white;
+        .nav{
+            .navLink a{
+                color: white;
+            }
+        }
+    }
 }
 
-ul.nav{
+.nav{
     list-style: none;
     display: flex;
     align-items: flex-start;
     margin: 0;
     padding: 0;
     align-items: center;
-    li {
+    > * {
         text-decoration: none;
         display: flex;
         &.navLink a {

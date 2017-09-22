@@ -17,7 +17,6 @@ class Logo extends React.Component {
         return <span
             className={classes}>
             OneRoost
-            <input/>
         </span>
 
     }

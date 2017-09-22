@@ -57,7 +57,7 @@ a {
 @mixin button-style ($btnColor, $textColor) {
     color: $textColor;
     background-color: $btnColor;
-    padding: $padding + $borderWeight;
+    padding: ($padding + $borderWeight) ($padding + $borderWeight) * 2;
     &:hover:not(.disabled){
         cursor: pointer;
         $darkenedColor: darken($btnColor, $hoverDarken);

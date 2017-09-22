@@ -5,6 +5,7 @@ import qs from 'qs'
 import {loginWithSlack} from 'ducks/user'
 import {Redirect} from 'react-router'
 import GoogleLoginButton from './GoogleLoginButton'
+import BasePage from './BasePage'
 
 class LoginPage extends React.Component{
     static propTypes = {
@@ -12,6 +13,13 @@ class LoginPage extends React.Component{
         slackClientId: PropTypes.string.isRequired,
         error: PropTypes.any,
         isLoggedIn: PropTypes.bool,
+        isLoading: PropTypes.bool,
+        userName: PropTypes.string,
+        teamName: PropTypes.string,
+        location: PropTypes.any,
+        hasGoogle: PropTypes.bool,
+        hasSlack: PropTypes.bool,
+        redirectUri: PropTypes.string,        
         //actions
         getToken: PropTypes.func.isRequired,
     }
@@ -45,7 +53,7 @@ class LoginPage extends React.Component{
         }
 
         return (
-            <div>
+            <BasePage>
                 <div display-if={isLoggedIn} className="">
                     Successfully logged in as {userName} @ {teamName}
                 </div>
@@ -62,13 +70,13 @@ class LoginPage extends React.Component{
                             height="40"
                             width="172"
                             src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
-                            srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" />
+                            srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"/>
                     </a>
                 </div>
                 <div display-if={!hasGoogle}>
                     <GoogleLoginButton/>
                 </div>
-            </div>)
+            </BasePage>)
     }
 }
 

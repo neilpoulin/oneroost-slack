@@ -42,10 +42,10 @@ class Clickable extends React.Component {
         this._handleClick = this._handleClick.bind(this)
     }
 
-    _handleClick() {
+    _handleClick(event) {
         const {disabled, onClick} = this.props
         if (!disabled && onClick){
-            onClick()
+            onClick(event)
         }
     }
 
@@ -72,10 +72,10 @@ class Clickable extends React.Component {
             'disabled': disabled,
         })
         if(to){
-            return <Link className={classes} to={to}>{text}</Link>
+            return <Link className={classes} to={to} onClick={this._handleClick}>{text}</Link>
         }
         if(href){
-            return <a className={classes} href={href} target={target}>{text}</a>
+            return <a className={classes} href={href} target={target} onClick={this._handleClick}>{text}</a>
         }
         return <span className={classes} onClick={this._handleClick} disabled={disabled}>{text}</span>
     }

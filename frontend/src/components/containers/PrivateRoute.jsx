@@ -6,7 +6,10 @@ import {isLoggedIn, isUserLoading, hasUserLoaded} from 'selectors/user'
 
 class PrivateRoute extends React.Component {
     static propTypes = {
-        component: PropTypes.any.isRequired
+        component: PropTypes.any.isRequired,
+        isLoggedIn: PropTypes.bool.isRequired,
+        isLoading: PropTypes.bool,
+        hasLoaded: PropTypes.bool,
     }
 
     render () {
@@ -24,12 +27,12 @@ class PrivateRoute extends React.Component {
             }
             if (!hasLoaded || isLoading){
                 return null
-            }            
+            }
             return (<Redirect to={{
                 pathname: '/login',
                 state: { from: props.location }
             }}/>)
-        }} />
+        }}/>
     }
 }
 

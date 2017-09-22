@@ -9,6 +9,7 @@ import Parse from 'parse'
 import Checkbox from 'atoms/Checkbox'
 import Clickable from 'atoms/Clickable'
 import {Link} from 'react-router-dom'
+import BasePage from 'BasePage'
 
 class SettingsPage extends React.Component {
     static propTypes = {
@@ -16,7 +17,18 @@ class SettingsPage extends React.Component {
         slackClientId: PropTypes.string.isRequired,
         error: PropTypes.any,
         isLoggedIn: PropTypes.bool,
+        userName: PropTypes.string,
+        teamName: PropTypes.string,
+        teamId: PropTypes.string,
+        slackTeamId: PropTypes.string,
+        channels: PropTypes.array,
+        redirectUri: PropTypes.string,
+        parseUserId: PropTypes.string,
+        hasGoogle: PropTypes.bool,
+        hasSlack: PropTypes.bool,
         //actions
+        selectChannel: PropTypes.func.isRequired,
+        refreshSlack: PropTypes.func.isRequired,
         postToChannel: PropTypes.func.isRequired,
     }
 
@@ -37,46 +49,48 @@ class SettingsPage extends React.Component {
         } = this.props
 
         return (
-            <div>
-                <h1>Settings</h1>
-                <p>Welcome, {userName} @ {teamName}</p>
+            <BasePage>
                 <div>
-                    Parse User Id = {parseUserId}
-                </div>
-                <div>
-                    Parse Team Id = {teamId}
-                </div>
-                <div>
-                    Slack Team Id = {slackTeamId}
-                </div>
-                <div display-if={channels} className='channels'>
-                    <h4>Channels</h4>
-                    {channels.map((c, i) =>
-                        <div key={`channel_${i}`} className='channel'>
-                            <Checkbox label={`#${c.name}`} onChange={(selected) => selectChannel(c.id, selected)} selected={c.selected}/>
-                        </div>)
-                    }
-                </div>
-                <div className='action'>
-                    <Clickable inline={true} outline={true} onClick={refreshSlack} text='Refresh Channels'/>
-                </div>
-                <div className='action'>
-                    <Link to={`/teams/${teamId}`} className=''>Vendor Inbound Flow</Link>
-                </div>
-                <div display-if={!hasSlack}>
-                    <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
+                    <h1>Settings</h1>
+                    <p>Welcome, {userName} @ {teamName}</p>
+                    <div>
+                        Parse User Id = {parseUserId}
+                    </div>
+                    <div>
+                        Parse Team Id = {teamId}
+                    </div>
+                    <div>
+                        Slack Team Id = {slackTeamId}
+                    </div>
+                    <div display-if={channels} className='channels'>
+                        <h4>Channels</h4>
+                        {channels.map((c, i) =>
+                            <div key={`channel_${i}`} className='channel'>
+                                <Checkbox label={`#${c.name}`} onChange={(selected) => selectChannel(c.id, selected)} selected={c.selected}/>
+                            </div>)
+                        }
+                    </div>
+                    <div className='action'>
+                        <Clickable inline={true} outline={true} onClick={refreshSlack} text='Refresh Channels'/>
+                    </div>
+                    <div className='action'>
+                        <Link to={`/teams/${teamId}`} className=''>Vendor Inbound Flow</Link>
+                    </div>
+                    <div display-if={!hasSlack}>
+                        <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
 
-                        <img alt="Sign in with Slack"
-                            height="40"
-                            width="172"
-                            src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
-                            srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x" />
-                    </a>
+                            <img alt="Sign in with Slack"
+                                height="40"
+                                width="172"
+                                src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
+                                srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"/>
+                        </a>
+                    </div>
+                    <div display-if={!hasGoogle}>
+                        <GoogleLoginButton/>
+                    </div>
                 </div>
-                <div display-if={!hasGoogle}>
-                    <GoogleLoginButton/>
-                </div>
-            </div>)
+            </BasePage>)
     }
 }
 

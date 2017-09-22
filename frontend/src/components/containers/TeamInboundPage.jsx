@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {loadTeam} from 'ducks/inbound'
 import CompanyInfo from 'inbound/CompanyInfo'
@@ -10,8 +11,19 @@ import PageTabs from 'inbound/PageTabs'
 import {
   Route,
 } from 'react-router-dom'
+import BasePage from './BasePage'
 
 class TeamInboundPage extends React.Component {
+    static propTypes = {
+        teamName: PropTypes.string,
+        match: PropTypes.any,
+        isLoading: PropTypes.bool,
+        teamId: PropTypes.string,
+        //actions
+        loadTeam: PropTypes.func.isRequired,
+
+    }
+
     componentDidMount() {
         this.props.loadTeam()
     }
@@ -28,18 +40,20 @@ class TeamInboundPage extends React.Component {
             return null
         }
 
-        return <div className="container">
-            <PageTabs/>
-            <Route exact path={`${match.url}`} render={() => <ProcessOverview
+        return <BasePage showNav={false}>
+            <div className="container">
+                <PageTabs/>
+                <Route exact path={`${match.url}`} render={() => <ProcessOverview
                     teamId={teamId}
                     teamName={teamName}
                     nextRoute={`${match.url}/company`}/>}
-            />
-            <Route path={`${match.url}/company`} render={() => <CompanyInfo teamName={teamName} nextRoute={`${match.url}/product`}/>}/>
-            <Route path={`${match.url}/product`} render={()=> <ProductService teamName={teamName} nextRoute={`${match.url}/case-studies`}/>}/>
-            <Route path={`${match.url}/case-studies`} render={()=> <CustomerValidation nextRoute={`${match.url}/review`}/>}/>
-            <Route path={`${match.url}/review`} render={()=> <Review teamName={teamName}/>}/>
-        </div>
+                />
+                <Route path={`${match.url}/company`} render={() => <CompanyInfo teamName={teamName} nextRoute={`${match.url}/product`}/>}/>
+                <Route path={`${match.url}/product`} render={()=> <ProductService teamName={teamName} nextRoute={`${match.url}/case-studies`}/>}/>
+                <Route path={`${match.url}/case-studies`} render={()=> <CustomerValidation nextRoute={`${match.url}/review`}/>}/>
+                <Route path={`${match.url}/review`} render={()=> <Review teamName={teamName}/>}/>
+            </div>
+        </BasePage>
     }
 }
 
