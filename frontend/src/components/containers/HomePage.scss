@@ -11,9 +11,9 @@
 
 
 .main{
-    // font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     $baseFontSize: 1.5rem;
-    // font-family: "Gotham Book";
+    font-family: "Gotham Book";
     font-size: 22px;
     position: relative;
 
@@ -21,7 +21,7 @@
         padding-top: 4rem;
     }
     h1{
-        // font-family: "Gotham Bold";
+        font-family: "Gotham Bold";
         font-size: 4rem;
         line-height: 6rem;
         margin-bottom: 5rem;
@@ -89,7 +89,7 @@
             width: 50%;
             font-size: 1.2rem;
             .title{
-                // font-family: "Gotham Bold";
+                font-family: "Gotham Bold";
                 color: #4A4A4A;
                 margin-top: 0px;
             }

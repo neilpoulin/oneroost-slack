@@ -21,6 +21,6 @@ store.dispatch(loadServerConfigs()).then(({PARSE_PUBLIC_URL, PARSE_APP_ID}) => {
 
     ReactDOM.render(
         <Provider store={store}>
-            <App />
+            <App/>
         </Provider>, document.getElementById('root'));
 })

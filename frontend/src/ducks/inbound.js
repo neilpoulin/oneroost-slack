@@ -26,7 +26,6 @@ const initialState = Immutable.fromJS({
     isLoading: false,
     hasLoaded: false,
     teamId: null,
-    hasLoaded: false,
     teamName: null,
     channels: [],
     tagOptions: [],

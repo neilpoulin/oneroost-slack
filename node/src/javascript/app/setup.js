@@ -25,4 +25,5 @@ module.exports = function(app){
         }));
     }
     app.use('/static/images', express.static(__dirname + './../../../../images'));
+    app.use('/static/fonts', express.static(__dirname + './../../../../fonts'));
 }

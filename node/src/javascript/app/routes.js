@@ -2,6 +2,7 @@ var path = require('path');
 var axios = require('axios');
 var router = require('express').Router()
 var viewRoot = path.join(__dirname, '..', '..', 'view')
+import Parse from 'parse/node'
 import {
     SLACK_CLIENT_ID,
     SLACK_CLIENT_SECRET,
@@ -76,7 +77,7 @@ router.post('/tokens/slack', async (req, res) => {
     }catch(e){
         console.error(e);
         res.status(403)
-        return res.send({error})
+        return res.send({e})
     }
 })
 
@@ -157,7 +158,6 @@ router.post('/webhooks/slack', async (req, res) => {
                 'replace_original': false,
                 'text': 'Unknown action type'
             });
-            break;
     }
     let interestLevelDisplayText = getInterestLevelDisplayText(interestLevel)
     let inboundQuery = new Parse.Query(INBOUND_CLASSNAME)

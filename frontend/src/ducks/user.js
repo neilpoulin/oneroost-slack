@@ -39,16 +39,15 @@ export default function reducer(state=initialState, action){
             state = state.set('slackAccessToken', action.payload.get('accessToken'))
             state = state.set('error', null)
             state = state.set('isLoggedIn', true)
-            let slackUser = action.payload.get('user')
-            if (slackUser){
-                if ( slackUser.name){
-                    let splitName = slackUser.name.split(' ')
-                    let firstName = slitName[0]
+            if ( action.payload.get('user')){
+                if (action.payload.get('user').name){
+                    let splitName =  action.payload.get('user').name.split(' ')
+                    let firstName = splitName[0]
                     let lastName = splitName.length > 0 ? splitName[1] : ''
                     state = state.set('firstName', firstName)
                         .set('lastName', lastName)
                 }
-                state = state.set('email', slackUser.email)
+                state = state.set('email',  action.payload.get('user').email)
             }
             state = state.set('hasSlack', true)
             return state
@@ -80,7 +79,6 @@ export default function reducer(state=initialState, action){
                 default:
                     return state;
             }
-            break;
         case LOGOUT:
             return state = initialState
         default:
@@ -223,10 +221,10 @@ function linkUser(user, provider, authData){
             // }).catch(error => console.error)
             return savedUser
         }).catch(error => {
+            let email = user.get('email')
             switch (error.code){
                 case 202:
                     console.log('user exists, can\'t link.. need to login first')
-                    let email = user.get('email')
                     dispatch(connectExistingUser({email, provider, authData}))
                     break;
                 case 206:
@@ -244,22 +242,23 @@ function linkUser(user, provider, authData){
 
 export function connectExistingUser({email, provider, authData}){
     return (dispatch) => {
-        fetchUserByEmail(email).then(user => {
-            if (user){
-                dispatch(linkUser(user, provider, authData))
-            }
-            else {
-                throw new Error('No user found.')
-            }
-        }).catch(error => {
-            console.error('Failed to link existing with' + provider, error)
-            switch(error.code){
-                case 206:
-                    error.message = 'If you already have an account, you must log in before you can connect via a thrid party.'
-                    break
-            }
-            dispatch(linkUserWithProviderError(provider, error))
-        })
+        console.warn('this method is not implemented!!!')
+        // fetchUserByEmail(email).then(user => {
+        //     if (user){
+        //         dispatch(linkUser(user, provider, authData))
+        //     }
+        //     else {
+        //         throw new Error('No user found.')
+        //     }
+        // }).catch(error => {
+        //     console.error('Failed to link existing with' + provider, error)
+        //     switch(error.code){
+        //         case 206:
+        //             error.message = 'If you already have an account, you must log in before you can connect via a thrid party.'
+        //             break
+        //     }
+        //     dispatch(linkUserWithProviderError(provider, error))
+        // })
     }
 }
 

@@ -1,0 +1,33 @@
+{
+    "env": {
+        "node": true,
+        "es6": true
+    },
+    "parser": "babel-eslint",
+    "rules": {
+        "quotes": [2, "single"],
+        "strict": [2, "never"],
+        "no-irregular-whitespace": 1,
+        "indent": ["error", 4, {"SwitchCase": 1, "MemberExpression": 1}],
+        "react/jsx-uses-react": 2,
+        "react/jsx-uses-vars": 2,
+        "react/react-in-jsx-scope": 2,
+        "react/jsx-indent-props": [1, 4],
+        "react/jsx-tag-spacing": [2, {"beforeSelfClosing": "never"}],
+        "react/jsx-equals-spacing": [2, "never"],
+        "no-unused-vars": [1, {"vars": "local","args": "none"}],
+        "no-use-before-define": ["error", "nofunc"],
+        "no-undefined": ["error"],
+        "no-console": [0]
+    },
+    "settings": {
+        "react": {
+            "createClass": "createReactClass",
+            "pragma": "React",
+            "version": "15.0"
+        },
+        "propWrapperFunctions": [ "forbidExtraProps" ]
+    },
+    "extends": ["eslint:recommended", "plugin:react/recommended"],
+    "plugins": ["react"]
+}

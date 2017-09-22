@@ -43,11 +43,11 @@ function getDashboardConfig(){
 }
 
 export function getLiveQueryServer(httpServer){
-    ParseServer.createLiveQueryServer(httpServer, {
-        appId: envUtil.getParseAppId(),
-        masterKey: envUtil.getParseMasterKey(),
-        serverURL: envUtil.getParseServerUrl(),
-    });
+    // ParseServer.createLiveQueryServer(httpServer, {
+    //     appId: envUtil.getParseAppId(),
+    //     masterKey: envUtil.getParseMasterKey(),
+    //     serverURL: envUtil.getParseServerUrl(),
+    // });
 }
 
 export function getParseServer(){

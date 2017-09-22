@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {loadPage} from 'ducks/homePage'
 import Clickable from 'atoms/Clickable'
+import Logo from 'atoms/Logo'
 // import TermsOfServiceLink from 'TermsOfServiceLink'
 // import RoostNav, {TRANSPARENT_STYLE, LIGHT_FONT_STYLE, DARK_FONT_HOVER_STYLE} from 'RoostNav'
 
@@ -33,13 +34,14 @@ class HomePage extends React.Component{
         if (isLoading){
             return null
         }
-
+        console.log(test)
+        let test = 'la'
         var page =
         <div className={'main'} >
             <section className="background-primary textured">
                 <div className="container">
                     <div className="logoContainer">
-                        <h1>OneRoost</h1>
+                        <Logo size='heading'/>
                     </div>
 
                     <div className="heroContainer" display-if={heroTitle}>

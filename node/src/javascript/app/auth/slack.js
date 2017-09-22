@@ -1,4 +1,3 @@
-import axios from 'axios'
 import {getUserInfo} from 'slack/slackService'
 import {Parse} from 'parse/node'
 

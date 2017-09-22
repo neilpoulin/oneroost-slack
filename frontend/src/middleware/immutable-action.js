@@ -25,9 +25,7 @@ function immutableAction({ getState }) {
         catch (e){
             console.error(e)
         }
-        finally{
-            return returnValue
-        }
+        return returnValue
     }
 }
 

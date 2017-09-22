@@ -16,7 +16,7 @@ module.exports = {
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json', '.css', '.scss'],
-        modules: ['frontend', 'src', 'containers', 'ducks', 'components', 'actions', 'organisms', 'node_modules', './lib/scripts', './lib/styles'],
+        modules: ['frontend', 'src', 'containers', 'ducks', 'components', 'actions', 'organisms', 'node_modules', './lib/scripts', './lib/styles', './lib/fonts'],
         alias: {
             models: path.resolve(__dirname, 'lib/scripts/models/frontend/'),
             'react-select-css': path.join(__dirname, 'node_modules', 'react-select/dist/react-select.css')
@@ -89,7 +89,11 @@ module.exports = {
                         options: {sourceMap: true, }
                     },
                 ]
-            }
+            },
+            {
+                test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+                loader: 'file-loader?name=fonts/[name].[ext]'
+            },
         ]
     }
 };
