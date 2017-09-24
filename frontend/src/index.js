@@ -13,14 +13,21 @@ store.subscribe(() => {
 
 })
 
-store.dispatch(loadServerConfigs()).then(({PARSE_PUBLIC_URL, PARSE_APP_ID}) => {
-    Parse.initialize(PARSE_APP_ID);
-    Parse.serverURL = window.location.origin + '/parse';
-    store.dispatch(loadUser())
-    console.log(Parse.User.current())
+store.dispatch(loadServerConfigs())
+    .then(({PARSE_PUBLIC_URL, PARSE_APP_ID, INTERCOM_APP_ID}) => {
+        Parse.initialize(PARSE_APP_ID);
+        Parse.serverURL = window.location.origin + '/parse';
+        store.dispatch(loadUser())
+        console.log(Parse.User.current())
+        //setup Intercom
+        if (window.Intercom){
+            window.Intercom('boot', {
+                app_id: INTERCOM_APP_ID
+            });
+        }
 
-    ReactDOM.render(
+        ReactDOM.render(
         <Provider store={store}>
             <App/>
         </Provider>, document.getElementById('root'));
-})
+    })

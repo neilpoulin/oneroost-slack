@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Clickable from 'atoms/Clickable'
 import Header from './Header'
-import Logo from 'atoms/Logo'
 
 class ProcessOverview extends React.Component {
     static propTypes = {

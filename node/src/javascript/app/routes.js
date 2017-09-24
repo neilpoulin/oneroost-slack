@@ -13,6 +13,8 @@ import {
     ENV_NAME,
     GOOGLE_CLIENT_ID,
     HOSTNAME,
+    INTERCOM_SECRET_KEY,
+    INTERCOM_APP_ID,
 } from 'util/Environment'
 import {
     postToChannel,
@@ -96,6 +98,7 @@ router.get('/configs', (req, res) => {
         SLACK_CLIENT_ID,
         GOOGLE_CLIENT_ID,
         HOSTNAME,
+        INTERCOM_APP_ID,
     })
 })
 

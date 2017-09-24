@@ -32,6 +32,10 @@ export const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID || '78v10otstxn
 //AWS
 export const DOCUMENT_BUCKET = process.env.DOCUMENT_BUCKET || 'oneroost-documents'
 
+//intercom
+export const INTERCOM_APP_ID = process.env.INTERCOM_APP_ID
+export const INTERCOM_SECRET_KEY = process.env.INTERCOM_SECRET_KEY
+
 //Helper Methods
 export const isProd = () => {
     return ENV.toLowerCase() === 'prod'
