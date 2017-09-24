@@ -46,7 +46,7 @@ phases:
       - echo Build started on `date`
       - echo starting the gulp build process
       - echo Installing gulp...again...
-      - yarn global add gulp
+      - npm install gulp
       - which gulp && gulp -v
     #   - gulp version
       - gulp install
