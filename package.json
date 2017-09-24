@@ -12,6 +12,7 @@
         "dev:server": "NODE_ENV=production webpack && NODE_ENV=production nodemon main.js",
         "bundle": "NODE_ENV=production webpack",
         "lint": "eslint frontend",
+        "install": "gulp install",
         "test": "jest --watch"
     },
     "jest": {

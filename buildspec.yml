@@ -45,11 +45,10 @@ phases:
     commands:
       - echo Build started on `date`
       - echo starting the gulp build process
-      - echo Installing gulp...again...
-      - npm install gulp
-      - which gulp && gulp -v
+      - echo where am I?
+      - pwd && ls
     #   - gulp version
-      - gulp install
+      - npm run install
   post_build:
     commands:
       - echo Build completed on `date`
