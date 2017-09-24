@@ -27,7 +27,7 @@ class NavBar extends React.Component {
     }
 
     render () {
-        const {isLoggedIn, hasSlack, fixed, backgroundStyle, textColor, showHome} = this.props
+        const {isLoggedIn, fixed, backgroundStyle, textColor, showHome} = this.props
 
         const containerClasses = classNames('navContainer', {
             'fixed': fixed,
@@ -44,7 +44,7 @@ class NavBar extends React.Component {
                 <li className='navLink' display-if={isLoggedIn}>
                     <LogoutLink/>
                 </li>
-                <li className='navLink' display-if={!isLoggedIn}><NavLink to="/login">Login</NavLink></li>                
+                <li className='navLink' display-if={!isLoggedIn}><NavLink to="/login">Login</NavLink></li>
             </ul>
         </div>
     }

@@ -41,7 +41,6 @@ class LoginPage extends React.Component{
             userName,
             teamName,
             location,
-            hasGoogle,
             hasSlack,
             redirectUri
         } = this.props
@@ -103,7 +102,6 @@ const mapStateToProps = (state, ownProps) => {
         userName: user.get('firstName') + ' ' + user.get('lastName'),
         userEmail: user.get('email'),
         redirectUri: `${config.get('HOSTNAME')}/login`,
-        hasGoogle: user.get('hasGoogle', false),
         hasSlack: user.get('hasSlack', false)
     }
 }

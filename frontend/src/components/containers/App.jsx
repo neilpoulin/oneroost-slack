@@ -10,6 +10,8 @@ import HomePage from './HomePage'
 import SettingsPage from './SettingsPage'
 import TeamInboundPage from './TeamInboundPage'
 import PrivateRoute from './PrivateRoute'
+import SupportPage from './SupportPage'
+import PrivacyPage from './PrivacyPage'
 
 const App = ({
     hasLoaded
@@ -20,6 +22,8 @@ const App = ({
             <Route path="/login" component={LoginPage}/>
             <Route path={'/teams/:teamId'} component={TeamInboundPage}/>
             <PrivateRoute path='/settings' component={SettingsPage}/>
+            <Route path='/support' component={SupportPage}/>
+            <Route path='/privacy' component={PrivacyPage}/>
         </div>
     </Router>
 )
