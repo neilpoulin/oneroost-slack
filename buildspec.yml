@@ -18,7 +18,7 @@ phases:
       - echo Installing Yarn...
       - npm install -g yarn
       - echo Installing source Yarn dependencies...
-      - yarn install --production=false
+      - yarn --production=false
     #   - npm install -g node-sass
       - echo Installing gulp...
       - yarn global add gulp
@@ -38,7 +38,6 @@ phases:
     #   - which sentry-cli
   pre_build:
     commands:
-
     #   - echo log into sentry with auth token
     #   - sentry-cli info
   build:
