@@ -19,6 +19,7 @@ phases:
       - npm install -g gulp@3.9.1
       - echo Installing Yarn...
       - npm install -g yarn@1.0.0
+      - echo yarn version && yarn -v
       - echo Installing source Yarn dependencies...
     #   - npm install -g node-sass
       - which gulp && gulp -v
