@@ -48,7 +48,7 @@ phases:
       - echo where am I?
       - pwd && ls
     #   - gulp version
-      - npm run install
+      - npm run build
   post_build:
     commands:
       - echo Build completed on `date`
