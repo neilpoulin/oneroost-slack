@@ -73,10 +73,7 @@ class HomePage extends React.Component{
             paragraphs,
             hasMore,
             isLoading,
-            installing,
-            installed,
-            installError,
-            installSuccess
+            redirectUri,
             //actions
         } = this.props
 
@@ -107,7 +104,9 @@ class HomePage extends React.Component{
                             <p className="tagline" display-if={heroSubTitle}>{heroSubTitle}</p>
                         </div>
                         <div className="emailContainer form-group" display-if={ctaButtonText}>
-                            <a href="https://slack.com/oauth/authorize?&client_id=225772115667.227177070210&scope=incoming-webhook,chat:write:bot,channels:write,channels:read,files:write:user"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"/></a>
+                            <a href={`https://slack.com/oauth/authorize?&client_id=225772115667.227177070210&scope=chat:write:bot,channels:write,channels:read,files:write:user&redirect_uri=${encodeURIComponent(redirectUri)}`}>
+                                <img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"/>
+                            </a>
                         </div>
                         <div display-if={ctaSubText} className={'actionSubTextContainer'}>
                             {ctaSubText}
@@ -159,9 +158,12 @@ const mapStateToProps = (state, ownProps) => {
             success: installSuccess,
         },
     } = homePage
+    const config = state.config
+    const redirectUri = `${config.get('HOSTNAME')}/login`
 
     const hasMore = paragraphs && paragraphs.length > 0
     return {
+        redirectUri,
         heroTitle,
         heroSubTitle,
         ctaSubText,
