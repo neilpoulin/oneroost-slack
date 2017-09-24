@@ -45,8 +45,9 @@ phases:
     commands:
       - echo Build started on `date`
       - echo starting the gulp build process
-      - printing the gulp version as part of the build process
-      - echo gulp -v
+      - echo Installing gulp...again...
+      - yarn global add gulp
+      - which gulp && gulp -v
     #   - gulp version
       - gulp install
   post_build:
