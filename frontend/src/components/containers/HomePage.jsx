@@ -81,7 +81,7 @@ class HomePage extends React.Component{
         } = this.props
 
         const $footer = <div className="container">
-            &copy; 2017 OneRoost
+            &copy; 2017 OneRoost | <Clickable look='link' text='Privacy' to='/privacy'/> | <Clickable to='/support' look='link' text='Support'/>
         </div>
 
         if (isLoading){
