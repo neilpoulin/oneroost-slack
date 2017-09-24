@@ -5,7 +5,6 @@ import {
     NavLink,
     withRouter,
 } from 'react-router-dom'
-import LogoutLink from './LogoutLink'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import Logo from 'atoms/Logo'
@@ -41,9 +40,6 @@ class NavBar extends React.Component {
             </ul>
             <ul className='nav'>
                 <li className='navLink' display-if={isLoggedIn}><NavLink to="/settings">Settings</NavLink></li>
-                <li className='navLink' display-if={isLoggedIn}>
-                    <LogoutLink/>
-                </li>
                 <li className='navLink' display-if={!isLoggedIn}><NavLink to="/login">Login</NavLink></li>
             </ul>
         </div>

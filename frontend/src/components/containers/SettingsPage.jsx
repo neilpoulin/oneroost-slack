@@ -12,7 +12,7 @@ import {Link} from 'react-router-dom'
 import BasePage from 'BasePage'
 import ChromeExtensionButton from 'molecules/ChromeExtensionButton'
 import FlexBoxes from 'molecule/FlexBoxes'
-
+import LogoutLink from 'containers/LogoutLink'
 class SettingsPage extends React.Component {
     static propTypes = {
         code: PropTypes.string,
@@ -52,7 +52,7 @@ class SettingsPage extends React.Component {
             <BasePage>
                 <div>
                     <h1>Settings</h1>
-                    <p>Welcome, {userName} @ {teamName}</p>
+                    <p>Welcome, {userName} @ {teamName} (<LogoutLink/>)</p>
                     <div className='action'>
                         <Link to={`/teams/${teamId}`} className=''>Vendor Inbound Flow</Link>
                     </div>
@@ -93,7 +93,6 @@ class SettingsPage extends React.Component {
                             </div>
                         </div>
                     </FlexBoxes>
-
                 </div>
             </BasePage>)
     }
