@@ -18,11 +18,11 @@ phases:
       - echo Installing Yarn...
       - npm install -g yarn
       - echo Installing source Yarn dependencies...
-      - yarn --production=false
     #   - npm install -g node-sass
       - echo Installing gulp...
       - yarn global add gulp
       - which gulp && gulp -v
+      - yarn --production=false
     #   - yarn global add webpack
     #   - yarn global add babel-loader
     #   - yarn global add babel-preset-react
