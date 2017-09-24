@@ -65,7 +65,7 @@ const sharedProps = {
     PARSE_APP_ID: process.env.ONEROOST_PARSE_APP_ID_DEV,
     DATABASE_URL: 'mongodb://localhost:27017/oneroost-db',
     DOCUMENT_BUCKET: 'oneroost-documents',
-    INTERCOM_APP_ID: 'te0db1m0',    
+    INTERCOM_APP_ID: 'te0db1m0',
     // VERBOSE: 1, //used for parse server verbose mode
 }
 

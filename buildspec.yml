@@ -9,8 +9,6 @@ version: 0.1
 phases:
   install:
     commands:
-      - echo dumping all environment variables
-      - printenv
     #   - echo putting CODEBUILD_BUILD_ID=$CODEBUILD_BUILD_ID into file
     #   - echo "export const build_id = \"$CODEBUILD_BUILD_ID\"" > codebuild_build.js
       - echo "NODE_ENV = $NODE_ENV"
@@ -47,6 +45,8 @@ phases:
     commands:
       - echo Build started on `date`
       - echo starting the gulp build process
+      - printing the gulp version as part of the build process
+      - echo gulp -v
     #   - gulp version
       - gulp install
   post_build:
