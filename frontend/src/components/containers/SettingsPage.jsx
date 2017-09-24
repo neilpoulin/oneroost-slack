@@ -10,6 +10,8 @@ import Checkbox from 'atoms/Checkbox'
 import Clickable from 'atoms/Clickable'
 import {Link} from 'react-router-dom'
 import BasePage from 'BasePage'
+import ChromeExtensionButton from 'molecules/ChromeExtensionButton'
+import FlexBoxes from 'molecule/FlexBoxes'
 
 class SettingsPage extends React.Component {
     static propTypes = {
@@ -53,42 +55,47 @@ class SettingsPage extends React.Component {
                 <div>
                     <h1>Settings</h1>
                     <p>Welcome, {userName} @ {teamName}</p>
-                    <div>
-                        Parse User Id = {parseUserId}
-                    </div>
-                    <div>
-                        Parse Team Id = {teamId}
-                    </div>
-                    <div>
-                        Slack Team Id = {slackTeamId}
-                    </div>
-                    <div display-if={channels} className='channels'>
-                        <h4>Channels</h4>
-                        {channels.map((c, i) =>
-                            <div key={`channel_${i}`} className='channel'>
-                                <Checkbox label={`#${c.name}`} onChange={(selected) => selectChannel(c.id, selected)} selected={c.selected}/>
-                            </div>)
-                        }
-                    </div>
-                    <div className='action'>
-                        <Clickable inline={true} outline={true} onClick={refreshSlack} text='Refresh Channels'/>
-                    </div>
                     <div className='action'>
                         <Link to={`/teams/${teamId}`} className=''>Vendor Inbound Flow</Link>
                     </div>
-                    <div display-if={!hasSlack}>
-                        <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
+                    <FlexBoxes>
+                        <div>
+                            <h2>Slack Settings</h2>
+                            <div display-if={channels} className='channels'>
+                                <h4>Channels</h4>
+                                {channels.map((c, i) =>
+                                    <div key={`channel_${i}`} className='channel'>
+                                        <Checkbox label={`#${c.name}`} onChange={(selected) => selectChannel(c.id, selected)} selected={c.selected}/>
+                                    </div>)
+                                }
+                            </div>
+                            <div className='action'>
+                                <Clickable inline={true} outline={true} onClick={refreshSlack} text='Refresh Channels'/>
+                            </div>
+                            <div display-if={!hasSlack}>
+                                <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
+                                    <img alt="Sign in with Slack"
+                                        height="40"
+                                        width="172"
+                                        src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
+                                        srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"/>
+                                </a>
+                            </div>
+                        </div>
+                        <div>
+                            <h2>Google Settings</h2>
+                            <div className='action'>
+                                Connceted with Google: {hasGoogle ? 'Yes!' : 'Not Yet'}
+                            </div>
+                            <div className='action' display-if={!hasGoogle}>
+                                <GoogleLoginButton/>
+                            </div>
+                            <div className='action'>
+                                <ChromeExtensionButton/>
+                            </div>
+                        </div>
+                    </FlexBoxes>
 
-                            <img alt="Sign in with Slack"
-                                height="40"
-                                width="172"
-                                src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
-                                srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"/>
-                        </a>
-                    </div>
-                    <div display-if={!hasGoogle}>
-                        <GoogleLoginButton/>
-                    </div>
                 </div>
             </BasePage>)
     }

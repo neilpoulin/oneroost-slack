@@ -4,8 +4,9 @@ import {connect} from 'react-redux'
 import qs from 'qs'
 import {loginWithSlack} from 'ducks/user'
 import {Redirect} from 'react-router'
-import GoogleLoginButton from './GoogleLoginButton'
 import BasePage from './BasePage'
+import Logo from 'atoms/Logo'
+import Clickable from 'atoms/Clickable'
 
 class LoginPage extends React.Component{
     static propTypes = {
@@ -19,7 +20,7 @@ class LoginPage extends React.Component{
         location: PropTypes.any,
         hasGoogle: PropTypes.bool,
         hasSlack: PropTypes.bool,
-        redirectUri: PropTypes.string,        
+        redirectUri: PropTypes.string,
         //actions
         getToken: PropTypes.func.isRequired,
     }
@@ -54,27 +55,31 @@ class LoginPage extends React.Component{
 
         return (
             <BasePage>
-                <div display-if={isLoggedIn} className="">
-                    Successfully logged in as {userName} @ {teamName}
-                </div>
-                <div display-if={error}>
-                    Something went wrong while authenticating with Slack: {error}
-                </div>
-                <div display-if={isLoading}>
-                    Loading...
-                </div>
-                <div display-if={!hasSlack}>
-                    <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
-
-                        <img alt="Sign in with Slack"
-                            height="40"
-                            width="172"
-                            src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
-                            srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"/>
-                    </a>
-                </div>
-                <div display-if={!hasGoogle}>
-                    <GoogleLoginButton/>
+                <div className='container'>
+                    <div className='logo'>
+                        <Logo size='heading' color='primary'/>
+                    </div>
+                    <div display-if={isLoggedIn} className="success">
+                        <p className=''>Successfully logged in as {userName} @ {teamName}</p>
+                        <div className='action'>
+                            <Clickable to='/settings' text='View my settings' inline={true}/>
+                        </div>
+                    </div>
+                    <div display-if={error}>
+                        Something went wrong while authenticating with Slack: {error}
+                    </div>
+                    <div display-if={isLoading}>
+                        Loading...
+                    </div>
+                    <div display-if={!hasSlack} className='action'>
+                        <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
+                            <img alt="Sign in with Slack"
+                                height="40"
+                                width="172"
+                                src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
+                                srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"/>
+                        </a>
+                    </div>
                 </div>
             </BasePage>)
     }

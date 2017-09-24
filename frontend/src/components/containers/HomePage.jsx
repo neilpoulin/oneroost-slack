@@ -107,19 +107,7 @@ class HomePage extends React.Component{
                             <p className="tagline" display-if={heroSubTitle}>{heroSubTitle}</p>
                         </div>
                         <div className="emailContainer form-group" display-if={ctaButtonText}>
-                            <Clickable text={`${installing ? 'Installing....' : 'Get the Chrome Extenstion'}`}
-                                colorType={'secondary'}
-                                inline={true}
-                                onClick={this._handleGetExtensionClick}
-                                disabled={installing}
-                                display-if={!installed}
-                                />
-                            <div display-if={installed}>
-                                {`${installSuccess ? 'Congratulations! ' :''} `}You have the Chrome extension and are ready to start taking full advantage of OneRoost!
-                            </div>
-                            <div display-if={installError} className='error'>
-                                Uh oh! Something went wrong while installing the Chrome extension. Please try again.
-                            </div>
+                            <a href="https://slack.com/oauth/authorize?&client_id=225772115667.227177070210&scope=incoming-webhook,chat:write:bot,channels:write,channels:read,files:write:user"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"/></a>
                         </div>
                         <div display-if={ctaSubText} className={'actionSubTextContainer'}>
                             {ctaSubText}
