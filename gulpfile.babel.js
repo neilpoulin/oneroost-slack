@@ -65,13 +65,13 @@ const sharedProps = {
     PARSE_APP_ID: process.env.ONEROOST_PARSE_APP_ID_DEV,
     DATABASE_URL: 'mongodb://localhost:27017/oneroost-db',
     DOCUMENT_BUCKET: 'oneroost-documents',
+    GA_TRACKING_CODE: 'UA-87950724-3',
     INTERCOM_APP_ID: 'te0db1m0',
     // VERBOSE: 1, //used for parse server verbose mode
 }
 
 var devEnvProps = {
     ...sharedProps,
-    GA_TRACKING_CODE: 'UA-87950724-3',
     NODE_ENV: 'development',
     ENV: 'dev',
     ENV_NAME: 'dev',
@@ -79,7 +79,6 @@ var devEnvProps = {
 
 var prodEnvProps = {
     ...sharedProps,
-    GA_TRACKING_CODE: 'UA-87950724-3',
     NODE_ENV: 'production',
     ENV: 'prod',
     ENV_NAME: 'prod-dev',

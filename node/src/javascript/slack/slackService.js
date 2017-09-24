@@ -7,6 +7,7 @@ import SlackTeam from 'models/SlackTeam'
 import {SLACK_TEAM_CLASSNAME} from 'models/ModelConstants'
 import Parse from 'parse/node'
 
+//TODO: if needing to use different tokens on a request, create a NEW instance of the web client!!!
 const web = new WebClient(SLACK_OAUTH_TOKEN)
 
 export function postToChannel(channelId, message, payload){
@@ -60,19 +61,25 @@ export async function createChannel(access_token){
 }
 
 export async function getChannels(token){
-    return new Timeout((resolve, reject) => web.channels.list({
+    let channelResponse = await axios.post('https://slack.com/api/channels.list', qs.stringify({
         token,
         exclude_archived: true,
         exclude_members: true,
-    }, async (error, res) => {
-        if (error){
-            console.error('Error getting channel list: ', error)
-            return reject(error)
-        }
-        console.log('successfully got channel list', res)
-        const {channels} = res
-        return resolve(channels)
     }))
+    let channels = channelResponse.data.channels
+    return channels
+    //TODO: if needing to use different tokens on a request, create a NEW instance of the web client!!!
+    // return new Timeout((resolve, reject) => web.channels.list({
+    //     token,
+    // }, async (error, res) => {
+    //     if (error){
+    //         console.error('Error getting channel list: ', error)
+    //         return reject(error)
+    //     }
+    //     console.log('successfully got channel list', res)
+    //     const {channels} = res
+    //     return resolve(channels)
+    // }), 10000)
 }
 
 export async function getChannelInfo(channelId){

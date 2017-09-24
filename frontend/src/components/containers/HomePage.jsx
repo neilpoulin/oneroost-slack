@@ -34,7 +34,7 @@ class HomePage extends React.Component{
         installed: PropTypes.bool,
         installError: PropTypes.any,
         installSuccess: PropTypes.bool,
-
+        redirectUri: PropTypes.string,
         //actions
         setNav: PropTypes.func,
     }

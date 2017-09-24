@@ -46,13 +46,7 @@ router.post('/tokens/slack', async (req, res) => {
         if (!ok){
             throw error
         }
-
-        // let channelResponse = await axios.post('https://slack.com/api/channels.list', qs.stringify({
-        //     token: access_token,
-        //     exclude_archived: true,
-        //     exclude_members: true,
-        // }))
-        // let channels = channelResponse.data.channels
+        console.log('user access token', access_token)
         let channels = await getChannels(access_token)
         let slackTeam = await getSlackTeamBySlackTeamId(team.id)
         if (!slackTeam){
