@@ -14,6 +14,8 @@ class FileUploadForm extends React.Component {
         buttonOutline: PropTypes.bool,
         className: PropTypes.string,
         fileKeyPrefix: PropTypes.string,
+        onCompleted: PropTypes.func,
+        selectedFilePath: PropTypes.string,
     }
 
     static defaultProps = {
@@ -25,20 +27,19 @@ class FileUploadForm extends React.Component {
 
     constructor(props){
         super(props)
-
+        let filename = props.selectedFilePath ? props.selectedFilePath.split('/')[props.selectedFilePath.split('/').length - 1 ] : null
         this.state = {
             isUploading: false,
-            percentCompleted: 0,
-            success: false,
+            percentCompleted: filename ? 1 : 0,
+            success: filename ? true : false,
             error: null,
-            showProgressBar: false,
-            filename: null,
+            showProgressBar: filename ? true : false,
+            filename,
         };
 
         this._handleDrop = this._handleDrop.bind(this)
         this._onProgress = this._onProgress.bind(this)
         this._onCompleted = this._onCompleted.bind(this)
-
     }
 
     _onProgress({percentCompleted}){
@@ -159,6 +160,7 @@ class FileUploadForm extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
+
     return {
 
     }

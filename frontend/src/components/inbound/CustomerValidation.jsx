@@ -24,6 +24,7 @@ class CustomerValidation extends React.Component {
         createTestimonialSetter: PropTypes.func,
         removeTestimonial: PropTypes.func,
         setCaseStudyFilePath: PropTypes.func,
+        caseStudyFilePath: PropTypes.string,
     }
 
     componentDidMount() {
@@ -33,6 +34,7 @@ class CustomerValidation extends React.Component {
     render () {
         const {
             testimonials,
+            caseStudyFilePath,
             //actions
             saveAndContinue,
             createTestimonialSetter,
@@ -51,6 +53,7 @@ class CustomerValidation extends React.Component {
                             fileKeyPrefix={'inbound/pitches'}
                             onCompleted={setCaseStudyFilePath}
                             buttonOutline={true}
+                            selectedFilePath={caseStudyFilePath}
                             />
                     </div>
                     {testimonials.map((testimonial, i) => {
@@ -85,7 +88,8 @@ class CustomerValidation extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     const formInput = state.inbound.get('formInput', Immutable.Map())
     return {
-        testimonials: formInput.get('testimonials', Immutable.List()).toJS()
+        testimonials: formInput.get('testimonials', Immutable.List()).toJS(),
+        caseStudyFilePath: formInput.get('caseStudyFilePath')
     }
 }
 

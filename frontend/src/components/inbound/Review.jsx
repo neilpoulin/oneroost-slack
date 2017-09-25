@@ -26,6 +26,7 @@ class Review extends React.Component {
             hasError,
             errorText,
             email,
+            vendorSignupSuccess,
             //actions
             submit,
             vendorSignUp,
@@ -67,12 +68,13 @@ class Review extends React.Component {
                         <p>
                             OneRoost is testing a new product that provides sellers insights into why they didn’t get the deal.  If you’re interested in learning more, click below
                         </p>
-                        <div>
+                        <div display-if={!vendorSignupSuccess}>
                             <FormGroup label='Your Email'>
                                 <TextInput placeholder={email} value={email}/>
                             </FormGroup>
-                            <Clickable text='Sign Up' onClick={vendorSignUp}/>
+                            <Clickable text={'Subitted successfully'} onClick={vendorSignUp}/>
                         </div>
+                        <p display-if={vendorSignupSuccess} className='success'>{'Your information was successfully submitted. We\'ll notify you when we have any updates!'}</p>
                     </section>
 
                 </div>
@@ -106,11 +108,6 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        saveAndContinue: () => {
-            dispatch(saveInbound()).then(saved => {
-                ownProps.history.push(ownProps.nextRoute)
-            })
-        },
         submit: () => {
             dispatch(submitInbound())
         },

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import Header from './Header'
@@ -14,6 +15,18 @@ const MAX_CHARACTERS = 300
 
 class ProductService extends React.Component {
 
+    static propTypes = {
+        pitchDeckFilePath: PropTypes.string,
+        teamName: PropTypes.string,
+        elevatorPitch: PropTypes.string,
+        elevatorRemaining: PropTypes.any,
+        relevancy: PropTypes.string,
+        relevancyRemaining: PropTypes.any,
+        saveAndContinue: PropTypes.func.isRequired,
+        createSetter: PropTypes.func.isRequired,
+        setPitchFilePath: PropTypes.func.isRequired,
+    }
+
     componentDidMount() {
         window.scrollTo(0, 0)
     }
@@ -26,6 +39,7 @@ class ProductService extends React.Component {
             elevatorRemaining,
             relevancy,
             relevancyRemaining,
+            pitchDeckFilePath,
             //actions
             saveAndContinue,
             createSetter,
@@ -69,6 +83,7 @@ class ProductService extends React.Component {
                         fileKeyPrefix={'inbound/pitches'}
                         onCompleted={setPitchFilePath}
                         buttonOutline={true}
+                        selectedFilePath={pitchDeckFilePath}
                         />
                 </div>
             </FlexBoxes>
@@ -87,8 +102,8 @@ const mapStateToProps = (state, ownProps) => {
         elevatorPitch,
         elevatorRemaining:  MAX_CHARACTERS - elevatorPitch.length,
         relevancy,
-        relevancyRemaining: MAX_CHARACTERS - relevancy.length
-
+        relevancyRemaining: MAX_CHARACTERS - relevancy.length,
+        pitchDeckFilePath: formInput.get('pitchDeckFilePath'),
     }
 }
 

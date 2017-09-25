@@ -41,29 +41,38 @@ router.post('/tokens/slack', async (req, res) => {
 
     try{
         let userResponse = await axios.get(`https://slack.com/api/oauth.access?client_id=${SLACK_CLIENT_ID}&client_secret=${SLACK_CLIENT_SECRET}&code=${code}&redirect_uri=${redirectUri}`)
-        const {data: {ok, access_token, scope, team, user, error}} = userResponse
-
+        const {data: {ok, access_token, scope, team, user, error, user_id, team_id, team_name, user_name}} = userResponse
+        console.log(userResponse)
         if (!ok){
             throw error
         }
         console.log('user access token', access_token)
-        let channels = await getChannels(access_token)
-        let slackTeam = await getSlackTeamBySlackTeamId(team.id)
+        console.log('slack team', team)
+        let slackTeam = await getSlackTeamBySlackTeamId(team_id || team.id)
+
+        //Not all users will be giving the channel permission at this point,
+        //so dont' fail if we can't get channels.
         if (!slackTeam){
             slackTeam = new SlackTeam({
-                teamId: team.id,
-                selectedChannels: []
+                teamId: team_id || team.id,
+                selectedChannels: [],
+                accessToken: access_token,
             })
         }
-        slackTeam.set('name', team.name)
-        slackTeam.setChannels(channels)
+        slackTeam.set('name', team_name || team.name)
+        try {
+            let channels = await getChannels(access_token)
+            slackTeam.setChannels(channels)
+        } catch(e){
+            console.warn('Failed to get channels for user: ', e)
+        }
+
         slackTeam = await slackTeam.save()
         const info = {
             access_token,
             scope,
-            team,
-            user,
-            channels,
+            team: team || {id: team_id, name: team_name},
+            user: user || {id: user_id, name: user_name},
             slackTeam
         }
 
@@ -73,7 +82,7 @@ router.post('/tokens/slack', async (req, res) => {
     }catch(e){
         console.error(e);
         res.status(403)
-        return res.send({e})
+        return res.send({error: e})
     }
 })
 

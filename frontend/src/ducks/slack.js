@@ -111,12 +111,23 @@ export function postMessage(channelId, message){
     }
 }
 
+export function requestPermission(permission){
+    return dispatch => {
+        console.log('requesting permissoins', permission)
+    }
+}
+
 export function refreshChannels(){
     return dispatch => {
         dispatch({
             type: LOAD_CHANNELS_REQUEST
         })
-        Parse.Cloud.run('refreshSlackChannels').then(({channels}) => {
+        Parse.Cloud.run('refreshSlackChannels').then(({channels, code}) => {
+            if (code === 403){
+                console.warn('need permissions')
+                dispatch(requestPermission('channels.list'))
+                return;
+            }
             console.log('refreshed channels')
             dispatch({
                 type: LOAD_CHANNELS_SUCCESS,

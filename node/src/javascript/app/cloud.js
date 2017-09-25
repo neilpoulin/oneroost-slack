@@ -28,19 +28,34 @@ export function initialize(){
                     message: 'You must be logged in to perform this function'
                 })
             }
-            const accessToken = user.get('authData').slack.access_token
-            let channels = await getChannels(accessToken)
+            // const accessToken = user.get('authData').slack.access_token
+            await user.get('slackTeam').fetch()
             let slackTeam = user.get('slackTeam')
-            if( slackTeam ){
-                slackTeam.setChannels(channels)
-                slackTeam.save()
+            try{
+                let channels = await getChannels(slackTeam.get('accessToken'))
+                console.log('got channels', channels)
+                if( slackTeam ){
+                    slackTeam.setChannels(channels)
+                    slackTeam.save()
+                }
+                return response.success({
+                    channels: channels || [],
+                })
+
+            } catch(e){
+                console.warn('failed to get the channels', e);
+                return response.success({
+                    unauthorized: true,
+                    code: 403,
+                    message: 'User did not have permissions needed'
+                })
             }
-            console.log('channels: ', channels)
-            return response.success({
-                channels,
-            })
+
         } catch (e){
             console.error('Error running refreshSlackChannels', e)
+            if ( e.code){
+                response.status(e.code)
+            }
             return response.error({
                 message: 'Failed to run cloud code: refreshSlackChannels',
                 error: e
@@ -70,7 +85,7 @@ export function initialize(){
                 let inboundChannelId = inbound.get('channelId')
                 if (team.get('selectedChannels').indexOf(inboundChannelId) !== -1){
                     let messageInfo = buildSubmitMessage(inbound)
-                    await postToChannel(inboundChannelId, messageInfo.message, messageInfo.payload)
+                    await postToChannel(inboundChannelId, messageInfo.message, messageInfo.payload, team.get('accessToken'))
                     resolve({
                         message: 'Successfully posted message'
                     })

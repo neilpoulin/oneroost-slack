@@ -1,5 +1,4 @@
 // SLACK
-export const SLACK_OAUTH_TOKEN = process.env.SLACK_OAUTH_TOKEN || ''
 export const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID || ''
 export const SLACK_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET || ''
 export const SLACK_VERIFICATION_TOKEN = process.env.SLACK_VERIFICATION_TOKEN || ''

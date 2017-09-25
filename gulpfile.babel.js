@@ -60,13 +60,12 @@ const sharedProps = {
     AWS_PROFILE: 'oneroost',
     STRIPE_PUBLISH_KEY: process.env.STRIPE_PUBLISH_KEY_TEST,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY_TEST,
-    SLACK_OAUTH_TOKEN: process.env.SLACK_OAUTH_TOKEN,
     PARSE_MASTER_KEY: process.env.ONEROOST_PARSE_MASTER_KEY_DEV,
     PARSE_APP_ID: process.env.ONEROOST_PARSE_APP_ID_DEV,
     DATABASE_URL: 'mongodb://localhost:27017/oneroost-db',
     DOCUMENT_BUCKET: 'oneroost-documents',
     GA_TRACKING_CODE: 'UA-87950724-3',
-    INTERCOM_APP_ID: 'te0db1m0',
+    INTERCOM_APP_ID: process.env.INTERCOM_APP_ID_DEV,
     // VERBOSE: 1, //used for parse server verbose mode
 }
 

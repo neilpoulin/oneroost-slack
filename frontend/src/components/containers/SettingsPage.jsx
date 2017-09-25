@@ -83,7 +83,7 @@ class SettingsPage extends React.Component {
                         <div>
                             <h2>Google Settings</h2>
                             <div className='action'>
-                                Connceted with Google: {hasGoogle ? 'Yes!' : 'Not Yet'}
+                                Connected with Google: {hasGoogle ? 'Yes!' : 'Not Yet'}
                             </div>
                             <div className='action' display-if={!hasGoogle}>
                                 <GoogleLoginButton/>

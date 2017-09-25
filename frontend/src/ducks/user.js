@@ -113,14 +113,13 @@ export function loginWithSlack(code, redirectUri){
         axios.post('/tokens/slack', {
             code,
             redirectUri,
-        }).then( ({data: {access_token: accessToken, user, team, channels, slackTeam}}) => {
+        }).then( ({data: {access_token: accessToken, user, team, slackTeam}}) => {
             dispatch({
                 type: SLACK_AUTH_SUCCESS,
                 payload: {
                     accessToken,
                     user,
                     team,
-                    channels,
                     slackTeam,
                 }
             })

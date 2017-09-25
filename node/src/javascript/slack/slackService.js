@@ -1,5 +1,4 @@
 import {WebClient} from '@slack/client'
-import {SLACK_OAUTH_TOKEN} from 'util/Environment'
 import axios from 'axios'
 import qs from 'qs'
 import Timeout from 'util/Timeout'
@@ -8,11 +7,11 @@ import {SLACK_TEAM_CLASSNAME} from 'models/ModelConstants'
 import Parse from 'parse/node'
 
 //TODO: if needing to use different tokens on a request, create a NEW instance of the web client!!!
-const web = new WebClient(SLACK_OAUTH_TOKEN)
 
-export function postToChannel(channelId, message, payload){
+
+export function postToChannel(channelId, message, payload, accessToken){
     console.log('posting to channel ', channelId)
-
+    const web = new WebClient(accessToken)
     return new Timeout((resolve, reject) => web.chat.postMessage(channelId, message, payload, function(err, res) {
         if (err) {
             console.error('Error:', err);
@@ -67,7 +66,12 @@ export async function getChannels(token){
         exclude_members: true,
     }))
     let channels = channelResponse.data.channels
-    return channels
+    if (channelResponse.data.ok){
+        return channels
+    }
+    else {
+        throw Error('Could not fetch channels');
+    }
     //TODO: if needing to use different tokens on a request, create a NEW instance of the web client!!!
     // return new Timeout((resolve, reject) => web.channels.list({
     //     token,
@@ -82,9 +86,10 @@ export async function getChannels(token){
     // }), 10000)
 }
 
-export async function getChannelInfo(channelId){
+export async function getChannelInfo(channelId, accessToken){
     console.log('getting channel info')
     return new Timeout((resolve, reject) => {
+        let web = new WebClient(accessToken)
         web.channels.info(channelId, async (err, res) => {
             if (err) {
                 console.error('Error getting channel info:', err);
@@ -98,10 +103,10 @@ export async function getChannelInfo(channelId){
 
 export async function saveChannel(teamId, channelId, selected=true){
     try{
-        let channelInfo = await getChannelInfo(channelId)
-        let {channel} = channelInfo
         console.log('looking for slack team')
         let slackTeam = await getSlackTeamByTeamId(teamId)
+        let channelInfo = await getChannelInfo(channelId, slackTeam.get('accessToken'))
+        let {channel} = channelInfo
         if (!slackTeam){
             throw 'Can not save channel... teamId = ' + teamId + ' does not exist'
         }
