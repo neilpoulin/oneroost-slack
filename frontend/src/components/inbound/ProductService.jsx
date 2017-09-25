@@ -53,7 +53,7 @@ class ProductService extends React.Component {
                     <p className='description'>
                         Tell us what is special about your offering
                     </p>
-                    <FormGroup label='Team' helperText={`${elevatorRemaining} characters remaining`}>
+                    <FormGroup label='' helperText={`${elevatorRemaining} characters remaining`}>
                         <TextArea placeholder={''}
                             maxLength={300}
                             value={elevatorPitch}
@@ -67,7 +67,7 @@ class ProductService extends React.Component {
                     <p className='description'>
                         Why do you think your offering will help {teamName}?
                     </p>
-                    <FormGroup label='Team' helperText={`${relevancyRemaining} characters remaining`} >
+                    <FormGroup label='' helperText={`${relevancyRemaining} characters remaining`} >
                         <TextArea placeholder={null}
                             maxLength={300}
                             value={relevancy}

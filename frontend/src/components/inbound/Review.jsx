@@ -72,7 +72,7 @@ class Review extends React.Component {
                             <FormGroup label='Your Email'>
                                 <TextInput placeholder={email} value={email}/>
                             </FormGroup>
-                            <Clickable text={'Subitted successfully'} onClick={vendorSignUp}/>
+                            <Clickable text={'Get Updates'} onClick={vendorSignUp}/>
                         </div>
                         <p display-if={vendorSignupSuccess} className='success'>{'Your information was successfully submitted. We\'ll notify you when we have any updates!'}</p>
                     </section>

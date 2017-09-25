@@ -64,14 +64,14 @@ class CompanyInfo extends React.Component {
                         Which categories best represent your offering, e.g. CRM, applicant tracking, etc.
                     </p>
                     <Creatable
-                      name="form-field-name"
-                      multi={true}
-                      value={tags}
-                      options={tagOptions}
-                      clearable={false}
-                      placeholder={'Enter tags...'}
-                      noResultsText={'Enter a new tag...'}
-                      onChange={createSetter('tags')}
+                        name="form-field-name"
+                        multi={true}
+                        value={tags}
+                        options={tagOptions}
+                        clearable={false}
+                        placeholder={'Enter tags...'}
+                        noResultsText={'Enter a new tag...'}
+                        onChange={createSetter('tags')}
                     />
                 </div>
                 <div >
@@ -81,13 +81,13 @@ class CompanyInfo extends React.Component {
                     </p>
                     <FormGroup label='Team'>
                         <Select
-                          name="form-field-name"
-                          multi={false}
-                          value={selectedChannel}
-                          options={channelOptions}
-                          clearable={true}
-                          placeholder={'Select a team...'}
-                          onChange={({value}) => createSetter('channelId')(value)}
+                            name="form-field-name"
+                            multi={false}
+                            value={selectedChannel}
+                            options={channelOptions}
+                            clearable={true}
+                            placeholder={'Select a team...'}
+                            onChange={({value}) => createSetter('channelId')(value)}
                         />
                     </FormGroup>
                 </div>
