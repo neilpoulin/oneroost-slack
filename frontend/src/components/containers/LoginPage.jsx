@@ -4,6 +4,7 @@ import {connect} from 'react-redux'
 import qs from 'qs'
 import {loginWithSlack} from 'ducks/user'
 import {Redirect} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import BasePage from './BasePage'
 import Logo from 'atoms/Logo'
 import Clickable from 'atoms/Clickable'
@@ -21,6 +22,7 @@ class LoginPage extends React.Component{
         hasGoogle: PropTypes.bool,
         hasSlack: PropTypes.bool,
         redirectUri: PropTypes.string,
+        installSuccess: PropTypes.bool,
         //actions
         getToken: PropTypes.func.isRequired,
     }
@@ -42,7 +44,8 @@ class LoginPage extends React.Component{
             teamName,
             location,
             hasSlack,
-            redirectUri
+            redirectUri,
+            installSuccess,
         } = this.props
 
         if ((isLoggedIn || error) && location.search){
@@ -64,13 +67,16 @@ class LoginPage extends React.Component{
                             <Clickable to='/settings' text='View my settings' inline={true}/>
                         </div>
                     </div>
+                    <div display-if={installSuccess}>
+                        <p>You have successfully installed OneRoost to your team. Now, please log in below.</p>
+                    </div>
                     <div display-if={error}>
                         Something went wrong while authenticating with Slack: {error}
                     </div>
                     <div display-if={isLoading}>
                         Loading...
                     </div>
-                    <div display-if={!hasSlack} className='action'>
+                    <div display-if={!hasSlack && !isLoading} className='action'>
                         <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
                             <img alt="Sign in with Slack"
                                 height="40"
@@ -112,4 +118,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginPage))

@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 // import Logo from 'Logo'
 import {connect} from 'react-redux'
+import {Redirect} from 'react-router'
+import qs from 'qs'
 import {
     loadPage,
     INSTALL_CHROME_EXTENSION_REQUEST,
@@ -12,6 +14,7 @@ import Clickable from 'atoms/Clickable'
 import Logo from 'atoms/Logo'
 import {setNavProperty} from 'ducks/basePage'
 import BasePage from './BasePage'
+import {authorizeSlackTeam} from 'ducks/user'
 
 class HomePage extends React.Component{
     static propTypes = {
@@ -35,8 +38,12 @@ class HomePage extends React.Component{
         installError: PropTypes.any,
         installSuccess: PropTypes.bool,
         redirectUri: PropTypes.string,
+        code: PropTypes.string,
+        slackAddedSuccess: PropTypes.bool,
+        location: PropTypes.any,
         //actions
         setNav: PropTypes.func,
+        getToken: PropTypes.func,
     }
 
     constructor(props){
@@ -51,6 +58,10 @@ class HomePage extends React.Component{
     componentDidMount(){
         document.title = 'OneRoost'
         this.props.loadPage()
+        const {code, redirectUri} = this.props
+        if (code){
+            this.props.getToken(code, redirectUri)
+        }
     }
 
     _handleGetExtensionClick(event){
@@ -74,6 +85,8 @@ class HomePage extends React.Component{
             hasMore,
             isLoading,
             redirectUri,
+            slackAddedSuccess,
+            location,
             //actions
         } = this.props
 
@@ -84,6 +97,14 @@ class HomePage extends React.Component{
         if (isLoading){
             return null
         }
+
+        if (slackAddedSuccess){
+            return <Redirect to={{
+                pathname: '/install-success',
+                state: { from: location }
+            }}/>
+        }
+
         var page =
         <BasePage showNav={true}
             fixedNav={false}
@@ -104,7 +125,7 @@ class HomePage extends React.Component{
                             <p className="tagline" display-if={heroSubTitle}>{heroSubTitle}</p>
                         </div>
                         <div className="emailContainer form-group" display-if={ctaButtonText}>
-                            <a href={`https://slack.com/oauth/authorize?&client_id=225772115667.227177070210&scope=chat:write:bot,channels:write,channels:read,files:write:user&redirect_uri=${encodeURIComponent(redirectUri)}`}>
+                            <a href={`https://slack.com/oauth/authorize?&client_id=225772115667.227177070210&scope=chat:write:bot,channels:write,channels:read&redirect_uri=${encodeURIComponent(redirectUri)}`}>
                                 <img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"/>
                             </a>
                         </div>
@@ -159,10 +180,15 @@ const mapStateToProps = (state, ownProps) => {
         },
     } = homePage
     const config = state.config
-    const redirectUri = `${config.get('HOSTNAME')}/login`
-
+    const redirectUri = `${config.get('HOSTNAME')}`
+    let params = {}
+    if (location.search){
+        const {code, state: stateParam, error} = qs.parse(location.search, { ignoreQueryPrefix: true })
+        params = {code, state: stateParam, error}
+    }
     const hasMore = paragraphs && paragraphs.length > 0
     return {
+        ...params,
         redirectUri,
         heroTitle,
         heroSubTitle,
@@ -175,7 +201,8 @@ const mapStateToProps = (state, ownProps) => {
         installing,
         installed,
         installError,
-        installSuccess
+        installSuccess,
+        slackAddedSuccess: state.user.get('slackAddedSuccess'),
     }
 }
 
@@ -207,7 +234,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 name: 'show',
                 value: false,
             }))
-        }
+        },
+        getToken: (code, redirectUri) => dispatch(authorizeSlackTeam(code, redirectUri)),
     }
 }
 

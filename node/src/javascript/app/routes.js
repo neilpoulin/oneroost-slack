@@ -13,7 +13,6 @@ import {
     ENV_NAME,
     GOOGLE_CLIENT_ID,
     HOSTNAME,
-    INTERCOM_SECRET_KEY,
     INTERCOM_APP_ID,
 } from 'util/Environment'
 import {
@@ -42,7 +41,7 @@ router.post('/tokens/slack', async (req, res) => {
     try{
         let userResponse = await axios.get(`https://slack.com/api/oauth.access?client_id=${SLACK_CLIENT_ID}&client_secret=${SLACK_CLIENT_SECRET}&code=${code}&redirect_uri=${redirectUri}`)
         const {data: {ok, access_token, scope, team, user, error, user_id, team_id, team_name, user_name}} = userResponse
-        console.log(userResponse)
+        console.log(userResponse.data)
         if (!ok){
             throw error
         }

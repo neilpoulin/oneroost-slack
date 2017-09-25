@@ -62,7 +62,7 @@ const sharedProps = {
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY_TEST,
     PARSE_MASTER_KEY: process.env.ONEROOST_PARSE_MASTER_KEY_DEV,
     PARSE_APP_ID: process.env.ONEROOST_PARSE_APP_ID_DEV,
-    DATABASE_URL: 'mongodb://localhost:27017/oneroost-db',
+    DATABASE_URL: 'mongodb://localhost:27017/oneroost-slack',
     DOCUMENT_BUCKET: 'oneroost-documents',
     GA_TRACKING_CODE: 'UA-87950724-3',
     INTERCOM_APP_ID: process.env.INTERCOM_APP_ID_DEV,

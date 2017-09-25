@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import {
     BrowserRouter as Router,
     Route,
+    withRouter,
 } from 'react-router-dom'
 import LoginPage from 'LoginPage'
 import {connect} from 'react-redux'
@@ -14,12 +15,13 @@ import SupportPage from './SupportPage'
 import PrivacyPage from './PrivacyPage'
 
 const App = ({
-    hasLoaded
+    hasLoaded,
 }) => (
     <Router>
         <div display-if={hasLoaded}>
             <Route exact path="/" component={HomePage}/>
             <Route path="/login" component={LoginPage}/>
+            <Route path="/install-success" render={() => <LoginPage installSuccess={true}/>}/>
             <Route path={'/teams/:teamId'} component={TeamInboundPage}/>
             <PrivateRoute path='/settings' component={SettingsPage}/>
             <Route path='/support' component={SupportPage}/>

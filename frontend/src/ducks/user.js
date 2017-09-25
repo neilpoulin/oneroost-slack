@@ -7,6 +7,8 @@ export const SLACK_AUTH_REQUEST = 'oneroost/login/SLACK_AUTH_REQUEST'
 export const SLACK_AUTH_SUCCESS = 'oneroost/login/SLACK_AUTH_SUCCESS'
 export const SLACK_AUTH_ERROR = 'oneroost/login/SLACK_AUTH_ERROR'
 
+export const SLACK_ADDED_SUCCESS = 'oneroost/login/SLACK_ADDED_SUCCESS'
+
 export const LOGIN_SUCCESS = 'oneroost/login/LOGIN_SUCCESS'
 export const SET_PROVIDER_ERROR = 'oneroost/login/PROVIDER_ERROR'
 export const SET_HAS_PROVIDER = 'oneroost/login/SET_HAS_PROVIDER'
@@ -28,6 +30,7 @@ const initialState = Immutable.Map({
     parseUserId: null,
     hasSlack: false,
     hasGoogle: false,
+    slackAddedSuccess: false,
 })
 
 export default function reducer(state=initialState, action){
@@ -79,6 +82,8 @@ export default function reducer(state=initialState, action){
                 default:
                     return state;
             }
+        case SLACK_ADDED_SUCCESS:
+            return state.set('slackAddedSuccess', true)
         case LOGOUT:
             return state = initialState
         default:
@@ -101,6 +106,21 @@ export function loadUser(){
             }
 
         }
+    }
+}
+
+export function authorizeSlackTeam(code, redirectUri){
+    console.log('authorize slack team')
+    return dispatch => {        
+        axios.post('/tokens/slack', {
+            code,
+            redirectUri,
+        }).then( ({data: {access_token: accessToken, user, team, slackTeam}}) => {
+            console.log('authorized slack team slack team')
+            dispatch({
+                type: SLACK_ADDED_SUCCESS,
+            })
+        })
     }
 }
 
@@ -169,6 +189,7 @@ export function linkUserWithProvider(provider, authData){
             lastName,
             username: email
         });
+
         return dispatch(linkUser(user, provider, authData))
     }
 }
