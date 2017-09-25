@@ -1,5 +1,6 @@
 import path from 'path'
 import express from 'express'
+import favicon from 'serve-favicon'
 import {
     isDev,
 } from 'util/Environment'
@@ -26,4 +27,5 @@ module.exports = function(app){
     }
     app.use('/static/images', express.static(__dirname + './../../../../images'));
     app.use('/static/fonts', express.static(__dirname + './../../../../fonts'));
+    app.use(favicon(path.join(__dirname, '..', '..', '..','..', 'images/favicon.ico')));
 }

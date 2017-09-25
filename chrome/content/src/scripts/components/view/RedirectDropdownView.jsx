@@ -30,7 +30,7 @@ class RedirectDropdownView extends React.Component {
                 Loading....
             </div>
             <div display-if={!isLoading}>
-                <span className="title">Vendor Interceptor</span>
+                <span className="title">OneRoost</span>
                 <ul className="vanityUrls">
                     <li className='vanityUrl' onClick={() => insertLink(teamUrl, senderName, senderEmail, true)}>Redirect and Block</li>
                     <li className='vanityUrl' onClick={() => insertLink(teamUrl, senderName, senderEmail, false)}>Redirect and Do Not Block</li>
@@ -78,7 +78,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 senderEmail,
                 vanityUrl,
                 blocked: doBlock,
-            })        
+            })
         }
     }
 }

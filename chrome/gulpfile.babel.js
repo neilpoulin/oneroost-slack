@@ -46,7 +46,7 @@ gulp.task('chrome:popup-html', ['chrome:clean'], () => {
 gulp.task('chrome:copy-manifest', ['chrome:clean'], () => {
     return gulp.src('manifest.json')
         .pipe(jeditor(manifest => {
-            manifest.name = 'OneRoost Vendor Inteceptor ' + (process.env.ENV_NAME || '')
+            manifest.name = 'OneRoost' + (process.env.ENV_NAME || '')
             return manifest;
         }))
         .pipe(gulp.dest('build'));

@@ -5,7 +5,7 @@ import {
 } from 'ducks/config'
 import {SET_SERVER_URL,} from 'actions/config'
 
-const oneroostDomain = process.env.HOSTNAME || 'https://stage.oneroost.com'
+const oneroostDomain = process.env.HOSTNAME || 'https://www.oneroost.com'
 console.log('ONEROOST DOMAIN = ' + oneroostDomain)
 wrapStore(store, {
     portName: 'oneroost'

@@ -1,7 +1,7 @@
 {
-    "name": "OneRoost - Vendor Interceptor",
-    "description": "OneRoost Gmail Extension - Stage",
-    "version": "2.0",
+    "name": "OneRoost",
+    "description": "OneRoost Gmail Extension",
+    "version": "3.0",
     "background": {
         "page": "background.html",
         "persistent": true
@@ -10,7 +10,7 @@
         "128": "images/oneroost_logo_square_128x128.png"
     },
     "browser_action": {
-        "default_title": "OneRoost Example",
+        "default_title": "OneRoost",
         "default_popup": "popup.html",
         "default_icon": {
             "30": "images/logo30x30.png"
@@ -43,6 +43,7 @@
     ],
     "web_accessible_resources": [
         "images/*.png",
+        "fonts/**/*",
         "lib/*.js",
         "*.html"
     ],

@@ -5,6 +5,13 @@ $googleButtonImageStyle: "btn_google_signin_dark_";
     padding: 1rem;
 }
 
+.logo{
+    font-family: 'Grand Hotel';
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
 .admin{
     margin-bottom: 1rem;
     border: 1px solid gray;
@@ -46,12 +53,18 @@ $googleButtonImageStyle: "btn_google_signin_dark_";
 .header{
     display: flex;
     justify-content: space-between;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
+
+
 .content{
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin-bottom: 1rem;
+}
+.footer{
+    margin-bottom: 1rem;
 }
 .brandPages{
     padding: 1rem 0;

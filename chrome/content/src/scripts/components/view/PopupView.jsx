@@ -20,12 +20,10 @@ class PopupView extends Component {
             isAdmin,
             serverUrl,
             setServerUrl,
+            helpUrl,
         } = this.props
         return (
             <div className="container">
-                <div display-if={!isLoggedIn} className="loginContainer">
-                    <div className="googleLogin" onClick={logInGoogle}></div>
-                </div>
                 <div display-if={isLoggedIn} className="">
                     <div className="header">
                         <div display-if={fullName} className="email">
@@ -36,6 +34,12 @@ class PopupView extends Component {
                             className="logout"
                             look="link"/>
                     </div>
+                </div>
+                <div className='logo'>OneRoost</div>
+                <div display-if={!isLoggedIn} className="loginContainer">
+                    <div className="googleLogin" onClick={logInGoogle}></div>
+                </div>
+                <div display-if={isLoggedIn} className="">
                     <div display-if={isAdmin} className='admin'>
                         <label className='label'>Admin</label>
                         <label>
@@ -54,7 +58,13 @@ class PopupView extends Component {
                                 outline={true}
                                 text="Team Settings"/>
                         </div>
-                    </div>
+                    </div>                    
+                </div>
+                <div className='footer'>
+                    <Clickable href={helpUrl}
+                        target="_blank"
+                        look="link"
+                        text="help"/>
                 </div>
             </div>
         );
@@ -66,6 +76,7 @@ const mapStateToProps = (state) => {
     const {serverUrl: domain, serverUrl} = state.config
     const {email, isLoggedIn, userId, isAdmin} = user
     const settingsUrl = `${domain}/settings`
+    const helpUrl = `${domain}/support`
     return {
         userId,
         fullName: getFullName(state),
@@ -74,6 +85,7 @@ const mapStateToProps = (state) => {
         settingsUrl,
         isAdmin,
         serverUrl,
+        helpUrl,
     }
 }
 
