@@ -2,6 +2,7 @@ import Immutable from 'immutable'
 import axios from 'axios'
 import Parse from 'parse'
 import SlackTeam from 'models/SlackTeam'
+import Cookie from 'js-cookie'
 
 export const SLACK_AUTH_REQUEST = 'oneroost/login/SLACK_AUTH_REQUEST'
 export const SLACK_AUTH_SUCCESS = 'oneroost/login/SLACK_AUTH_SUCCESS'
@@ -12,6 +13,8 @@ export const SLACK_ADDED_SUCCESS = 'oneroost/login/SLACK_ADDED_SUCCESS'
 export const LOGIN_SUCCESS = 'oneroost/login/LOGIN_SUCCESS'
 export const SET_PROVIDER_ERROR = 'oneroost/login/PROVIDER_ERROR'
 export const SET_HAS_PROVIDER = 'oneroost/login/SET_HAS_PROVIDER'
+
+export const SET_OAUTH_STATE = 'oneroost/login/SET_OAUTH_STATE'
 
 export const LOGOUT = 'oneroost/login/LOGOUT'
 
@@ -31,6 +34,7 @@ const initialState = Immutable.Map({
     hasSlack: false,
     hasGoogle: false,
     slackAddedSuccess: false,
+    oauthState: null,
 })
 
 export default function reducer(state=initialState, action){
@@ -86,6 +90,8 @@ export default function reducer(state=initialState, action){
             return state.set('slackAddedSuccess', true)
         case LOGOUT:
             return state = initialState
+        case SET_OAUTH_STATE:
+            return state.set('oauthState', action.payload)
         default:
             break
     }
@@ -111,7 +117,7 @@ export function loadUser(){
 
 export function authorizeSlackTeam(code, redirectUri){
     console.log('authorize slack team')
-    return dispatch => {        
+    return dispatch => {
         axios.post('/tokens/slack', {
             code,
             redirectUri,
@@ -306,4 +312,19 @@ export function logout(){
             }).catch(console.error)
         }
     }
+}
+
+export function setOAuthState(){
+    return dispatch => {
+        const state = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)
+        Cookie.set('oneroost_state', state)
+        dispatch({
+            type: SET_OAUTH_STATE,
+            payload: state
+        })
+    }
+}
+
+export function getOAuthState(){
+    return Cookie.get('oneroost_state')
 }

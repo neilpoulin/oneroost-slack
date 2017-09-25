@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import qs from 'qs'
-import {loginWithSlack} from 'ducks/user'
+import {loginWithSlack, setOAuthState, getOAuthState} from 'ducks/user'
 import {Redirect} from 'react-router'
 import {withRouter} from 'react-router-dom'
 import BasePage from './BasePage'
@@ -23,14 +23,22 @@ class LoginPage extends React.Component{
         hasSlack: PropTypes.bool,
         redirectUri: PropTypes.string,
         installSuccess: PropTypes.bool,
+        state: PropTypes.string,
         //actions
         getToken: PropTypes.func.isRequired,
+        generateOAuthState: PropTypes.func,
     }
 
     componentDidMount(){
-        const {code, redirectUri} = this.props
+        const {code, redirectUri, state, generateOAuthState} = this.props
         if (code){
-            this.props.getToken(code, redirectUri)
+            if (state === getOAuthState()){
+                this.props.getToken(code, redirectUri)
+            } else {
+                console.error('state param did not match: returned =' + state + ', saved = ' + getOAuthState() )
+            }
+        } else {
+            generateOAuthState()
         }
     }
 
@@ -46,6 +54,7 @@ class LoginPage extends React.Component{
             hasSlack,
             redirectUri,
             installSuccess,
+            state,
         } = this.props
 
         if ((isLoggedIn || error) && location.search){
@@ -77,7 +86,7 @@ class LoginPage extends React.Component{
                         Loading...
                     </div>
                     <div display-if={!hasSlack && !isLoading} className='action'>
-                        <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
+                        <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`}>
                             <img alt="Sign in with Slack"
                                 height="40"
                                 width="172"
@@ -93,7 +102,9 @@ class LoginPage extends React.Component{
 const mapStateToProps = (state, ownProps) => {
     const {config, user} = state
     const {location} = ownProps
-    let params = {}
+    let params = {
+        state: getOAuthState()
+    }
     if (location.search){
         const {code, state: stateParam, error} = qs.parse(location.search, { ignoreQueryPrefix: true })
         params = {code, state: stateParam, error}
@@ -108,13 +119,14 @@ const mapStateToProps = (state, ownProps) => {
         userName: user.get('firstName') + ' ' + user.get('lastName'),
         userEmail: user.get('email'),
         redirectUri: `${config.get('HOSTNAME')}/login`,
-        hasSlack: user.get('hasSlack', false)
+        hasSlack: user.get('hasSlack', false),
     }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         getToken: (code, redirectUri) => dispatch(loginWithSlack(code, redirectUri)),
+        generateOAuthState: () => dispatch(setOAuthState())
     }
 }
 
