@@ -94,7 +94,7 @@ const mapStateToProps = (state, ownProps) => {
         formInput: {email},
         vendorSignupSuccess
     } = state.inbound.toJS()
-    const errorText = (error && error.friendlyText ) ? error.friendlyText : 'Something went wrong, please try again later.';
+    const errorText = (error && error.friendlyText) ? error.friendlyText : 'Something went wrong, please try again later.';
 
     return {
         submitted,

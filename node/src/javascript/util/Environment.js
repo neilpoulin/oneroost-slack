@@ -30,7 +30,7 @@ export const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID || '78v10otstxn
 
 //AWS
 export const DOCUMENT_BUCKET = process.env.DOCUMENT_BUCKET || 'oneroost-documents'
-
+export const CLOUDFRONT_DOMAIN = process.env.CLOUDFRONT_DOMAIN || 'd3syt8tcu3x4rv.cloudfront.net'
 //intercom
 export const INTERCOM_APP_ID = process.env.INTERCOM_APP_ID
 export const INTERCOM_SECRET_KEY = process.env.INTERCOM_SECRET_KEY

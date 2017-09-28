@@ -5,6 +5,8 @@ import Clickable from 'atoms/Clickable'
 import {uploadFile} from '../../actions/FileActions'
 import Dropzone from 'react-dropzone'
 import {Line} from 'react-progressbar.js'
+import TextInput from 'atoms/form/TextInput'
+import FormGroup from 'molecule/FormGroup'
 
 class FileUploadForm extends React.Component {
     static propTypes = {
@@ -15,7 +17,11 @@ class FileUploadForm extends React.Component {
         className: PropTypes.string,
         fileKeyPrefix: PropTypes.string,
         onCompleted: PropTypes.func,
+        onClear: PropTypes.func,
         selectedFilePath: PropTypes.string,
+        showUrlInput: PropTypes.bool,
+        onUrlChange: PropTypes.func,
+        url: PropTypes.string,
     }
 
     static defaultProps = {
@@ -23,6 +29,9 @@ class FileUploadForm extends React.Component {
         fileKeyPrefix: 'misc',
         onProgress: () => null,
         onCompleted: () => null,
+        showUrlInput: false,
+        onUrlChange: () => null,
+        url: '',
     }
 
     constructor(props){
@@ -40,6 +49,7 @@ class FileUploadForm extends React.Component {
         this._handleDrop = this._handleDrop.bind(this)
         this._onProgress = this._onProgress.bind(this)
         this._onCompleted = this._onCompleted.bind(this)
+        this._reset = this._reset.bind(this)
     }
 
     _onProgress({percentCompleted}){
@@ -63,6 +73,21 @@ class FileUploadForm extends React.Component {
         const {onCompleted} = this.props;
         if (onCompleted){
             onCompleted({filePath})
+        }
+    }
+
+    _reset(e){
+        e.preventDefault()
+        this.setState({
+            isUploading: false,
+            percentCompleted: 0,
+            success: false,
+            error: null,
+            showProgressBar: false,
+            filename: null,
+        })
+        if (this.props.onClear){
+            this.props.onClear()
         }
     }
 
@@ -99,6 +124,9 @@ class FileUploadForm extends React.Component {
             buttonText,
             className: containerClassName,
             buttonOutline,
+            showUrlInput,
+            onUrlChange,
+            url,
         } = this.props
 
         const {
@@ -116,16 +144,16 @@ class FileUploadForm extends React.Component {
                 activeClassName='active'
                 acceptClassName='accepted'
                 multiple={false}
+                disabled={url ? true : false}
                 >
                 <div className='dropTarget'>
-                    <Clickable outline={buttonOutline} text={buttonText} display-if={!showProgressBar}/>
+                    <Clickable outline={buttonOutline} text={url ?'Clear link to upload' : buttonText} display-if={!showProgressBar} disabled={url ? true : false}/>
                     <div display-if={error} className='error'>
                         Oops, something went wrong while uploading {filename} {error.message ? ': ' + error.message : null}
                     </div>
                     <div display-if={showProgressBar} className='progressContainer'>
                         <div className='fileInfo'>
                             <div className='filename'>{`${isUploading ? 'Uploading' : 'Uploaded'} ${filename}`}</div>
-                            <Clickable className='link-small' text={'Choose a different file'} display-if={success} look={'link'}/>
                         </div>
                         <Line
                             progress={percentCompleted}
@@ -153,7 +181,13 @@ class FileUploadForm extends React.Component {
                     </div>
                 </div>
             </Dropzone>
-
+            <Clickable className='link-small' text={'Remove'} display-if={success} onClick={this._reset} look={'link'}/>
+            <div className='urlInput' display-if={showUrlInput && !showProgressBar}>
+                <div className='divider'>Or, share a link</div>
+                <FormGroup label='Link'>
+                    <TextInput placeholder='' onChange={onUrlChange} value={url}/>
+                </FormGroup>
+            </div>
         </div>
 
     }

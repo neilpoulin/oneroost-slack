@@ -121,16 +121,26 @@ export function initialize(){
             };
 
             console.log('generating s3 key with params:', params);
-            let signedUrl = s3Client.getSignedUrl('putObject', params);
-            resolve({
-                signedUrl,
-                s3Key
-            })
+            s3Client.getSignedUrl('putObject', params, (err, url) =>{
+                if (err){
+                    return reject({
+                        error: err,
+                        message: 'Failed to sign the url'
+                    })
+                }
+                resolve({
+                    signedUrl: url,
+                    s3Key
+                })
+            });
+
         }, 2000).then(({signedUrl, s3Key}) => {
             return response.success({
                 signedUrl,
                 filePath: s3Key
             })
+        }).catch(error => {
+            return response.error(error)
         })
     })
 
@@ -242,6 +252,22 @@ function buildSubmitMessage(inbound){
         {
             title: 'Relevancy',
             value: inbound.get('relevancy'),
+        },        
+        {
+            title: 'Case Study',
+            value: inbound.get('caseStudyUrl')
+        },
+        {
+            title: 'Case Study',
+            value: createSlackS3DownloadLink(inbound.get('caseStudyFilePath'))
+        },
+        {
+            title: 'Pitch Materials',
+            value: inbound.get('pitchDeckUrl')
+        },
+        {
+            title: 'Pitch Materials',
+            value: createSlackS3DownloadLink(inbound.get('pitchDeckFilePath'))
         },
         {
             title: 'Tags',
@@ -269,6 +295,7 @@ function buildSubmitMessage(inbound){
                 'color': roostOrange,
                 'attachment_type': 'default',
                 'fields': fields,
+                'mrkdwn_in': ['fields'],
                 'actions': []
             },
             {
@@ -302,4 +329,14 @@ function buildSubmitMessage(inbound){
         ]
     }
     return {payload, message}
+}
+
+export function createSlackS3DownloadLink(path){
+    if (path){
+        //TODO: use cloudfront and maybe sign urls
+        let parts = path.split('/')
+        let filename = parts[parts.length - 1]
+        return  `<https://documents.oneroost.com/${path}|${filename}>`
+    }
+    return null
 }

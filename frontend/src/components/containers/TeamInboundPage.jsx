@@ -53,14 +53,14 @@ class TeamInboundPage extends React.Component {
                 <div className='backContainer' display-if={match.url !== location.pathname}>
                     <BackButton/>
                 </div>
-                <Route onChange={() => window.scrollTo(0,0)} exact path={`${match.url}`} render={() => <ProcessOverview
+                <Route onChange={() => window.scrollTo(0, 0)} exact path={`${match.url}`} render={() => <ProcessOverview
                     teamId={teamId}
                     teamName={teamName}
                     nextRoute={`${match.url}/company`}/>}
                 />
                 <Route path={`${match.url}/company`} render={() => <CompanyInfo teamName={teamName} nextRoute={`${match.url}/product`}/>}/>
                 <Route path={`${match.url}/product`} render={()=> <ProductService teamName={teamName} nextRoute={`${match.url}/case-studies`}/>}/>
-                <Route path={`${match.url}/case-studies`} render={()=> <CustomerValidation nextRoute={`${match.url}/review`}/>}/>
+                <Route path={`${match.url}/case-studies`} render={()=> <CustomerValidation teamName={teamName} nextRoute={`${match.url}/review`}/>}/>
                 <Route path={`${match.url}/review`} render={()=> <Review teamName={teamName}/>}/>
             </div>
             <footer>

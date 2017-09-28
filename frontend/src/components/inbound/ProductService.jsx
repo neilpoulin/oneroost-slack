@@ -25,6 +25,9 @@ class ProductService extends React.Component {
         saveAndContinue: PropTypes.func.isRequired,
         createSetter: PropTypes.func.isRequired,
         setPitchFilePath: PropTypes.func.isRequired,
+        setPitchUrl: PropTypes.func,
+        clearPitch: PropTypes.func,
+        pitchDeckUrl: PropTypes.string,
     }
 
     componentDidMount() {
@@ -40,10 +43,13 @@ class ProductService extends React.Component {
             relevancy,
             relevancyRemaining,
             pitchDeckFilePath,
+            pitchDeckUrl,
             //actions
             saveAndContinue,
             createSetter,
             setPitchFilePath,
+            setPitchUrl,
+            clearPitch,
         } = this.props
         return <div>
             <Header title="Product / Service Information" subtitle={`Tell us more about what you’re offering and how it helps ${teamName}`}/>
@@ -83,7 +89,11 @@ class ProductService extends React.Component {
                         fileKeyPrefix={'inbound/pitches'}
                         onCompleted={setPitchFilePath}
                         buttonOutline={true}
+                        onClear={clearPitch}
                         selectedFilePath={pitchDeckFilePath}
+                        showUrlInput={true}
+                        onUrlChange={setPitchUrl}
+                        url={pitchDeckUrl}
                         />
                 </div>
             </FlexBoxes>
@@ -104,6 +114,7 @@ const mapStateToProps = (state, ownProps) => {
         relevancy,
         relevancyRemaining: MAX_CHARACTERS - relevancy.length,
         pitchDeckFilePath: formInput.get('pitchDeckFilePath'),
+        pitchDeckUrl: formInput.get('pitchDeckUrl')
     }
 }
 
@@ -120,6 +131,12 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         setPitchFilePath: ({filePath}) => {
             console.log('got the file path!', filePath)
             dispatch(setFormValue('pitchDeckFilePath', filePath))
+        },
+        setPitchUrl: (url='') => {
+            dispatch(setFormValue('pitchDeckUrl', url.trim()))
+        },
+        clearPitch: () => {
+            dispatch(setFormValue('pitchDeckFilePath', null))
         }
     }
 }

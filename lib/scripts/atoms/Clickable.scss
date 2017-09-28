@@ -21,6 +21,8 @@ a {
     justify-content: center;
     &.disabled{
         background-color: lightgray;
+        border-color: darkgray;
+        color: gray;
     }
     &:hover:not(.disabled){
         cursor: pointer;

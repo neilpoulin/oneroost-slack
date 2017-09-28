@@ -18,6 +18,7 @@ class CustomerValidation extends React.Component {
             customerName: PropTypes.string,
             review: PropTypes.string,
         })),
+        teamName: PropTypes.string,
         nextRoute: PropTypes.any,
         saveAndContinue: PropTypes.func,
         addTestimonial: PropTypes.func,
@@ -25,6 +26,9 @@ class CustomerValidation extends React.Component {
         removeTestimonial: PropTypes.func,
         setCaseStudyFilePath: PropTypes.func,
         caseStudyFilePath: PropTypes.string,
+        setCaseStudyUrl: PropTypes.func,
+        clearCaseStudy: PropTypes.func,
+        caseStudyUrl: PropTypes.string,
     }
 
     componentDidMount() {
@@ -35,12 +39,16 @@ class CustomerValidation extends React.Component {
         const {
             testimonials,
             caseStudyFilePath,
+            teamName,
+            caseStudyUrl,
             //actions
             saveAndContinue,
             createTestimonialSetter,
             addTestimonial,
             removeTestimonial,
-            setCaseStudyFilePath
+            setCaseStudyFilePath,
+            setCaseStudyUrl,
+            clearCaseStudy,
         } = this.props
 
         return <div className='container'>
@@ -49,11 +57,16 @@ class CustomerValidation extends React.Component {
                 <FlexBoxes defaultContentStyles={false}>
                     <div className='content'>
                         <h3>Case Study</h3>
+                        <p className='description'>Upload the a case study that illustrates how your offering could impact {teamName}.</p>
                         <FileUploadForm buttonText={'Upload a Case Study'}
                             fileKeyPrefix={'inbound/pitches'}
                             onCompleted={setCaseStudyFilePath}
                             buttonOutline={true}
                             selectedFilePath={caseStudyFilePath}
+                            onClear={clearCaseStudy}
+                            showUrlInput={true}
+                            onUrlChange={setCaseStudyUrl}
+                            url={caseStudyUrl}
                             />
                     </div>
                     {testimonials.map((testimonial, i) => {
@@ -89,7 +102,8 @@ const mapStateToProps = (state, ownProps) => {
     const formInput = state.inbound.get('formInput', Immutable.Map())
     return {
         testimonials: formInput.get('testimonials', Immutable.List()).toJS(),
-        caseStudyFilePath: formInput.get('caseStudyFilePath')
+        caseStudyFilePath: formInput.get('caseStudyFilePath'),
+        caseStudyUrl: formInput.get('caseStudyUrl'),
     }
 }
 
@@ -115,6 +129,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         setCaseStudyFilePath: ({filePath}) => {
             dispatch(setFormValue('caseStudyFilePath', filePath))
+        },
+        setCaseStudyUrl: (url='') => {
+            dispatch(setFormValue('caseStudyUrl', url.trim()))
+        },
+        clearCaseStudy: () => {
+            dispatch(setFormValue('caseStudyUrl', null))
+            dispatch(setFormValue('caseStudyFilePath', null))
         }
     }
 }
