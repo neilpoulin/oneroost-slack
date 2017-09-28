@@ -134,6 +134,15 @@ export function initialize(){
         })
     })
 
+    Parse.Cloud.define('teamExtensionConfig', async (request, response) => {
+        Parse.Config.get().then(config => {
+            let redirectMessage = config.get('redirectMessage')
+            return response.success({
+                redirectMessage
+            })
+        })
+    })
+
     Parse.Cloud.define('logRedirect', async (request, response) => {
         new Timeout(async (resolve, reject) => {
             console.log('attempting to save the redirect')

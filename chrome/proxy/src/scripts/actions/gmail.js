@@ -5,6 +5,7 @@ export const GET_FILTERS_ERROR = 'oneroost/gmail/GET_FILTERS_ERROR'
 export const CREATE_FILTER_SUCCESS = 'oneroost/gmail/CREATE_FILTER_SUCCESS'
 export const CREATE_FILTER_ERROR = 'oneroost/gmail/CREATE_FILTER_ERROR'
 
+export const SAVE_REDIRECT_REQUEST = 'oneroost/gmail/SAVE_REDIRECT_REQUEST'
 export const SAVE_REDIRECT_SUCCESS = 'oneroost/gmail/SAVE_REDIRECT_SUCCESS'
 export const SAVE_REDIRECT_ERROR = 'oneroost/gmail/SAVE_REDIRECT_ERROR'
 

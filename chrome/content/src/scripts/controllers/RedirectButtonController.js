@@ -1,6 +1,6 @@
 import * as RedirectDropdownApp from 'RedirectDropdownApp'
 import {RESET_THREAD} from 'actions/thread'
-const iconUrl = 'https://www.oneroost.com/favicon.ico'
+const iconUrl = chrome.runtime.getURL('images/logo30x30.png')
 
 export function composeViewHandler(composeView, store){
     // a compose view has come into existence, do something with it!

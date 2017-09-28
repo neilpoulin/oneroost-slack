@@ -74,7 +74,6 @@ export const loadUserDetails = (userId) => (dispatch, getState) => {
             type: UserActions.UPDATE_USER_INFO,
             payload: user.toJSON()
         })
-        dispatch(syncTeamRedirects())
     }).catch(error => {
         console.error(error)
     })
@@ -141,6 +140,7 @@ export const loadCachedUser = () => (dispatch, getState) => {
     loadUserFromCache().then(({email, access_token, id}) => {
         console.log('Loaded google user from cache finished...', email)
         dispatch(linkUserWithProvider('google', {access_token, id}))
+        dispatch(syncTeamRedirects())
         // dispatch({type: UserActions.GOOGLE_LOG_IN_SUCCESS, payload: {email}})
     }).catch(console.error)
 }

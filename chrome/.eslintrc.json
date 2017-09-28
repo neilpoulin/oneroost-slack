@@ -1,0 +1,10 @@
+{
+    "globals": {
+        "chrome": true,
+        "InboxSDK": true
+    },
+    "rules": {
+
+    },
+    "extends": ["./../.eslintrc.json"]
+}

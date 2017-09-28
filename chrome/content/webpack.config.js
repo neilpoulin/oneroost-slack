@@ -42,7 +42,9 @@ module.exports = {
             'node_modules',
             'actions',
             'controllers',
-            '../../lib/scripts'
+            '../../lib/scripts',
+            '../../lib/styles',
+            '../../lib/fonts',
         ]
     },
     devtool: 'source-map',

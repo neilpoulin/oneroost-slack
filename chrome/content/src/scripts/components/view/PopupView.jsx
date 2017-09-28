@@ -1,4 +1,5 @@
-import React, {Component} from 'react';
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
 import Clickable from 'atoms/Clickable';
 import {LOG_OUT_ALIAS, LOG_IN_GOOGLE_ALIAS} from 'actions/user'
@@ -8,6 +9,20 @@ import {REFRESH_SERVER_CONFIG_ALIAS, SET_SERVER_URL} from 'actions/config'
 // import {handleSignInClick, handleSignOutClick} from "background/googleAuth"
 
 class PopupView extends Component {
+    static propTypes = {
+        userId: PropTypes.string,
+        fullName: PropTypes.string,
+        logOut: PropTypes.func,
+        isLoggedIn: PropTypes.bool,
+        logInGoogle: PropTypes.func,
+        email: PropTypes.string,
+        settingsUrl: PropTypes.string,
+        isAdmin: PropTypes.bool,
+        serverUrl: PropTypes.string,
+        setServerUrl: PropTypes.string,
+        helpUrl: PropTypes.string,
+    }
+
     render() {
         const {
             userId,
@@ -58,7 +73,7 @@ class PopupView extends Component {
                                 outline={true}
                                 text="Team Settings"/>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
                 <div className='footer'>
                     <Clickable href={helpUrl}

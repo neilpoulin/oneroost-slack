@@ -1,4 +1,4 @@
-{
+{    
     "env": {
         "browser": true,
         "es6": true,
@@ -19,7 +19,9 @@
         "no-unused-vars": [1, {"vars": "local","args": "none"}],
         "no-use-before-define": ["error", "nofunc"],
         "no-undefined": ["error"],
-        "no-console": [0]
+        "no-console": [0],
+        "comma-spacing": ["warn", { "before": false, "after": true }],
+        "space-in-parens": ["warn", "never"]
     },
     "settings": {
         "react": {

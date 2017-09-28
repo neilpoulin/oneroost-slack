@@ -1,9 +1,15 @@
 import Immutable from 'immutable'
 import axios from 'axios'
 import {SET_SERVER_URL} from 'actions/config'
+
 export const CONFIGS_LOAD_REQUEST = 'oneroost/config/CONFIGS_LOAD_REQUEST'
 export const CONFIGS_LOAD_SUCCESS = 'oneroost/config/CONFIGS_LOAD_SUCCESS'
 export const CONFIGS_LOAD_ERROR = 'oneroost/config/CONFIGS_LOAD_ERROR'
+export const TEAM_CONFIGS_LOAD_REQUEST = 'oneroost/config/TEAM_CONFIGS_LOAD_REQUEST'
+export const TEAM_CONFIGS_LOAD_SUCCESS = 'oneroost/config/TEAM_CONFIGS_LOAD_SUCCESS'
+export const TEAM_CONFIGS_LOAD_ERROR = 'oneroost/config/TEAM_CONFIGS_LOAD_ERROR'
+
+
 import * as ConfigActions from 'actions/config'
 import Parse from 'parse'
 import {loadCachedUser} from 'ducks/user'
@@ -15,8 +21,14 @@ const initialState = Immutable.fromJS({
     SLACK_CLIENT_ID: null,
     PARSE_APP_ID: null,
     isLoading: false,
+    teamConfigLoading: false,
+    redirectMessage: {
+        'message':'Thanks for reaching out. I\'m excited to hear what more about your product/service. Please provide an overview of your offering by going to $TEAM_LINK.',
+        'linkText':'$TEAM_LINK'
+    },
     hasLoaded: false,
-    serverUrl: 'https://dev.oneroost.com'
+    serverUrl: 'https://dev.oneroost.com',
+    error: null,
 })
 
 export default function reducer(state=initialState, action){
@@ -30,10 +42,21 @@ export default function reducer(state=initialState, action){
             state = state.merge(action.payload)
             break
         case CONFIGS_LOAD_ERROR:
-            state = state.set('isLoading', true)
+            state = state.set('isLoading', false)
             break
         case SET_SERVER_URL:
             state = state.set('serverUrl', action.payload.serverUrl)
+            break
+        case TEAM_CONFIGS_LOAD_REQUEST:
+            state = state.set('teamConfigLoading', true)
+            break
+        case TEAM_CONFIGS_LOAD_SUCCESS:
+            state = state.set('teamConfigLoading', false)
+            state = state.merge(action.payload);
+            break
+        case TEAM_CONFIGS_LOAD_ERROR:
+            state = state.set('teamConfigLoading', false)
+            state = state.set('error', action.error)
             break
         default:
             break
@@ -67,12 +90,37 @@ export function loadServerConfigs(){
     }
 }
 
+export function loadTeamConfigs(){
+    return dispatch => {
+        dispatch({
+            type: TEAM_CONFIGS_LOAD_REQUEST
+        })
+        Parse.Cloud.run('teamExtensionConfig').then(({redirectMessage}) => {
+            dispatch({
+                type: TEAM_CONFIGS_LOAD_SUCCESS,
+                payload: {
+                    redirectMessage,
+                }
+            })
+        }).catch(error => {
+            dispatch({
+                type: TEAM_CONFIGS_LOAD_ERROR,
+                error,
+                payload: {
+                    error
+                }
+            })
+        })
+    }
+}
+
 export function updateServerConfigs(){
     return dispatch => {
         dispatch(loadServerConfigs()).then(configs => {
             console.log(configs)
             Parse.initialize(configs.PARSE_APP_ID);
             Parse.serverURL = configs.PARSE_PUBLIC_URL;
+            dispatch(loadTeamConfigs())
             dispatch(loadCachedUser())
         })
     }
