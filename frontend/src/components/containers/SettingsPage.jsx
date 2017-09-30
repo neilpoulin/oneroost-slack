@@ -1,18 +1,22 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import {postMessage, refreshChannels} from 'ducks/slack'
+import {postMessage, refreshChannels, setVanityChannelName, saveTeam, clearSaveMessages} from 'ducks/slack'
 import {toggleChannel} from 'ducks/slack'
 import {getChannels} from 'selectors/slack'
 import GoogleLoginButton from './GoogleLoginButton'
 import Parse from 'parse'
 import Checkbox from 'atoms/Checkbox'
 import Clickable from 'atoms/Clickable'
-import {Link} from 'react-router-dom'
 import BasePage from 'BasePage'
 import ChromeExtensionButton from 'molecules/ChromeExtensionButton'
 import FlexBoxes from 'molecule/FlexBoxes'
 import LogoutLink from 'containers/LogoutLink'
+import TextInput from 'atoms/form/TextInput'
+import FormGroup from 'molecule/FormGroup'
+import SlackSvg from 'atoms/SlackSvg'
+import GoogleLogo from 'atoms/GoogleLogo'
+
 class SettingsPage extends React.Component {
     static propTypes = {
         code: PropTypes.string,
@@ -28,10 +32,13 @@ class SettingsPage extends React.Component {
         parseUserId: PropTypes.string,
         hasGoogle: PropTypes.bool,
         hasSlack: PropTypes.bool,
+        saveSuccess: PropTypes.bool,
         //actions
         selectChannel: PropTypes.func.isRequired,
         refreshSlack: PropTypes.func.isRequired,
         postToChannel: PropTypes.func.isRequired,
+        createChannelVanitySetter: PropTypes.func.isRequired,
+        save: PropTypes.func.isRequired,
     }
 
     render () {
@@ -46,6 +53,9 @@ class SettingsPage extends React.Component {
             hasSlack,
             selectChannel,
             refreshSlack,
+            createChannelVanitySetter,
+            saveSuccess,
+            save,
         } = this.props
 
         return (
@@ -54,21 +64,28 @@ class SettingsPage extends React.Component {
                     <h1>Settings</h1>
                     <p>Welcome, {userName} @ {teamName} (<LogoutLink/>)</p>
                     <div className='action'>
-                        <Link to={`/teams/${teamId}`} className=''>Vendor Inbound Flow</Link>
+                        <Clickable to={`/teams/${teamId}`} inline outline text='Vendor Inbound Flow'/>
                     </div>
-                    <FlexBoxes>
+                    <FlexBoxes defaultContentStyles={true} columns={2}>
                         <div>
-                            <h2>Slack Settings</h2>
+                            <h2 className='heading'><SlackSvg className='slackLogo'/>Slack Settings</h2>
+
+                            <Clickable inline={true} outline={false} look='link' onClick={refreshSlack} text='Refresh Channels'/>
                             <div display-if={channels} className='channels'>
                                 <h4>Channels</h4>
                                 {channels.map((c, i) =>
-                                    <div key={`channel_${i}`} className='channel'>
-                                        <Checkbox label={`#${c.name}`} onChange={(selected) => selectChannel(c.id, selected)} selected={c.selected}/>
+                                    <div key={`channel_${i}`} className={`channel ${c.selected ? 'selected' : ''}`}>
+                                        <Checkbox label={`#${c.name}`} onChange={(selected) => selectChannel(c.id, selected)} selected={c.selected}>
+                                            <FormGroup display-if={c.selected} >
+                                                <TextInput placeholder={`#${c.name}`} onChange={createChannelVanitySetter(c.id)} value={c.vanityName}/>
+                                            </FormGroup>
+                                        </Checkbox>
                                     </div>)
                                 }
                             </div>
                             <div className='action'>
-                                <Clickable inline={true} outline={true} onClick={refreshSlack} text='Refresh Channels'/>
+                                <Clickable text='Save Slack Settings' onClick={save}/>
+                                <p display-if={saveSuccess}>Settings saved successfully</p>
                             </div>
                             <div display-if={!hasSlack}>
                                 <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
@@ -81,14 +98,15 @@ class SettingsPage extends React.Component {
                             </div>
                         </div>
                         <div>
-                            <h2>Google Settings</h2>
+                            <h2 className='heading'><GoogleLogo/>Google Settings</h2>
+
                             <div className='action'>
                                 Connected with Google: {hasGoogle ? 'Yes!' : 'Not Yet'}
                             </div>
                             <div className='action' display-if={!hasGoogle}>
                                 <GoogleLoginButton/>
                             </div>
-                            <div className='action'>
+                            <div className='action' display-if={hasGoogle}>
                                 <ChromeExtensionButton/>
                             </div>
                         </div>
@@ -99,7 +117,7 @@ class SettingsPage extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-    const {config, user} = state
+    const {config, user, slack} = state
     let params = {}
     const parseUser = Parse.User.current()
     let channels = getChannels(state)
@@ -118,7 +136,8 @@ const mapStateToProps = (state, ownProps) => {
         redirectUri: 'https://dev.oneroost.com/login',
         parseUserId: parseUser ? parseUser.id : null,
         hasGoogle: user.get('hasGoogle', false),
-        hasSlack: user.get('hasSlack', false)
+        hasSlack: user.get('hasSlack', false),
+        saveSuccess: slack.get('saveSuccess'),
     }
 }
 
@@ -133,7 +152,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         refreshSlack: () => {
             dispatch(refreshChannels())
-        }
+        },
+        createChannelVanitySetter: (channelId) => (name) => {
+            dispatch(setVanityChannelName({channelId, name}))
+        },
+        save: () => {
+            dispatch(saveTeam()).then(() => {
+                window.setTimeout(() => dispatch(clearSaveMessages()), 5000)
+            })
+        },
     }
 }
+
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPage);

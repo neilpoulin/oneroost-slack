@@ -10,6 +10,8 @@ class Checkbox extends React.Component {
     static propTypes = {
         selected: PropTypes.bool.isRequired,
         label: PropTypes.string,
+        onChange: PropTypes.func,
+        children: PropTypes.any,
     }
 
     static defaultProps = {
@@ -26,15 +28,17 @@ class Checkbox extends React.Component {
     }
 
     render () {
-        const {selected, label} = this.props
+        const {selected, label, children} = this.props
         const $input = <input type='checkbox' className={''} checked={selected} onChange={this._handleChange}/>
         return <div>
             <label display-if={label}>
                 {$input}
                 {label}
+                {children}
             </label>
             <div display-if={!label}>
                 {$input}
+                {children}
             </div>
         </div>
     }

@@ -15,6 +15,7 @@ class ChromeExtensionButton extends React.Component {
         chromeInstallStart: PropTypes.func.isRequired,
         chromeExtensionInstallError: PropTypes.func.isRequired,
         chromeExtensionInstallSuccess: PropTypes.func.isRequired,
+        inline: PropTypes.bool,
         installing: PropTypes.bool,
         installed: PropTypes.bool,
         installError: PropTypes.any,
@@ -42,13 +43,14 @@ class ChromeExtensionButton extends React.Component {
             installing,
             installed,
             installError,
-            installSuccess
+            installSuccess,
+            inline
         } = this.props
 
         return <div>
             <Clickable text={`${installing ? 'Installing....' : 'Get the Chrome Extenstion'}`}
                 colorType={'secondary'}
-                inline={true}
+                inline={inline}
                 onClick={this._handleGetExtensionClick}
                 disabled={installing}
                 display-if={!installed}

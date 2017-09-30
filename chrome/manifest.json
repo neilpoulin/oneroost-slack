@@ -30,14 +30,13 @@
     "permissions": [
         "https://mail.google.com/",
         "https://inbox.google.com/",
-        "https://stage.oneroost.com/*",
         "https://www.oneroost.com/*",
-        "https://dev.oneroost.com/*",
         "https://www.google.com/accounts/OAuthGetRequestToken",
         "https://www.google.com/accounts/OAuthAuthorizeToken",
         "https://www.google.com/accounts/OAuthGetAccessToken",
-        "https://docs.google.com/feeds/*",
-        "https://accounts.google.com/o/oauth2/token",
+        "https://accounts.google.com/o/oauth2/token",        
+        "https://www.googleapis.com/auth/gmail.labels",
+        "https://www.googleapis.com/auth/gmail.modify",
         "identity",
         "tabs"
     ],
@@ -53,8 +52,8 @@
         "client_id": "298915058255-8mq6ebtrh8e78en6k4kq5p2i8em42s9d.apps.googleusercontent.com",
         "scopes": [
             "https://www.googleapis.com/auth/gmail.modify",
-            "https://www.googleapis.com/auth/gmail.settings.basic",
-            "openid", "email", "profile"
+            "https://www.googleapis.com/auth/gmail.labels",
+            "https://www.googleapis.com/auth/userinfo.email"
         ]
     },
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5TPxBMexUUVSn0uUYX2p7/qUmANKdFteXWQdE+MHbTuYCILYTy3qFtMEENEKDQ8oN7n+EQPQpiMTz7/76TZGQHDASxA0shmZvfhTRJ+BcIqr7yrhJSsLvhWGDgT24jf2ubbLTX2GJQHMOsMdsgW14Gb/npFZg5LmheR47rWcpE5WyUq2Vm5ItMGXoWnSTWOjbWWpkz/m5j9cJccbbGOfAsohCLIlaVJ92vPUTALUhK+N/+9kN1xpZrIQ9m5TdN0Z6VvM/eVJe+41+1qDE91/T+lAwFwNTDXkVodVimUM/JnOLPH8Esh7bDHWmSbpvUYGFCYM2hOGVYOq1cMzyRXwZwIDAQAB"

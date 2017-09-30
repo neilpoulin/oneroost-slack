@@ -5,11 +5,28 @@
 }
 
 .channels{
-    margin: 2rem 0
+    margin: 2rem 0;
+
+    .channel {
+        margin-bottom: .5rem;
+        &.selected{
+            font-weight: bold;
+        }
+        input{
+            margin-left: 2rem;
+        }
+    }
 }
 
 .action{
     margin-bottom: 2rem;
+}
+.heading{
+    display: flex;
+    align-items: center;
+}
+.slackLogo{
+    height: 5rem;
 }
 
 a {

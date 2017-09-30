@@ -52,7 +52,10 @@ export default function reducer(state=initialState, action){
             state = state.set('isLoading', false)
             state = state.set('hasLoaded', true)
             state = state.set('teamName', action.payload.get('name'))
-            state = state.set('channels', action.payload.get('channels').toList().filter(c => action.payload.get('selectedChannels').includes(c.get('id'))))
+            state = state.set('channels', action.payload.get('channels').toList()
+                .filter(c => action.payload.get('selectedChannels').includes(c.get('id')))
+                .map(c => c.set('name', action.payload.getIn(['channelVanityNames', c.get('id')], c.get('name'))))
+            )
             break;
         case SET_FORM_VALUE:
             state = state.setIn(['formInput', ...action.payload.get('name', '').split('.')], action.payload.get('value'))

@@ -14,7 +14,19 @@ import FlexBoxes from 'molecule/FlexBoxes'
 class CompanyInfo extends React.Component {
     static propTypes = {
         nextRoute: PropTypes.string.isRequired,
-        teamName: PropTypes.string.isRequired
+        teamName: PropTypes.string.isRequired,
+        tags: PropTypes.arrayOf(PropTypes.string),
+        tagOptions: PropTypes.arrayOf(PropTypes.object),
+        channelOptions: PropTypes.arrayOf(PropTypes.object),
+        selectedChannel: PropTypes.string,
+        companyName: PropTypes.string,
+        website: PropTypes.string,
+        fullName: PropTypes.string,
+        email: PropTypes.string,
+        phoneNumber: PropTypes.any,
+        //actions
+        createSetter: PropTypes.func.isRequired,
+        saveAndContinue: PropTypes.func.isRequired,
     }
 
     componentDidMount() {
@@ -102,7 +114,7 @@ class CompanyInfo extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
     const channelOptions = state.inbound.get('channels', Immutable.List()).toJS().map(c => ({
-        label: `#${c.name}`,
+        label: `${c.name}`,
         value: c.id,
     }))
     const {

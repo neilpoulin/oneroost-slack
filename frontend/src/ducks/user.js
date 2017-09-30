@@ -35,6 +35,7 @@ const initialState = Immutable.Map({
     hasGoogle: false,
     slackAddedSuccess: false,
     oauthState: null,
+    hasChromeExtension: false,
 })
 
 export default function reducer(state=initialState, action){
@@ -46,7 +47,7 @@ export default function reducer(state=initialState, action){
             state = state.set('slackAccessToken', action.payload.get('accessToken'))
             state = state.set('error', null)
             state = state.set('isLoggedIn', true)
-            if ( action.payload.get('user')){
+            if (action.payload.get('user')){
                 if (action.payload.get('user').name){
                     let splitName =  action.payload.get('user').name.split(' ')
                     let firstName = splitName[0]
@@ -121,7 +122,7 @@ export function authorizeSlackTeam(code, redirectUri){
         axios.post('/tokens/slack', {
             code,
             redirectUri,
-        }).then( ({data: {access_token: accessToken, user, team, slackTeam}}) => {
+        }).then(({data: {access_token: accessToken, user, team, slackTeam}}) => {
             console.log('authorized slack team slack team')
             dispatch({
                 type: SLACK_ADDED_SUCCESS,
@@ -139,7 +140,7 @@ export function loginWithSlack(code, redirectUri){
         axios.post('/tokens/slack', {
             code,
             redirectUri,
-        }).then( ({data: {access_token: accessToken, user, team, slackTeam}}) => {
+        }).then(({data: {access_token: accessToken, user, team, slackTeam}}) => {
             dispatch({
                 type: SLACK_AUTH_SUCCESS,
                 payload: {
@@ -168,7 +169,7 @@ export function loginWithSlack(code, redirectUri){
                     dispatch(loadUser())
                 })
             })
-        }).catch( error => {
+        }).catch(error => {
             console.log(error);
             dispatch({
                 type: SLACK_AUTH_ERROR,
