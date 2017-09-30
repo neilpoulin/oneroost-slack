@@ -20,6 +20,7 @@ import {
     getChannels,
     saveChannel,
     getSlackTeamBySlackTeamId,
+    getImagesFromTeam,
 } from 'slack/slackService'
 import SlackTeam from 'models/SlackTeam'
 import {
@@ -59,6 +60,10 @@ router.post('/tokens/slack', async (req, res) => {
             })
         }
         slackTeam.set('name', team_name || team.name)
+        if (team){
+            slackTeam.set('images', getImagesFromTeam(team))
+        }
+
         try {
             let channels = await getChannels(access_token)
             slackTeam.setChannels(channels)

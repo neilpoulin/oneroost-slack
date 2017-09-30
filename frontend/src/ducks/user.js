@@ -36,6 +36,7 @@ const initialState = Immutable.Map({
     slackAddedSuccess: false,
     oauthState: null,
     hasChromeExtension: false,
+    teamImages: {},
 })
 
 export default function reducer(state=initialState, action){
@@ -72,6 +73,7 @@ export default function reducer(state=initialState, action){
             state = state.set('teamName', action.payload.getIn(['slackTeam', 'name']))
             state = state.set('teamId', action.payload.getIn(['slackTeam', 'objectId']))
             state = state.set('slackTeamId', action.payload.getIn(['slackTeam', 'teamId']))
+            state = state.set('teamImages', action.payload.getIn(['slackTeam', 'images'], {}))
             return state;
         case SET_PROVIDER_ERROR:
             state = state.set('error', action.payload)

@@ -16,6 +16,7 @@ import TextInput from 'atoms/form/TextInput'
 import FormGroup from 'molecule/FormGroup'
 import SlackSvg from 'atoms/SlackSvg'
 import GoogleLogo from 'atoms/GoogleLogo'
+import Logo from 'atoms/Logo'
 
 class SettingsPage extends React.Component {
     static propTypes = {
@@ -33,6 +34,7 @@ class SettingsPage extends React.Component {
         hasGoogle: PropTypes.bool,
         hasSlack: PropTypes.bool,
         saveSuccess: PropTypes.bool,
+        teamImageUrl: PropTypes.string,
         //actions
         selectChannel: PropTypes.func.isRequired,
         refreshSlack: PropTypes.func.isRequired,
@@ -56,16 +58,22 @@ class SettingsPage extends React.Component {
             createChannelVanitySetter,
             saveSuccess,
             save,
+            teamImageUrl
         } = this.props
 
         return (
             <BasePage>
                 <div>
                     <h1>Settings</h1>
-                    <p>Welcome, {userName} @ {teamName} (<LogoutLink/>)</p>
+                    <div display-if={teamImageUrl} className='teamConnect'>
+                        <img src={teamImageUrl} display-if={teamImageUrl}/><span className='plus'>+</span><Logo color='primary'/>
+                    </div>
                     <div className='action'>
                         <Clickable to={`/teams/${teamId}`} inline outline text='Vendor Inbound Flow'/>
                     </div>
+                    <p>
+                        Welcome, {userName} @ {teamName} (<LogoutLink/>)
+                    </p>
                     <FlexBoxes defaultContentStyles={true} columns={2}>
                         <div>
                             <h2 className='heading'><SlackSvg className='slackLogo'/>Slack Settings</h2>
@@ -138,6 +146,7 @@ const mapStateToProps = (state, ownProps) => {
         hasGoogle: user.get('hasGoogle', false),
         hasSlack: user.get('hasSlack', false),
         saveSuccess: slack.get('saveSuccess'),
+        teamImageUrl: user.getIn(['teamImages', 'image_102'])
     }
 }
 

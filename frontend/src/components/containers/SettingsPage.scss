@@ -4,6 +4,16 @@
     justify-content: space-around;
 }
 
+.teamConnect{
+    display: flex;
+    align-items: center;
+    font-size: 2rem;
+    justify-content: center;
+    .plus{
+        margin: 0 1rem;
+    }
+}
+
 .channels{
     margin: 2rem 0;
 

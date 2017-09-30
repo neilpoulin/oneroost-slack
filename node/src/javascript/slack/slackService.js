@@ -167,3 +167,12 @@ export async function createSlackTeam(teamId, channel, selected=false){
     console.log('Successfully saved slack team!')
     return saved
 }
+
+export function getImagesFromTeam(team){
+    if (!team){
+        return {}
+    }
+    const {image_34, image_44, image_68, image_88, image_102, image_132, image_230, image_original} = team
+    return {image_34, image_44, image_68, image_88, image_102, image_132, image_230, image_original}
+
+}
