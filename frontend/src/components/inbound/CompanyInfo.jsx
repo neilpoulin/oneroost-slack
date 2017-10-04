@@ -50,7 +50,7 @@ class CompanyInfo extends React.Component {
             saveAndContinue,
         } = this.props
         return <div>
-            <Header title="Company Information" subtitle={'Share a bit about your orginazation'}/>
+            <Header title="Company Information" subtitle={'Share a bit about your organization'}/>
             <FlexBoxes defaultContentStyles={true}>
                 <div>
                     <h3>Basics</h3>

@@ -24,14 +24,24 @@ class RedirectDropdownView extends React.Component {
             senderEmail,
             teamUrl,
             message,
+            blockOnly,
+            saved,
+            userBlocked,
         } = this.props
         return <div className="RedirectDropdownView">
             <div display-if={isLoading}>
                 Loading....
             </div>
             <div display-if={!isLoading}>
-                <h2 className="title logo">OneRoost</h2>
+                <p className={`username ${userBlocked ? 'blocked' : (saved ? 'unblocked' : '')}`}>
+                    <span className='title'>{senderEmail}</span>
+                    <span display-if={saved}>
+                        {`${userBlocked ? ' Blocked' : ' Unblocked'}`}
+                    </span>
+                </p>
+
                 <ul className="vanityUrls">
+                    <li className='vanityUrl' onClick={() => blockOnly({senderName, senderEmail})}>Block Only</li>
                     <li className='vanityUrl' onClick={() => insertLink({message, teamUrl, senderName, senderEmail, doBlock: true})}>Redirect and Block</li>
                     <li className='vanityUrl' onClick={() => insertLink({message, teamUrl, senderName, senderEmail, doBlock: false})}>Redirect and Do Not Block</li>
                 </ul>
@@ -49,6 +59,9 @@ RedirectDropdownView.propTypes = {
     senderEmail: PropTypes.string,
     teamUrl: PropTypes.string,
     message: PropTypes.string,
+    blockOnly: PropTypes.func.isRequired,
+    saved: PropTypes.bool,
+    userBlocked: PropTypes.bool,
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -57,8 +70,6 @@ const mapStateToProps = (state, ownProps) => {
     const user = state.user;
     const teamId = state.user.teamId
     const {channels, selectedChannels} = user
-
-
 
     let availableChannels = selectedChannels.map(id => {
         return channels[id]
@@ -72,7 +83,9 @@ const mapStateToProps = (state, ownProps) => {
     return {
         senderName: sender.name,
         senderEmail: sender.emailAddress,
+        saved: state.gmail.redirectSaveSuccess,
         channels: availableChannels,
+        userBlocked: state.gmail.userBlocked,
         teamUrl,
         message,
     }
@@ -89,7 +102,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 destinationUrl: teamUrl,
                 blocked: doBlock,
             })
-        }
+        },
+        blockOnly: ({senderName, senderEmail}) => {
+            dispatch({
+                type: CREATE_FILTER_ALIAS,
+                senderName,
+                senderEmail,
+                destinationUrl: null,
+                blocked: true,
+            })
+        },
     }
 }
 

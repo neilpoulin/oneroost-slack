@@ -24,6 +24,8 @@ const initialState = {
     filters: [],
     redirectsSaving: false,
     redirectsLoading: false,
+    redirectSaveSuccess: false,
+    filterSaveSuccess: false,
     redirects: [],
     error: null,
 }
@@ -41,18 +43,23 @@ export default function reducer(state=initialState, action){
         case CREATE_FILTER_SUCCESS:
             state = state.set('filters', state.get('filters').push(action.payload))
             state = state.set('error', null)
+            state = state.set('filterSaveSuccess', true)
             break;
         case CREATE_FILTER_ERROR:
             state = state.set('error', action.error)
+            state = state.set('filterSaveSuccess', false)
             break;
         case SAVE_REDIRECT_REQUEST:
             state = state.set('redirectsSaving', true)
+            state = state.set('userBlocked', action.payload.blocked)
             break;
         case SAVE_REDIRECT_SUCCESS:
             state = state.set('redirectsSaving', false)
+            state = state.set('redirectSaveSuccess', true)
             break;
         case SAVE_REDIRECT_ERROR:
             state = state.set('redirectsSaving', false)
+            state = state.set('redirectSaveSuccess', false)
             break;
         case LOAD_REDIRECTS_REQUEST:
             state = state.set('redirectsLoading', true)
@@ -254,7 +261,10 @@ export function logRedirect({
 }){
     return dispatch => {
         dispatch({
-            type: SAVE_REDIRECT_REQUEST
+            type: SAVE_REDIRECT_REQUEST,
+            payload: {
+                blocked,
+            }
         })
         Parse.Cloud.run('logRedirect', {
             senderName,
@@ -303,8 +313,10 @@ export function deleteFilter({id}){
 
 // https://developers.google.com/gmail/api/v1/reference/users/settings/filters#resource
 export function createFilter({senderName, senderEmail, destinationUrl, blocked}){
+    console.log('Creating filter...')
     return (dispatch, getState) => {
         if (!senderEmail){
+            console.log('sender email is null, cannot create a filter')
             return null;
         }
         const labelName = blocked ? GMAIL_LABEL_NAME_BLOCKED : GMAIL_LABEL_NAME_NOT_BLOCKED

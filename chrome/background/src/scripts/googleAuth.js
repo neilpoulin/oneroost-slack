@@ -2,6 +2,7 @@ import axios from 'axios'
 // helpful link https://developer.chrome.com/apps/app_identity
 // https://developer.chrome.com/extensions/tut_oauth#oauth-dance
 const webClientId = '298915058255-27b27sbb83fpe105kj12ccv0hc7380es.apps.googleusercontent.com';
+const chromeAppClientID = '1027279659159-vhp3u2qq0gbjhvb0a2leujqn2mvt87a4.apps.googleusercontent.com'
 const logoutUrl = 'https://accounts.google.com/logout'
 const redirectUri = chrome.identity.getRedirectURL('oauth2');
 const verifyTokenUrl = 'https://www.googleapis.com/oauth2/v3/tokeninfo'
@@ -27,7 +28,9 @@ export function handleSignInClick(event) {
 
 function oauth2(interactive=true){
     var url = 'https://accounts.google.com/o/oauth2/auth' +
-    '?client_id=' + webClientId +
+    // '?client_id=' + webClientId +
+    // `?client_id=${chromeAppClientID}` +
+    `?client_id=${webClientId}` +
     '&response_type=token' +
     '&redirect_uri=' + redirectUri +
     // "&access_type=offline" +

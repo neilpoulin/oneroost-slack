@@ -30,7 +30,7 @@ Promise.all([loadSDK, storeReady]).then(function([sdk, isReady]){
     });
 
     sdk.Conversations.registerThreadViewHandler(function(threadView){
-        dispatch({type: RESET_THREAD})
+        // dispatch({type: RESET_THREAD})
         const subject = threadView.getSubject()
         dispatch({type: SET_SUBJECT, payload: subject})
     });

@@ -1,11 +1,18 @@
 $gmailHoverColor: #dddddd;
 $padding: 10px;
 
+.username{
+    padding: 0 $padding;
+    &.blocked{
+        color: red;
+    }
+    &.unblocked{
+        color: green;
+    }
+}
+
 .title{
     font-weight: bold;
-    padding: $padding;
-    margin-top: 1rem;
-    font-size: 1.1rem;
 }
 
 ul.vanityUrls{
