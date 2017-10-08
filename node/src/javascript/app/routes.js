@@ -209,6 +209,10 @@ router.post('/webhooks/slack', async (req, res) => {
     })
 })
 
+router.get('/googleUsers', async (req, res) => {
+    
+})
+
 router.get('*', function(req, res) {
     res.sendFile(path.join(viewRoot, 'index.html'));
 });

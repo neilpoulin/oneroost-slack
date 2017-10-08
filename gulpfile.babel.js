@@ -180,7 +180,7 @@ function bundle(done, withLog=false, withStats=false, env='prod') {
             });
         }
         else {
-            if( withLog){
+            if(withLog){
                 gutil.log(`[webpack:build-${env}]`, stats.toString({
                     colors: true,
                     version: true,

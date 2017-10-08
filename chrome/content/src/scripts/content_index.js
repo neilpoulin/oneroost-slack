@@ -1,5 +1,12 @@
 import {Store} from 'react-chrome-redux'
-import {SET_SUBJECT, SET_BODY, SET_SENDER, SET_ROOST_ID, RESET_THREAD} from 'actions/thread'
+import {
+    SET_SUBJECT,
+    SET_BODY,
+    SET_SENDER,
+} from 'actions/thread'
+import {
+    RESET_USER_REDIRECT
+} from 'actions/gmail'
 import {composeViewHandler} from 'RedirectButtonController'
 
 const store = new Store({
@@ -38,15 +45,9 @@ Promise.all([loadSDK, storeReady]).then(function([sdk, isReady]){
     sdk.Conversations.registerMessageViewHandler(function(messageView){
         const $messageBody = messageView.getBodyElement();
         const sender = messageView.getSender();
-        const links = messageView.getLinksInBody();
-        if (links){
-            let roostLink = links.find(link => link.href.indexOf('oneroost.com/roosts/') != -1)
-            if (roostLink){
-                let roostId = roostLink.href.split('roosts/')[1].split('/')[0]
-                dispatch({type: SET_ROOST_ID, payload: roostId})
-            }
-        }
+
         dispatch({type: SET_BODY, payload: $messageBody.innerText})
         dispatch({type: SET_SENDER, payload: sender})
+        dispatch({type: RESET_USER_REDIRECT})
     })
 });

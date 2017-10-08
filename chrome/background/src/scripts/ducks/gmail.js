@@ -15,6 +15,7 @@ import {
     LOAD_REDIRECTS_REQUEST,
     LOAD_REDIRECTS_SUCCESS,
     LOAD_REDIRECTS_ERROR,
+    RESET_USER_REDIRECT
 } from 'actions/gmail'
 
 const GMAIL_LABEL_NAME_BLOCKED = 'OneRoost | Blocked'
@@ -28,6 +29,7 @@ const initialState = {
     filterSaveSuccess: false,
     redirects: [],
     error: null,
+    userBlocked: false,
 }
 
 export default function reducer(state=initialState, action){
@@ -71,6 +73,11 @@ export default function reducer(state=initialState, action){
         case LOAD_REDIRECTS_ERROR:
             state = state.set('error', action.error)
             state = state.set('redirectsLoading', false)
+            break;
+        case RESET_USER_REDIRECT:
+            state = state.set('userBlocked', false)
+            state = state.set('redirectSaveSuccess', false)
+            state = state.set('redirectsSaving', false)
             break;
         default:
             break;

@@ -13,6 +13,8 @@ export const LOAD_REDIRECTS_REQUEST = 'oneroost/gmail/LOAD_REDIRECTS_REQUEST'
 export const LOAD_REDIRECTS_SUCCESS = 'oneroost/gmail/LOAD_REDIRECTS_SUCCESS'
 export const LOAD_REDIRECTS_ERROR = 'oneroost/gmail/LOAD_REDIRECTS_ERROR'
 
+export const RESET_USER_REDIRECT = 'oneroost/gmail/RESET_USER_REDIRECT'
+
 // ALIASES
 export const GET_FILTERS_ALIAS = 'oneroost/gmail/GET_FILTERS_ALIAS'
 export const CREATE_FILTER_ALIAS = 'oneroost/gmail/CREATE_FILTER_ALIAS'

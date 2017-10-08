@@ -25,10 +25,13 @@ export default function reducer(state=initialState, action){
             break;
         case ThreadActions.RESET_THREAD:
             state = fromJS(initialState)
-            break;
+            break
         default:
-            state = state;
             break;
     }
     return state.toJS()
+}
+
+export function getRedirects(){
+
 }

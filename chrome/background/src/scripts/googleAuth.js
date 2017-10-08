@@ -12,6 +12,7 @@ var id_token = null;
 var manifest = chrome.runtime.getManifest();
 
 var scopes = encodeURIComponent(manifest.oauth2.scopes.join(' '));
+var requiredScopes = manifest.oauth2.scopes;
 
 window.getLastToken = function() {
     return access_token;
@@ -56,7 +57,7 @@ function oauth2(interactive=true){
                         console.log('Background login complete.. token =', access_token);
                         getTokenInfo(access_token).then(({isValid, ...rest}) => {
                             if(isValid){
-                                console.log('Token was found to be valid!!')
+                                console.log('Token was found to be valid!!', rest)
                             }
                             else{
                                 console.log('Token was not valid!')
@@ -138,6 +139,18 @@ export function getTokenInfo(token){
     return axios.get(`${verifyTokenUrl}?access_token=${token}`)
         .then(({data, status}) => {
             console.log('Validated token', data)
+            let grantedScopes = data.scope;
+            let hasAllScopes = true;
+            requiredScopes.forEach(scope => {
+                if (hasAllScopes && grantedScopes.indexOf(scope) == -1){
+                    hasAllScopes = false;
+                    return;
+                }
+            })
+            if (!hasAllScopes){
+                console.log('user does not have all the required scopes... asking for more')
+
+            }
             if(data.aud === webClientId){
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
                 return {...data, isValid: true};
