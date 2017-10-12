@@ -126,7 +126,7 @@ export function syncTeamRedirects(){
                 console.log('result', r)
                 return r.toJSON()
             })
-        })
+        }).catch(error => console.error(error))
 
         let labelsAsync = getCurrentLabels()
         let filtersAsync = getCurrentFilters()
@@ -237,7 +237,7 @@ export function getTeamRedirects(){
         let user = Parse.User.current()
         if (!user){
             console.error('user is not logged in')
-            return null
+            return Promise.resolve([])
         }
         let query = new Parse.Query('Redirect')
         query.equalTo('slackTeam', user.get('slackTeam'))
