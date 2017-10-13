@@ -102,15 +102,19 @@ export const logIn = ({email, password}) => (dispatch, getState) => {
         })
 }
 
-export const logOut = () => (dispatch, getState) => {
-    console.log('Logging out')
-    if (!Parse.User.current()){
-        dispatch({type: UserActions.LOG_OUT_SUCCESS})
-        return null
+export function logOut (){
+    return (dispatch, getState) => {
+        console.log('Logging out')
+        if (!Parse.User.current()){
+            dispatch({type: UserActions.LOG_OUT_SUCCESS})
+            dispatch(logOutGoogle())
+            return null
+        }
+        Parse.User.logOut().then(() => {
+            dispatch({type: UserActions.LOG_OUT_SUCCESS})
+            dispatch(logOutGoogle())
+        })
     }
-    Parse.User.logOut().then(() => {
-        dispatch({type: UserActions.LOG_OUT_SUCCESS})
-    })
 }
 
 export const logInGoogle = () => (dispatch, getState) => {
@@ -121,10 +125,12 @@ export const logInGoogle = () => (dispatch, getState) => {
     })
 }
 
-export const logOutGoogle = () => (dispatch, getState) => {
-    handleSignOutClick().then(() => {
-        dispatch({type: UserActions.GOOGLE_LOG_OUT_SUCCESS})
-    })
+export function logOutGoogle(){
+    return (dispatch, getState) => {
+        handleSignOutClick().then(() => {
+            dispatch({type: UserActions.GOOGLE_LOG_OUT_SUCCESS})
+        })
+    }
 }
 
 export const loadCachedUser = () => (dispatch, getState) => {

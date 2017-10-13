@@ -50,12 +50,12 @@
     "manifest_version": 2,
     "content_security_policy": "script-src https://*.google.com 'unsafe-eval'; object-src 'self'",
     "oauth2": {
-        "client_id": "298915058255-8mq6ebtrh8e78en6k4kq5p2i8em42s9d.apps.googleusercontent.com",
+        "client_id": "1027279659159-vhp3u2qq0gbjhvb0a2leujqn2mvt87a4.apps.googleusercontent.com",
         "scopes": [
             "https://www.googleapis.com/auth/gmail.modify",
             "https://www.googleapis.com/auth/gmail.labels",
             "https://www.googleapis.com/auth/gmail.settings.basic",
             "https://www.googleapis.com/auth/userinfo.email"
         ]
-    }    
+    }
 }
