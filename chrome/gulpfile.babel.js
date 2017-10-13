@@ -4,6 +4,7 @@ import webpack from 'webpack';
 import rimraf from 'rimraf';
 import zip from 'gulp-zip';
 import jeditor from 'gulp-json-editor';
+import manifestKeys from './manifestEnv.json'
 
 const plugins = loadPlugins();
 
@@ -47,6 +48,11 @@ gulp.task('chrome:copy-manifest', ['chrome:clean'], () => {
     return gulp.src('manifest.json')
         .pipe(jeditor(manifest => {
             manifest.name = 'OneRoost' + (process.env.ENV_NAME || '')
+            let envName = process.env.ENV_NAME || 'prod'
+            envName = envName.toLowerCase()
+            let vars = manifestKeys[envName]
+            manifest.key = vars.key
+            manifest.oauth2.client_id = vars.client_id
             return manifest;
         }))
         .pipe(gulp.dest('build'));

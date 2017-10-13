@@ -1,7 +1,7 @@
 {
     "name": "OneRoost",
     "description": "OneRoost Gmail Extension",
-    "version": "4.3",
+    "version": "5.1",
     "background": {
         "page": "background.html",
         "persistent": true
@@ -57,6 +57,5 @@
             "https://www.googleapis.com/auth/gmail.settings.basic",
             "https://www.googleapis.com/auth/userinfo.email"
         ]
-    },
-    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5TPxBMexUUVSn0uUYX2p7/qUmANKdFteXWQdE+MHbTuYCILYTy3qFtMEENEKDQ8oN7n+EQPQpiMTz7/76TZGQHDASxA0shmZvfhTRJ+BcIqr7yrhJSsLvhWGDgT24jf2ubbLTX2GJQHMOsMdsgW14Gb/npFZg5LmheR47rWcpE5WyUq2Vm5ItMGXoWnSTWOjbWWpkz/m5j9cJccbbGOfAsohCLIlaVJ92vPUTALUhK+N/+9kN1xpZrIQ9m5TdN0Z6VvM/eVJe+41+1qDE91/T+lAwFwNTDXkVodVimUM/JnOLPH8Esh7bDHWmSbpvUYGFCYM2hOGVYOq1cMzyRXwZwIDAQAB"
+    }    
 }
