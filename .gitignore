@@ -6,6 +6,10 @@ yarn-debug.log*
 yarn-error.log*
 .DS_Store
 
+# Chrome build stuff
+*.pem
+*.crx
+
 # Runtime data
 pids
 *.pid

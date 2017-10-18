@@ -47,9 +47,14 @@ gulp.task('chrome:popup-html', ['chrome:clean'], () => {
 gulp.task('chrome:copy-manifest', ['chrome:clean'], () => {
     return gulp.src('manifest.json')
         .pipe(jeditor(manifest => {
-            manifest.name = 'OneRoost' + (process.env.ENV_NAME || '')
-            let envName = process.env.ENV_NAME || 'prod'
+            let envName = process.env.ENV_NAME || 'stage'
             envName = envName.toLowerCase()
+            manifest.name = `OneRoost ${(envName === 'prod' ? '' : process.env.ENV_NAME)}`
+            if (envName !== 'prod'){
+                manifest.permissions.push(`https://${envName}.oneroost.com/*`)
+                manifest.icons['128'] = 'images/oneroost_logo_square_128x128_alt.png'
+                manifest.browser_action.default_icon['30'] = 'images/logo30x30_alt.png'
+            }
             let vars = manifestKeys[envName]
             manifest.key = vars.key
             manifest.oauth2.client_id = vars.client_id
@@ -81,7 +86,7 @@ gulp.task('chrome:package:clean', (cb) => {
 });
 
 gulp.task('package:copy-manifest', ['chrome:copy-manifest'], () => {
-    return gulp.src('manifest.json')
+    return gulp.src('build/manifest.json')
         .pipe(jeditor(manifest => {
             delete manifest.key
             return manifest
@@ -97,6 +102,19 @@ gulp.task('package', ['chrome',
         .pipe(zip('archive.zip'))
         .pipe(gulp.dest('dist'))
 );
+
+gulp.task('manifest:tick', () => {
+    return gulp.src('manifest.json')
+        .pipe(jeditor(manifest => {
+            let version = manifest.version;
+            console.log('current version', version)
+            let [major, minor] = version.split('.')
+            manifest.version = `${Number(major)}.${Number(minor) + 1}`
+            console.log('new version', manifest.version)
+            return manifest
+        }))
+        .pipe(gulp.dest('./'));
+})
 
 gulp.task('chrome', ['chrome:copy-images',
     'chrome:copy-lib',

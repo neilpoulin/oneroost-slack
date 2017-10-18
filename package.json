@@ -14,7 +14,8 @@
         "lint": "eslint frontend",
         "build": "gulp install",
         "test": "jest --watch",
-        "tunnel": "lt --subdomain oneroost --port 8081"
+        "tunnel": "lt --subdomain oneroost --port 8081",
+        "dev": "gulp dev"
     },
     "jest": {
         "setupTestFrameworkScriptFile": "./node_modules/jest-enzyme/lib/index.js",

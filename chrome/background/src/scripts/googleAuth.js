@@ -14,7 +14,8 @@ window.getLastToken = function() {
 }
 
 export function loadUserFromCache() {
-    return oauth2(false)
+    return Promise.reject(null)
+    // return oauth2(false)
 }
 
 export function handleSignInClick(event) {

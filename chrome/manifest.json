@@ -1,7 +1,7 @@
 {
     "name": "OneRoost",
     "description": "OneRoost Gmail Extension",
-    "version": "5.1",
+    "version": "5.4",
     "background": {
         "page": "background.html",
         "persistent": true
@@ -16,17 +16,20 @@
             "30": "images/logo30x30.png"
         }
     },
-    "content_scripts": [
-        {
-            "matches": [
-                "https://mail.google.com/*",
-                "https://inbox.google.com/*"
-            ],
-            "js": ["lib/inboxsdk.js", "content.js"],
-            "css": ["content.css"],
-            "run_at": "document_end"
-        }
-    ],
+    "content_scripts": [{
+        "matches": [
+            "https://mail.google.com/*",
+            "https://inbox.google.com/*"
+        ],
+        "js": [
+            "lib/inboxsdk.js",
+            "content.js"
+        ],
+        "css": [
+            "content.css"
+        ],
+        "run_at": "document_end"
+    }],
     "permissions": [
         "https://mail.google.com/",
         "https://inbox.google.com/",
