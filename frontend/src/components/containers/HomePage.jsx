@@ -65,7 +65,7 @@ class HomePage extends React.Component{
             if (state === getOAuthState()){
                 this.props.getToken(code, redirectUri)
             } else {
-                console.error('state param did not match: returned =' + state + ', saved = ' + getOAuthState() )
+                console.error('state param did not match: returned =' + state + ', saved = ' + getOAuthState())
             }
 
         } else {
@@ -150,7 +150,19 @@ class HomePage extends React.Component{
                     </div>
                     <footer display-if={!hasMore} className="">
                         {$footer}
-                    </footer>
+                    </footer> </section>
+                <section className='youtubeContainer'>
+                    <div className='video'>
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/B_N4IVHGoZo?rel=0&amp;showinfo=0" frameBorder="0" allowFullScreen></iframe>
+                        <caption>Installing OneRoost takes about 90 seconds. Watch the video to see it in action.</caption>
+                    </div>
+                    <div className='video'>
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/_OwEo3GqK7c?rel=0&amp;showinfo=0" frameBorder="0" allowFullScreen></iframe>
+                        <caption>Collecting Vendor proposals has never been easier</caption>
+                    </div>
+                </section>
+                <section className='youtubeContainer'>
+
                 </section>
                 <section className="textInfo background-light" display-if={paragraphs && paragraphs.length > 0}>
                     {paragraphs.map(({title, content}, i) =>
