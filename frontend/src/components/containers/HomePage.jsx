@@ -159,8 +159,8 @@ class HomePage extends React.Component{
                     </footer> </section>
                 <section className='youtubeContainer' display-if={videos}>
                     <FlexBoxes columns={videos.length === 3 ? 3 : 2}>
-                        {videos.map(video =>
-                            <div className='video'>
+                        {videos.map((video, i) =>
+                            <div className='video' key={`video_${i}`}>
                                 <h3 display-if={video.title} className="title">{video.title}</h3>
                                 <iframe width="480" height="200" src={video.url} frameBorder="0" allowFullScreen></iframe>
                                 <p className='caption' >{video.caption}</p>

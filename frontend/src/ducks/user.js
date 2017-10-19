@@ -104,16 +104,23 @@ export default function reducer(state=initialState, action){
 
 export function loadUser(){
     return dispatch => {
-        let parseUser = Parse.User.current()
+        try{
+            let parseUser = Parse.User.current()
 
-        if (parseUser){
-            let slackTeam = parseUser.get('slackTeam')
-            if (slackTeam){
-                slackTeam.fetch().then(fetched => {
-                    dispatch(userLoggedIn(parseUser))
-                })
+            if (parseUser){
+                let slackTeam = parseUser.get('slackTeam')
+                if (slackTeam){
+                    slackTeam.fetch().then(fetched => {
+                        dispatch(userLoggedIn(parseUser))
+                    }).catch(error => {
+                        console.error(error)
+                        dispatch(logout()).then(() => window.location = '/')
+                    })
+                }
+
             }
-
+        }catch(e){
+            console.error(e)
         }
     }
 }
@@ -308,12 +315,13 @@ export function logout(){
         console.log('logging out...')
         let user = Parse.User.current()
         if (user){
-            Parse.User.logOut().then(() => {
+            return Parse.User.logOut().then(() => {
                 dispatch({
                     type: LOGOUT
                 })
             }).catch(console.error)
         }
+        return Promise.resolve()
     }
 }
 
@@ -329,6 +337,6 @@ export function setOAuthState(){
 }
 
 export function getOAuthState(){
-    let state = Cookie.get('oneroost_state')    
+    let state = Cookie.get('oneroost_state')
     return state
 }
