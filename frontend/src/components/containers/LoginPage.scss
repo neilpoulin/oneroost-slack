@@ -1,3 +1,5 @@
+@import "~variables.scss";
+
 .container{
     display: flex;
     flex-direction: column;
@@ -13,4 +15,24 @@
 
 .logo{
     margin-bottom: 2rem;
+}
+
+.action{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    section{
+        padding: 2rem 4rem;
+        width: 50%;
+    }
+}
+
+.description{
+    font-family: "Gotham Book";
+    color: $mutedColor;
+}
+
+.title{
+    font-family: "Gotham Bold";
+    color: $headerColor;
 }

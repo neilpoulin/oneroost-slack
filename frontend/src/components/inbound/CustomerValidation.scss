@@ -1,8 +1,9 @@
-.content{
-    border: 1px solid black;
-    padding: 1rem;
+@import "~variables.scss";
+
+.content{    
     height: 100%;
     min-height: 15rem;
+    @include contentBox;
 }
 
 .flexboxes{

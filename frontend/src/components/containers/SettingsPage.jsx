@@ -65,16 +65,16 @@ class SettingsPage extends React.Component {
             <BasePage>
                 <div>
                     <section className='teamInfo'>
-                        <h1>Settings</h1>
                         <div display-if={teamImageUrl} className='teamConnect'>
                             <img src={teamImageUrl} display-if={teamImageUrl}/><span className='plus'>+</span><Logo color='primary'/>
-                        </div>
-                        <div className='action'>
-                            <Clickable to={`/teams/${teamId}`} inline outline text='Vendor Inbound Flow'/>
                         </div>
                         <p className='welcome'>
                             Welcome, {userName} @ {teamName} (<LogoutLink/>)
                         </p>
+                        <div className='action'>
+                            <Clickable to={`/teams/${teamId}`} inline outline text='View your vendor inbound flow'/>
+                        </div>
+
                     </section>
                     <FlexBoxes defaultContentStyles={true} columns={2}>
                         <div>

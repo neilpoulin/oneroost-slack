@@ -318,7 +318,7 @@ export function logout(){
 }
 
 export function setOAuthState(){
-    return dispatch => {
+    return (dispatch, getState) => {
         const state = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)
         Cookie.set('oneroost_state', state)
         dispatch({
@@ -329,5 +329,6 @@ export function setOAuthState(){
 }
 
 export function getOAuthState(){
-    return Cookie.get('oneroost_state')
+    let state = Cookie.get('oneroost_state')    
+    return state
 }

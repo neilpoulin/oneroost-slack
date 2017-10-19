@@ -15,7 +15,7 @@ import Logo from 'atoms/Logo'
 import {setNavProperty} from 'ducks/basePage'
 import BasePage from './BasePage'
 import {authorizeSlackTeam, getOAuthState, setOAuthState} from 'ducks/user'
-
+import SlackAddButton from './SlackAddButton'
 class HomePage extends React.Component{
     static propTypes = {
         loadPage: PropTypes.func.isRequired,
@@ -26,6 +26,11 @@ class HomePage extends React.Component{
         paragraphs: PropTypes.arrayOf(PropTypes.shape({
             title: PropTypes.string,
             content: PropTypes.string,
+        })),
+        videos: PropTypes.arrayOf(PropTypes.shape({
+            title: PropTypes.string,
+            caption: PropTypes.string,
+            url: PropTypes.string.isRequired,
         })),
         hasMore: PropTypes.bool,
         isLoading: PropTypes.bool.isRequired,
@@ -97,6 +102,7 @@ class HomePage extends React.Component{
             slackAddedSuccess,
             location,
             state,
+            videos,
             //actions
         } = this.props
 
@@ -135,9 +141,7 @@ class HomePage extends React.Component{
                             <p className="tagline" display-if={heroSubTitle}>{heroSubTitle}</p>
                         </div>
                         <div className="emailContainer form-group" display-if={ctaButtonText}>
-                            <a href={`https://slack.com/oauth/authorize?&client_id=225772115667.227177070210&scope=chat:write:bot,channels:write,channels:read&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`}>
-                                <img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x"/>
-                            </a>
+                            <SlackAddButton/>
                         </div>
                         <div display-if={ctaSubText} className={'actionSubTextContainer'}>
                             {ctaSubText}
@@ -151,15 +155,14 @@ class HomePage extends React.Component{
                     <footer display-if={!hasMore} className="">
                         {$footer}
                     </footer> </section>
-                <section className='youtubeContainer'>
-                    <div className='video'>
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/B_N4IVHGoZo?rel=0&amp;showinfo=0" frameBorder="0" allowFullScreen></iframe>
-                        <caption>Installing OneRoost takes about 90 seconds. Watch the video to see it in action.</caption>
-                    </div>
-                    <div className='video'>
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/_OwEo3GqK7c?rel=0&amp;showinfo=0" frameBorder="0" allowFullScreen></iframe>
-                        <caption>Collecting Vendor proposals has never been easier</caption>
-                    </div>
+                <section className='youtubeContainer' display-if={videos}>
+                    {videos.map(video =>
+                        <div className='video'>
+                            <h3 display-if={video.title} className="title">{video.title}</h3>
+                            <iframe width="480" height="200" src={video.url} frameBorder="0" allowFullScreen></iframe>
+                            <caption >{video.caption}</caption>
+                        </div>)
+                    }
                 </section>
                 <section className='youtubeContainer'>
 
@@ -192,6 +195,7 @@ const mapStateToProps = (state, ownProps) => {
         ctaSubText,
         ctaButtonText,
         paragraphs,
+        videos,
         isLoading,
         extensionUrl,
         chromeExtension: {
@@ -217,6 +221,7 @@ const mapStateToProps = (state, ownProps) => {
         ctaSubText,
         ctaButtonText,
         paragraphs,
+        videos,
         isLoading,
         hasMore,
         extensionUrl,

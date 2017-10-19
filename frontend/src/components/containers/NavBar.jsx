@@ -8,6 +8,7 @@ import {
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import Logo from 'atoms/Logo'
+import SlackLoginButton from './SlackLoginButton'
 
 class NavBar extends React.Component {
     static propTypes = {
@@ -40,7 +41,7 @@ class NavBar extends React.Component {
             </ul>
             <ul className='nav'>
                 <li className='navLink' display-if={isLoggedIn}><NavLink to="/settings">Settings</NavLink></li>
-                <li className='navLink' display-if={!isLoggedIn}><NavLink to="/login">Login</NavLink></li>
+                <li className='navLink' display-if={!isLoggedIn}><NavLink to="/login">Login</NavLink></li>                
             </ul>
         </div>
     }

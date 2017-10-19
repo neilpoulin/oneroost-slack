@@ -14,6 +14,7 @@ export const initialState = Immutable.fromJS({
     ctaSubText: null,
     ctaButtonText: null,
     paragraphs: [],
+    videos: [],
     extensionUrl: null,
     isLoading: false,
     chromeExtension: {

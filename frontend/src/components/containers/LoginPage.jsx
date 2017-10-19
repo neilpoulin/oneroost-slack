@@ -8,6 +8,8 @@ import {withRouter} from 'react-router-dom'
 import BasePage from './BasePage'
 import Logo from 'atoms/Logo'
 import Clickable from 'atoms/Clickable'
+import SlackLoginButton from './SlackLoginButton'
+import SlackAddButton from './SlackAddButton'
 
 class LoginPage extends React.Component{
     static propTypes = {
@@ -35,7 +37,7 @@ class LoginPage extends React.Component{
             if (state === getOAuthState()){
                 this.props.getToken(code, redirectUri)
             } else {
-                console.error('state param did not match: returned =' + state + ', saved = ' + getOAuthState() )
+                console.error('state param did not match: returned =' + state + ', saved = ' + getOAuthState())
             }
         } else {
             generateOAuthState()
@@ -44,7 +46,6 @@ class LoginPage extends React.Component{
 
     render () {
         const {
-            slackClientId,
             isLoggedIn,
             error,
             isLoading,
@@ -52,9 +53,7 @@ class LoginPage extends React.Component{
             teamName,
             location,
             hasSlack,
-            redirectUri,
             installSuccess,
-            state,
         } = this.props
 
         if ((isLoggedIn || error) && location.search){
@@ -86,13 +85,16 @@ class LoginPage extends React.Component{
                         Loading...
                     </div>
                     <div display-if={!hasSlack && !isLoading} className='action'>
-                        <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`}>
-                            <img alt="Sign in with Slack"
-                                height="40"
-                                width="172"
-                                src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
-                                srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"/>
-                        </a>
+                        <section>
+                            <h3 className='title'>Login</h3>
+                            <SlackLoginButton/>
+                            <p className='description'>Already have OneRoost in Slack? Sign in above.</p>
+                        </section>
+                        <section>
+                            <h3 className='title'>Install</h3>
+                            <SlackAddButton/>
+                            <p className='description'>Does your team need to install OneRoost? Install using the button above.</p>
+                        </section>
                     </div>
                 </div>
             </BasePage>)
