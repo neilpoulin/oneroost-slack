@@ -10,6 +10,7 @@ import Logo from 'atoms/Logo'
 import Clickable from 'atoms/Clickable'
 import SlackLoginButton from './SlackLoginButton'
 import SlackAddButton from './SlackAddButton'
+import FlexBoxes from 'molecule/FlexBoxes'
 
 class LoginPage extends React.Component{
     static propTypes = {
@@ -85,16 +86,18 @@ class LoginPage extends React.Component{
                         Loading...
                     </div>
                     <div display-if={!hasSlack && !isLoading} className='action'>
-                        <section>
-                            <h3 className='title'>Login</h3>
-                            <SlackLoginButton/>
-                            <p className='description'>Already have OneRoost in Slack? Sign in above.</p>
-                        </section>
-                        <section>
-                            <h3 className='title'>Install</h3>
-                            <SlackAddButton/>
-                            <p className='description'>Does your team need to install OneRoost? Install using the button above.</p>
-                        </section>
+                        <FlexBoxes columns={2}>
+                            <section>
+                                <h3 className='title'>Login</h3>
+                                <SlackLoginButton/>
+                                <p className='description'>Already have OneRoost in Slack? Sign in above.</p>
+                            </section>
+                            <section>
+                                <h3 className='title'>Install</h3>
+                                <SlackAddButton/>
+                                <p className='description'>Does your team need to install OneRoost? Install using the button above.</p>
+                            </section>
+                        </FlexBoxes>
                     </div>
                 </div>
             </BasePage>)

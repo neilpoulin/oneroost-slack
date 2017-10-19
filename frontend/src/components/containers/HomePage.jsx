@@ -16,6 +16,8 @@ import {setNavProperty} from 'ducks/basePage'
 import BasePage from './BasePage'
 import {authorizeSlackTeam, getOAuthState, setOAuthState} from 'ducks/user'
 import SlackAddButton from './SlackAddButton'
+import FlexBoxes from 'molecule/FlexBoxes'
+
 class HomePage extends React.Component{
     static propTypes = {
         loadPage: PropTypes.func.isRequired,
@@ -156,13 +158,16 @@ class HomePage extends React.Component{
                         {$footer}
                     </footer> </section>
                 <section className='youtubeContainer' display-if={videos}>
-                    {videos.map(video =>
-                        <div className='video'>
-                            <h3 display-if={video.title} className="title">{video.title}</h3>
-                            <iframe width="480" height="200" src={video.url} frameBorder="0" allowFullScreen></iframe>
-                            <caption >{video.caption}</caption>
-                        </div>)
-                    }
+                    <FlexBoxes columns={videos.length === 3 ? 3 : 2}>
+                        {videos.map(video =>
+                            <div className='video'>
+                                <h3 display-if={video.title} className="title">{video.title}</h3>
+                                <iframe width="480" height="200" src={video.url} frameBorder="0" allowFullScreen></iframe>
+                                <p className='caption' >{video.caption}</p>
+                            </div>)
+                        }
+                    </FlexBoxes>
+
                 </section>
                 <section className='youtubeContainer'>
 

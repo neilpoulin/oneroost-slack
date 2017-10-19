@@ -39,23 +39,20 @@
         line-height: 1.5* $baseFontSize;
     }
 
-    .youtubeContainer{
-        display: flex;
+    .youtubeContainer{        
         .video{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 50%;
             padding: 1rem;
             color: $mutedColor;
+            text-align: center;
             iframe{
                 max-width: 100%;
                 height: 260px;
             }
-            caption{
-                padding: 1rem 1rem;
+            .title{
+                margin-bottom: 2rem;
+            }
+            .caption{
                 font-size: 1.2rem;
-                text-align: left;
             }
         }
 
@@ -203,14 +200,12 @@
         }
 
         .youtubeContainer{
-            display: flex;
-            flex-direction: column;
             .video{
                 width: 100%;
                 iframe: {
                     height: 200px;
                 }
-                caption{
+                .caption{
                     padding: 1rem 0rem;
                 }
             }
