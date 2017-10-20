@@ -29,7 +29,7 @@ class ProcessOverview extends React.Component {
                     Once your information is submitted, OneRoost presents your opportunity to the entire team most applicable to your solution/offering.  95% of the time the decision maker will indicate their level of interest in 48 hours.
                 </p>
                 <p>
-                    In the event you have any questions, ask away via the orange chat icon in the lower left.
+                    In the event you have any questions, ask away via the orange chat icon in the lower right.
                 </p>
             </div>
             <div>
