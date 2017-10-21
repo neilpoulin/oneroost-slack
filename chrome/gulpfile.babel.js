@@ -49,11 +49,13 @@ gulp.task('chrome:copy-manifest', ['chrome:clean'], () => {
         .pipe(jeditor(manifest => {
             let envName = process.env.ENV_NAME || 'stage'
             envName = envName.toLowerCase()
-            manifest.name = `OneRoost ${(envName === 'prod' ? '' : process.env.ENV_NAME)}`
+            manifest.name = `OneRoost${(envName === 'prod' ? '' : ' ' + process.env.ENV_NAME)}`
             if (envName !== 'prod'){
                 manifest.permissions.push(`https://${envName}.oneroost.com/*`)
                 manifest.icons['128'] = 'images/oneroost_logo_square_128x128_alt.png'
                 manifest.browser_action.default_icon['30'] = 'images/logo30x30_alt.png'
+            } else {
+                manifest.permissions.push('https://www.oneroost.com/*')
             }
             let vars = manifestKeys[envName]
             manifest.key = vars.key

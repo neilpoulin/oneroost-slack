@@ -6,7 +6,7 @@
     "scripts": {
         "test": "jest",
         "dev": "ENV_NAME=Dev NODE_ENV=dev HOSTNAME=https://dev.oneroost.com gulp chrome:watch",
-        "prod": "ENV_NAME=Prod && HOSTNAME=https://www.oneroost.com gulp package",
+        "prod": "ENV_NAME=Prod && ENV_NAME=Prod HOSTNAME=https://www.oneroost.com gulp package",
         "stage": "ENV_NAME=Stage gulp manifest:tick && ENV_NAME=Stage HOSTNAME=https://stage.oneroost.com gulp package"
     },
     "author": "Neil Poulin",
