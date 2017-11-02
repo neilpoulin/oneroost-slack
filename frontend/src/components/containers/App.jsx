@@ -19,9 +19,14 @@ import {logPageView} from 'analytics';
 
 const history = createBrowserHistory();
 history.listen((location) => {
-    const path = location.pathname
-    console.log("tracking page view: " + path);
-    logPageView({path})
+    try{
+        const path = location.pathname
+        console.log("tracking page view: " + path);
+        logPageView({path})
+    }
+    catch (e){
+        console.log('Failed to report page view')
+    }
 });
 
 const App = ({

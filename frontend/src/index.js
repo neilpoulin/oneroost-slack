@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/containers/App';
+import Parse from 'parse'
 import { Provider } from 'react-redux'
 import {getStore} from './store'
 import {loadUser} from 'ducks/user'
 import {loadServerConfigs} from 'ducks/config'
-import Parse from 'parse'
 import {initialize as initializeAnalytics} from 'analytics'
 
 const store = getStore()
@@ -24,7 +24,6 @@ store.dispatch(loadServerConfigs())
         console.log(currentUser)
 
         initializeAnalytics(config, Parse.User.current())
-
         ReactDOM.render(
         <Provider store={store}>
             <App/>
