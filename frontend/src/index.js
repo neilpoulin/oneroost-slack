@@ -6,6 +6,7 @@ import {getStore} from './store'
 import {loadUser} from 'ducks/user'
 import {loadServerConfigs} from 'ducks/config'
 import Parse from 'parse'
+import {initialize as initializeAnalytics} from 'analytics'
 
 const store = getStore()
 // let unsubscribe =
@@ -14,17 +15,15 @@ store.subscribe(() => {
 })
 
 store.dispatch(loadServerConfigs())
-    .then(({PARSE_PUBLIC_URL, PARSE_APP_ID, INTERCOM_APP_ID}) => {
+    .then((config) => {
+        const {PARSE_APP_ID, } = config
         Parse.initialize(PARSE_APP_ID);
         Parse.serverURL = window.location.origin + '/parse';
         store.dispatch(loadUser())
-        console.log(Parse.User.current())
-        //setup Intercom
-        if (window.Intercom){
-            window.Intercom('boot', {
-                app_id: INTERCOM_APP_ID
-            });
-        }
+        let currentUser = Parse.User.current()
+        console.log(currentUser)
+
+        initializeAnalytics(config, Parse.User.current())
 
         ReactDOM.render(
         <Provider store={store}>

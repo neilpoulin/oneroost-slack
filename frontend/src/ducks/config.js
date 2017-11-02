@@ -11,6 +11,7 @@ const initialState = Immutable.fromJS({
     ENV_NAME: null,
     SLACK_CLIENT_ID: null,
     PARSE_APP_ID: null,
+    GA_TRACKING_ID: null,
     isLoading: false,
     hasLoaded: false,
 })

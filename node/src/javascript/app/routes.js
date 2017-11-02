@@ -14,6 +14,7 @@ import {
     GOOGLE_CLIENT_ID,
     HOSTNAME,
     INTERCOM_APP_ID,
+    GA_TRACKING_ID,
 } from 'util/Environment'
 import {
     postToChannel,
@@ -106,6 +107,7 @@ router.get('/configs', (req, res) => {
         GOOGLE_CLIENT_ID,
         HOSTNAME,
         INTERCOM_APP_ID,
+        GA_TRACKING_ID,
     })
 })
 
