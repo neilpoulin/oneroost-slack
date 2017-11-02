@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {
-    BrowserRouter as Router,
+    Router,
     Route,
     withRouter,
 } from 'react-router-dom'
@@ -13,11 +13,26 @@ import TeamInboundPage from './TeamInboundPage'
 import PrivateRoute from './PrivateRoute'
 import SupportPage from './SupportPage'
 import PrivacyPage from './PrivacyPage'
+import { createBrowserHistory } from 'history';
+import {logPageView} from 'analytics';
+
+
+const history = createBrowserHistory();
+history.listen((location) => {
+    try{
+        const path = location.pathname
+        console.log("tracking page view: " + path);
+        logPageView({path})
+    }
+    catch (e){
+        console.log('Failed to report page view')
+    }
+});
 
 const App = ({
     hasLoaded,
 }) => (
-    <Router>
+    <Router history={history}>
         <div display-if={hasLoaded}>
             <Route exact path="/" component={HomePage}/>
             <Route path="/login" component={LoginPage}/>
