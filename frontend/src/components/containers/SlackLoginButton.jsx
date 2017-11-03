@@ -26,7 +26,7 @@ const mapStateToProps = (state, ownProps) => {
     const {config} = state
     return {
         slackClientId: config.get('SLACK_CLIENT_ID'),
-        redirectUri: `${config.get('HOSTNAME')}/login`,
+        redirectUri: `${window.location.origin}/login`,
         state: getOAuthState()
     }
 }
