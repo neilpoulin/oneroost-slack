@@ -15,7 +15,8 @@
         "build": "gulp install",
         "test": "jest --watch",
         "tunnel": "lt --subdomain oneroost --port 8081",
-        "dev": "gulp dev"
+        "dev": "gulp dev",
+        "build:sass": "npm rebuild node-sass --force"
     },
     "jest": {
         "setupTestFrameworkScriptFile": "./node_modules/jest-enzyme/lib/index.js",
@@ -89,6 +90,7 @@
         "babel-plugin-transform-async-to-generator": "^6.24.1",
         "babel-polyfill": "^6.26.0",
         "body-parser": "^1.17.2",
+        "console-stamp": "^0.2.6",
         "cookie-parser": "^1.4.3",
         "ejs": "^2.5.7",
         "express": "^4.15.4",

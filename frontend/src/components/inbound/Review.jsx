@@ -97,7 +97,7 @@ const mapStateToProps = (state, ownProps) => {
     const errorText = (error && error.friendlyText) ? error.friendlyText : 'Something went wrong, please try again later.';
 
     return {
-        submitted,
+        submitted: false,
         saving,
         hasError: !!error,
         errorText,

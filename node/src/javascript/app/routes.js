@@ -2,7 +2,7 @@ var path = require('path');
 var axios = require('axios');
 var router = require('express').Router()
 var viewRoot = path.join(__dirname, '..', '..', 'view')
-import Parse from 'parse/node'
+
 import {
     SLACK_CLIENT_ID,
     SLACK_CLIENT_SECRET,
@@ -22,13 +22,13 @@ import {
     saveChannel,
     getSlackTeamBySlackTeamId,
     getImagesFromTeam,
+    handleInboundInterestLevel,
 } from 'slack/slackService'
 import SlackTeam from 'models/SlackTeam'
 import {
     INBOUND_CLASSNAME,
     USER_CLASSNAME,
 } from 'models/ModelConstants'
-import {getInterestLevelDisplayText, getEmoji} from 'slack/InterestLevel'
 
 router.post('/tokens/slack', async (req, res) => {
     console.log('POST: /tokens/slack')
@@ -132,20 +132,13 @@ router.post('/slackTeams', async (req, res) => {
 })
 
 router.post('/webhooks/slack', async (req, res) => {
-    // console.log('Slack webhook body:', req.body)
     const body = req.body
 
-    console.log('request body.payload', body.payload)
+    console.log('POST: /webhooks/slack request body.payload', body.payload, null, 4)
     const payload = JSON.parse(body.payload)
     const {
-        actions,
         callback_id,
-        team: {id: teamId},
-        channel: {id: channelId},
-        user: {id: slackUserId, name: userName},
         token,
-        original_message: original_message,
-        response_url,
     } = payload
 
     if (SLACK_VERIFICATION_TOKEN !== token){
@@ -156,59 +149,24 @@ router.post('/webhooks/slack', async (req, res) => {
         });
     }
 
-    const [actionType, inboundId] = callback_id.split('::')
+    const [actionType] = callback_id.split('::')
     console.log('actionType', actionType)
-    console.log('inboundId', inboundId)
-    let interestLevel = null;
+
+    let responsePayload = {}
     switch (actionType){
         case 'interest_level':
-            interestLevel = actions[0].value
+            responsePayload = await handleInboundInterestLevel(payload)
             break;
         default:
-            return res.send({
+            responsePayload = {
                 'response_type': 'ephemeral',
                 'replace_original': false,
                 'text': 'Unknown action type'
-            });
+            }
+            break;
     }
-    let interestLevelDisplayText = getInterestLevelDisplayText(interestLevel)
-    let inboundQuery = new Parse.Query(INBOUND_CLASSNAME)
-    let inbound = await inboundQuery.get(inboundId)
-    if (!inbound){
-        return res.send({
-            'response_type': 'ephemeral',
-            'replace_original': false,
-            'text': 'this inbound is no loger valid'
-        });
-    }
-    console.log('inbound = ', inbound.toJSON())
 
-    let [opportunityInfo, actionsAttachment] = original_message.attachments
-
-    delete actionsAttachment.actions;
-    actionsAttachment.text = `${getEmoji(interestLevel)} *${userName}* said ${interestLevelDisplayText.toLowerCase()} to ${inbound.get('companyName')}.`
-    actionsAttachment.mrkdwn_in = ['text', 'footer']
-    let slackUserQuery = new Parse.Query(USER_CLASSNAME)
-    slackUserQuery.equalTo('slackUserId', slackUserId)
-    let user = await slackUserQuery.first()
-
-    inbound.set({
-        replies: original_message.replies,
-        interestLevel,
-        responseFromSlackUserId: slackUserId,
-        responseFrom: user,
-    })
-    inbound.save()
-
-    return res.send({
-        response_type: 'ephemeral',
-        replace_original: true,
-        text: '',
-        attachments: [
-            opportunityInfo,
-            actionsAttachment
-        ],
-    })
+    return res.send(responsePayload)
 })
 
 router.get('/googleUsers', async (req, res) => {

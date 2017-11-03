@@ -1,3 +1,13 @@
+var path = require('path')
+require("console-stamp")(console, {
+    pattern: "HH:MM:sstt ddd yyyy-mm-dd",
+    label: true,
+    colors: {
+        stamp: "yellow",
+        label: "white",
+        metadata: "green"
+    }
+});
 import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'

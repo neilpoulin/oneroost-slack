@@ -3,12 +3,22 @@ import axios from 'axios'
 import qs from 'qs'
 import Timeout from 'util/Timeout'
 import SlackTeam from 'models/SlackTeam'
-import {SLACK_TEAM_CLASSNAME} from 'models/ModelConstants'
+import {
+    SLACK_TEAM_CLASSNAME,
+    INBOUND_CLASSNAME,
+    USER_CLASSNAME
+} from 'models/ModelConstants'
+import {
+    getInterestLevelDisplayText,
+    getEmoji,
+    YES,
+    NO,
+    NOT_NOW,
+} from 'slack/InterestLevel'
+import {SLACK_OAUTH_TOKEN} from 'util/Environment';
 import Parse from 'parse/node'
 
 //TODO: if needing to use different tokens on a request, create a NEW instance of the web client!!!
-
-
 export function postToChannel(channelId, message, payload, accessToken){
     console.log('posting to channel ', channelId)
     const web = new WebClient(accessToken)
@@ -154,7 +164,6 @@ export async function createSlackTeam(teamId, channel, selected=false){
     }
 
     let slackTeam = new SlackTeam({teamId})
-    slackTeam.set('name', 'Test Name')
 
     slackTeam.addChannel(channel)
     if (selected){
@@ -174,5 +183,137 @@ export function getImagesFromTeam(team){
     }
     const {image_34, image_44, image_68, image_88, image_102, image_132, image_230, image_original} = team
     return {image_34, image_44, image_68, image_88, image_102, image_132, image_230, image_original}
+
+}
+
+async function buildDialogInterestResponse(interestLevel, payload){
+    console.log('Processing dialog interest response')
+    const {
+        trigger_id,
+        team: {id: slackTeamId},
+        token,
+    } = payload
+    let body = {
+        "token": SLACK_OAUTH_TOKEN,
+        "trigger_id": trigger_id,
+        "dialog": {
+            "callback_id": "not_not_form",
+            "title": "Request a Ride",
+            "submit_label": "Request",
+            "elements": [
+                {
+                    "type": "text",
+                    "label": "Pickup Location",
+                    "name": "loc_origin"
+                },
+                {
+                    "type": "text",
+                    "label": "Dropoff Location",
+                    "name": "loc_destination"
+                }
+            ]
+        }
+    }
+    // let queryString = qs.stringify(body)
+    // console.log('dialog query string', queryString)
+
+    let slackTeamQuery = new Parse.Query(SLACK_TEAM_CLASSNAME)
+    slackTeamQuery.equalTo('teamId', slackTeamId)
+    let slackTeam = await slackTeamQuery.first()
+    console.log('found team', slackTeam)
+    let accessToken = slackTeam.get('accessToken')
+
+    let dialogResponse = await axios.post('https://slack.com/api/dialog.open', body, {
+        headers: {
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        }
+    })
+    console.log('dialog response', dialogResponse.data)
+    return {
+        replace_original: false,
+        text: JSON.stringify(dialogResponse.data)
+    }
+}
+
+function getInboundIdFromCallbackId(callback_id=""){
+    const [, inboundId] = callback_id.split('::')
+    return inboundId;
+}
+
+async function buildSimpleInterestResponse(interestLevel, payload){
+    const {
+        callback_id,
+        user: {id: slackUserId, name: userName},
+        original_message,
+    } = payload
+
+    const inboundId = getInboundIdFromCallbackId(callback_id)
+
+    console.log('inboundId', inboundId)
+    let interestLevelDisplayText = getInterestLevelDisplayText(interestLevel)
+    let inboundQuery = new Parse.Query(INBOUND_CLASSNAME)
+    let inbound = await inboundQuery.get(inboundId)
+    if (!inbound){
+        return {
+            'response_type': 'ephemeral',
+            'replace_original': false,
+            'text': 'this inbound is no longer valid'
+        }
+    }
+    console.log('inbound = ', inbound.toJSON())
+
+    let [opportunityInfo, actionsAttachment] = original_message.attachments
+
+    delete actionsAttachment.actions;
+    actionsAttachment.text = `${getEmoji(interestLevel)} *${userName}* said ${interestLevelDisplayText.toLowerCase()} to ${inbound.get('companyName')}.`
+    actionsAttachment.mrkdwn_in = ['text', 'footer']
+    let slackUserQuery = new Parse.Query(USER_CLASSNAME)
+    slackUserQuery.equalTo('slackUserId', slackUserId)
+    let user = await slackUserQuery.first()
+
+    inbound.set({
+        replies: original_message.replies,
+        interestLevel,
+        responseFromSlackUserId: slackUserId,
+        responseFrom: user,
+    })
+    inbound.save()
+
+    return {
+        response_type: 'ephemeral',
+        replace_original: true,
+        text: '',
+        attachments: [
+            opportunityInfo,
+            actionsAttachment
+        ],
+    }
+}
+
+export async function handleInboundInterestLevel(payload){
+    const {
+        actions,
+        // callback_id,
+        // team: {id: teamId},
+        // channel: {id: channelId},
+        // user: {id: slackUserId, name: userName},
+        // original_message: original_message,
+        // response_url,
+    } = payload
+
+    const interestLevel = actions[0].value
+    let response = {}
+    console.log('interest level', interestLevel)
+    switch(interestLevel){
+        case NO:
+        case YES:
+             response = await buildSimpleInterestResponse(interestLevel, payload)
+            break;
+        case NOT_NOW:
+            response = await buildDialogInterestResponse(interestLevel, payload)
+            break;
+    }
+    return response
 
 }
