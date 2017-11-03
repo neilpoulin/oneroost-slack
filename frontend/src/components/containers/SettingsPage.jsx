@@ -17,6 +17,7 @@ import FormGroup from 'molecule/FormGroup'
 import SlackSvg from 'atoms/SlackSvg'
 import GoogleLogo from 'atoms/GoogleLogo'
 import Logo from 'atoms/Logo'
+import SlackLoginButton from './SlackLoginButton'
 
 class SettingsPage extends React.Component {
     static propTypes = {
@@ -29,7 +30,6 @@ class SettingsPage extends React.Component {
         teamId: PropTypes.string,
         slackTeamId: PropTypes.string,
         channels: PropTypes.array,
-        redirectUri: PropTypes.string,
         parseUserId: PropTypes.string,
         hasGoogle: PropTypes.bool,
         hasSlack: PropTypes.bool,
@@ -50,7 +50,6 @@ class SettingsPage extends React.Component {
             teamName,
             teamId,
             channels,
-            redirectUri,
             hasGoogle,
             hasSlack,
             selectChannel,
@@ -98,13 +97,7 @@ class SettingsPage extends React.Component {
                                 <p display-if={saveSuccess}>Settings saved successfully</p>
                             </div>
                             <div display-if={!hasSlack}>
-                                <a href={`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${slackClientId}&redirect_uri=${encodeURIComponent(redirectUri)}`}>
-                                    <img alt="Sign in with Slack"
-                                        height="40"
-                                        width="172"
-                                        src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
-                                        srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"/>
-                                </a>
+                                <SlackLoginButton/>
                             </div>
                         </div>
                         <div>
@@ -143,7 +136,6 @@ const mapStateToProps = (state, ownProps) => {
         channels,
         teamId: user.get('teamId'),
         slackTeamId: user.get('slackTeamId'),
-        redirectUri: 'https://dev.oneroost.com/login',
         parseUserId: parseUser ? parseUser.id : null,
         hasGoogle: user.get('hasGoogle', false),
         hasSlack: user.get('hasSlack', false),

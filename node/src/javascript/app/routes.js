@@ -34,6 +34,7 @@ router.post('/tokens/slack', async (req, res) => {
     console.log('POST: /tokens/slack')
     let code = req.body.code
     let redirectUri = req.body.redirectUri;
+    console.log('redirectUri:', redirectUri)
     if(!code){
         return res.error({error: {
             code: 'An auth code is required'
