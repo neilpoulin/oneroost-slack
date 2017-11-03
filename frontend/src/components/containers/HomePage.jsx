@@ -211,7 +211,7 @@ const mapStateToProps = (state, ownProps) => {
         },
     } = homePage
     const config = state.config
-    const redirectUri = `${config.get('HOSTNAME')}`
+    const redirectUri = `${window.location.origin}`
     let params = {state: getOAuthState()}
     if (location.search){
         const {code, state: stateParam, error} = qs.parse(location.search, { ignoreQueryPrefix: true })
