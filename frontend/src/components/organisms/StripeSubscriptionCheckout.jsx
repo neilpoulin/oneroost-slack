@@ -31,11 +31,11 @@ class StripeSubscriptionCheckout extends React.Component {
         // tokenize, since there's only one in this group.
         this.props.stripe.createToken().then(({token}) => {
             console.log('Received Stripe token:', token);
-            this.props.onToken(token)
+            if (token){
+                this.props.onToken(token)
+            }
         });
 
-        // However, this line of code will do the same thing:
-        // this.props.stripe.createToken({type: 'card', name: 'Jenny Rosen'});
     }
 
     render() {
