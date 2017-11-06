@@ -15,6 +15,7 @@ import {
     HOSTNAME,
     INTERCOM_APP_ID,
     GA_TRACKING_ID,
+    STRIPE_PUBLISH_KEY
 } from 'util/Environment'
 import {
     postToChannel,
@@ -29,6 +30,7 @@ import {
     USER_CLASSNAME,
 } from 'models/ModelConstants'
 import {getInterestLevelDisplayText, getEmoji} from 'slack/InterestLevel'
+import {getExtensionPlan, getSubscriptionById} from './subscriptionService'
 
 router.post('/tokens/slack', async (req, res) => {
     console.log('POST: /tokens/slack')
@@ -109,6 +111,7 @@ router.get('/configs', (req, res) => {
         HOSTNAME,
         INTERCOM_APP_ID,
         GA_TRACKING_ID,
+        STRIPE_PUBLISH_KEY
     })
 })
 
@@ -214,6 +217,24 @@ router.post('/webhooks/slack', async (req, res) => {
 
 router.get('/googleUsers', async (req, res) => {
     
+})
+
+router.get('/plans/extension/current', async (req, res) => {
+    return getExtensionPlan().then(plan => {
+        res.send(plan);
+    }).catch(error => {
+        res.status(500)
+        res.send(error)
+    })
+})
+
+router.get('/subscriptions/:subscriptionId', async (req, res) =>{
+    return getSubscriptionById(req.params.subscriptionId).then(subscription => {
+        res.send(subscription)
+    }).catch(error => {
+        res.status(500)
+        res.send(error)
+    })
 })
 
 router.get('*', function(req, res) {

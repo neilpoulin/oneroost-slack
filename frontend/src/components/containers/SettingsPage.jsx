@@ -18,6 +18,7 @@ import SlackSvg from 'atoms/SlackSvg'
 import GoogleLogo from 'atoms/GoogleLogo'
 import Logo from 'atoms/Logo'
 import SlackLoginButton from './SlackLoginButton'
+import CheckoutForm from 'organisms/CheckoutForm'
 
 class SettingsPage extends React.Component {
     static propTypes = {
@@ -102,6 +103,11 @@ class SettingsPage extends React.Component {
                         </div>
                         <div>
                             <h2 className='heading'><GoogleLogo/>Google Settings</h2>
+
+                            <div>
+                                <CheckoutForm/>
+                            </div>
+
 
                             <div className='action'>
                                 Connected with Google: {hasGoogle ? 'Yes!' : 'Not Yet'}

@@ -5,12 +5,14 @@ import slack from './ducks/slack'
 import inbound from './ducks/inbound'
 import homePage from './ducks/homePage'
 import basePage from './ducks/basePage'
+import payment from './ducks/payment'
 
 const reducers = combineReducers({
     basePage,
     config,
     inbound,
     homePage,
+    payment,
     slack,
     user
 })

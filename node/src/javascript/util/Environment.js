@@ -28,6 +28,10 @@ export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || ''
 //LINKEDIN
 export const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID || '78v10otstxnu8h'
 
+//STRIPE
+export const STRIPE_PUBLISH_KEY = process.env.STRIPE_PUBLISH_KEY || ''
+export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || ''
+
 //AWS
 export const DOCUMENT_BUCKET = process.env.DOCUMENT_BUCKET || 'oneroost-documents'
 export const CLOUDFRONT_DOMAIN = process.env.CLOUDFRONT_DOMAIN || 'd3syt8tcu3x4rv.cloudfront.net'

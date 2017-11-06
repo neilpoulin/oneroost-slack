@@ -12,12 +12,40 @@ import {
     DOCUMENT_BUCKET
 } from 'util/Environment'
 import uuid from 'uuid'
+import {handleRequest as handleSubscription, getSubscriptionById} from './subscriptionService';
 
 const roostOrange = '#ef5b25'
 var s3Client = new AWS.S3({computeChecksums: true, signatureVersion: 'v4'}); // this is the default setting
 
 export function initialize(){
     console.log('setting up cloud functions')
+
+    Parse.Cloud.define('getSubscription', async function(request, response){
+        let user = request.user
+        if (!user){
+            return response.error({message: 'You must be logged in to create a subscription'})
+        }
+        let subscriptionId = user.get('stripeSubscriptionId')
+        if (!subscriptionId){
+            return response.success({})
+        }
+        let subscription = await getSubscriptionById(subscriptionId)
+        return response.success(subscription)
+    })
+
+    Parse.Cloud.define('subscribe', async function (request, response){
+        let user = request.user
+        if (!user){
+            return response.error({message: 'You must be logged in to create a subscription'})
+        }
+        let {planId, token} = request.params
+        return handleSubscription({user, planId, token}).then(success => {
+            response.success(success)
+        }).catch(error => {
+            response.error(error)
+        })
+    })
+
     Parse.Cloud.define('refreshSlackChannels', async function(request, response) {
         try{
             console.log('attempting to run cloud function refreshSlackChannels')
