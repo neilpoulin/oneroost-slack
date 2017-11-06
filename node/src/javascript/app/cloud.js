@@ -38,6 +38,7 @@ export function initialize(){
         if (!user){
             return response.error({message: 'You must be logged in to create a subscription'})
         }
+        user = await user.fetch()
         let {planId, token} = request.params
         return handleSubscription({user, planId, token}).then(success => {
             response.success(success)

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import Clickable from 'atoms/Clickable'
 import StripeCheckout from 'react-stripe-checkout'
-import {processPayment, loadPlan, fetchUserSubscriptionInfo} from 'ducks/payment';
+import {processPayment, loadPlan, fetchUserSubscriptionInfo, STATUS_ACTIVE} from 'ducks/payment';
 import {getSubscriptionStatus} from 'selectors/payment'
 
 class CheckoutForm extends React.Component {
@@ -82,29 +82,42 @@ class CheckoutForm extends React.Component {
             <div display-if={planLoading}>
                 Loading...
             </div>
-            <div display-if={subscription}>
-                Subscription Status: {subscriptionStatus}
+            <div display-if={!planLoading}>
+                <table>
+                    <tr>
+                        <th>Plan</th><td>{planName} - {planDescription}</td>
+                    </tr>
+                    <tr>
+                        <th>Price</th><td>${(planAmount / 100).toFixed(2)} / {planInterval}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th><td>{subscriptionStatus}</td>
+                    </tr>
+                </table>
             </div>
-            <StripeCheckout
-                display-if={!hasPayment && !isSaving && !planLoading}
-                name={planName}
-                description={planDescription}
-                ComponentClass="div"
-                panelLabel="Subscribe"
-                amount={planAmount}
-                currency="USD"
-                stripeKey={STRIPE_PUBLISH_KEY}
-                locale="auto"
-                zipCode={false}
-                allowRememberMe
-                token={this._onToken}
-                reconfigureOnUpdate={false}
-                email={email}
-                opened={this._onOpened} // called when the checkout popin is opened (no IE6/7)
-                closed={this._onClosed}
-            >
-                <Clickable text={'Subscribe'}/>
-            </StripeCheckout>
+            <div display-if={!hasPayment && !isSaving && !planLoading && subscriptionStatus !== STATUS_ACTIVE}>
+
+                <StripeCheckout
+                    name={'OneRoost'}
+                    description={`${planName} - ${planDescription}`}
+                    ComponentClass="div"
+                    panelLabel="Subscribe"
+                    amount={planAmount}
+                    currency="USD"
+                    stripeKey={STRIPE_PUBLISH_KEY}
+                    locale="auto"
+                    zipCode={false}
+                    allowRememberMe
+                    token={this._onToken}
+                    reconfigureOnUpdate={false}
+                    email={email}
+                    opened={this._onOpened} // called when the checkout popin is opened (no IE6/7)
+                    closed={this._onClosed}
+                >
+                    <Clickable text={'Subscribe'}/>
+                </StripeCheckout>
+
+            </div>
 
         </div>
     }

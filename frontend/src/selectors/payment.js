@@ -6,5 +6,5 @@ export function getSubscriptionStatus(state){
     if (!subscription){
         return STATUS_NONE
     }
-    return subscription.get('status')
+    return subscription.get('status', STATUS_NONE)
 }

@@ -19,7 +19,19 @@ export function handleRequest({user, planId, token}){
             }
             //now we for sure have a customer
             let userPlanId = user.get('stripePlanId')
-            if (!userPlanId)
+            let userSubscriptionId = user.get('subscriptionId')
+            let hasActiveSubscription = false
+
+            if (userSubscriptionId) {
+                let currentSubscription = await getSubscriptionById(userSubscriptionId)
+                if ( currentSubscription){
+                    hasActiveSubscription = userPlanId === planId && currentSubscription.status === 'active'
+                    console.log('User already has active subscription, not updating')
+                    resolve({message: 'not updating users subscription - already active'})
+                }
+            }
+
+            if (!hasActiveSubscription)
             {
                 let subscription = await addUserToPlan(customerId, planId, token.id)
                 console.log('subscription created', subscription)
@@ -50,7 +62,6 @@ function createCustomer(user){
 
     // note: may want to create this after we've collected payment info, then attach the "source"
     return Stripe.customers.create({
-        description: 'Customer for ' + email,
         email,
     }).then(customer => {
         console.log('Customer created from stripe', customer)

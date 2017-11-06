@@ -76,7 +76,7 @@ class SettingsPage extends React.Component {
                         </div>
 
                     </section>
-                    <FlexBoxes defaultContentStyles={true} columns={2}>
+                    <FlexBoxes defaultContentStyles={true} columns={3}>
                         <div>
                             <h2 className='heading'><SlackSvg className='slackLogo'/>Slack Settings</h2>
 
@@ -104,11 +104,6 @@ class SettingsPage extends React.Component {
                         <div>
                             <h2 className='heading'><GoogleLogo/>Google Settings</h2>
 
-                            <div>
-                                <CheckoutForm/>
-                            </div>
-
-
                             <div className='action'>
                                 Connected with Google: {hasGoogle ? 'Yes!' : 'Not Yet'}
                             </div>
@@ -118,6 +113,10 @@ class SettingsPage extends React.Component {
                             <div className='action' display-if={hasGoogle}>
                                 <ChromeExtensionButton/>
                             </div>
+                        </div>
+                        <div>
+                            <h2 className='heading'>Payment</h2>
+                            <CheckoutForm/>
                         </div>
                     </FlexBoxes>
                 </div>
