@@ -5,7 +5,7 @@ import {
 import {Parse} from 'parse/node'
 const Stripe = StripeClient(STRIPE_SECRET_KEY)
 
-export function handleRequest({user, planId, token}){
+export function handleRequest({user, planId, token, couponCode}){
     console.log('handling subscription request', planId, token)
     return new Promise(async (resolve, reject) => {
         try{
@@ -33,7 +33,7 @@ export function handleRequest({user, planId, token}){
 
             if (!hasActiveSubscription)
             {
-                let subscription = await addUserToPlan(customerId, planId, token.id)
+                let subscription = await addUserToPlan(customerId, planId, token.id, couponCode)
                 console.log('subscription created', subscription)
                 updates.stripePlanId = planId
                 updates.stripeSubscriptionId = subscription.id
@@ -71,11 +71,12 @@ function createCustomer(user){
     })
 }
 
-async function addUserToPlan(customerId, planId, tokenId){
+async function addUserToPlan(customerId, planId, tokenId, couponCode){
     console.log('adding user to plan')
     return await Stripe.subscriptions.create({
         customer: customerId,
         source: tokenId,
+        coupon: couponCode,
         items: [
             {
                 plan: planId
@@ -104,4 +105,8 @@ export async function getExtensionPlan(){
 
 export async function getSubscriptionById(subscriptionId){
     return await Stripe.subscriptions.retrieve(subscriptionId)
+}
+
+export async function getCouponByCode(couponCode){
+    return await Stripe.coupons.retrieve(couponCode)
 }

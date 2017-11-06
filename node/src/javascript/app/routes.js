@@ -30,7 +30,7 @@ import {
     USER_CLASSNAME,
 } from 'models/ModelConstants'
 import {getInterestLevelDisplayText, getEmoji} from 'slack/InterestLevel'
-import {getExtensionPlan, getSubscriptionById} from './subscriptionService'
+import {getExtensionPlan, getSubscriptionById, getCouponByCode} from './subscriptionService'
 
 router.post('/tokens/slack', async (req, res) => {
     console.log('POST: /tokens/slack')
@@ -233,6 +233,15 @@ router.get('/subscriptions/:subscriptionId', async (req, res) =>{
         res.send(subscription)
     }).catch(error => {
         res.status(500)
+        res.send(error)
+    })
+})
+
+router.get('/coupons/:couponCode', async (req, res) => {
+    return getCouponByCode(req.params.couponCode).then(coupon => {
+        res.send(coupon)
+    }).catch(error => {
+        res.status(404)
         res.send(error)
     })
 })

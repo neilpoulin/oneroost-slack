@@ -5,6 +5,8 @@ import Clickable from 'atoms/Clickable'
 import StripeCheckout from 'react-stripe-checkout'
 import {processPayment, loadPlan, fetchUserSubscriptionInfo, STATUS_ACTIVE} from 'ducks/payment';
 import {getSubscriptionStatus} from 'selectors/payment'
+import {StripeProvider, Elements} from 'react-stripe-elements'
+import StripeSubscriptionCheckout from './StripeSubscriptionCheckout'
 
 class CheckoutForm extends React.Component {
     static propTypes = {
@@ -70,9 +72,6 @@ class CheckoutForm extends React.Component {
             subscriptionStatus,
         } = this.props
         return <div>
-            <div display-if={error}>
-                Ooops, something went wrong
-            </div>
             <div display-if={saveSuccess}>
                 Completed Payment
             </div>
@@ -84,19 +83,28 @@ class CheckoutForm extends React.Component {
             </div>
             <div display-if={!planLoading}>
                 <table>
-                    <tr>
-                        <th>Plan</th><td>{planName} - {planDescription}</td>
-                    </tr>
-                    <tr>
-                        <th>Price</th><td>${(planAmount / 100).toFixed(2)} / {planInterval}</td>
-                    </tr>
-                    <tr>
-                        <th>Status</th><td>{subscriptionStatus}</td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <th>Plan</th><td>{planName} - {planDescription}</td>
+                        </tr>
+                        <tr>
+                            <th>Price</th><td>${(planAmount / 100).toFixed(2)} / {planInterval}</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th><td>{subscriptionStatus}</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             <div display-if={!hasPayment && !isSaving && !planLoading && subscriptionStatus !== STATUS_ACTIVE}>
+                <StripeProvider apiKey={STRIPE_PUBLISH_KEY}>
+                    <Elements>
+                        <StripeSubscriptionCheckout onToken={this._onToken}/>
+                    </Elements>
+                </StripeProvider>
+            </div>
 
+            <div display-if={!hasPayment && !isSaving && !planLoading && subscriptionStatus !== STATUS_ACTIVE && false}>
                 <StripeCheckout
                     name={'OneRoost'}
                     description={`${planName} - ${planDescription}`}
@@ -114,11 +122,13 @@ class CheckoutForm extends React.Component {
                     opened={this._onOpened} // called when the checkout popin is opened (no IE6/7)
                     closed={this._onClosed}
                 >
-                    <Clickable text={'Subscribe'}/>
+                    <Clickable text={'Old Popup Subscribe'} outline/>
                 </StripeCheckout>
 
             </div>
-
+            <div display-if={error}>
+                Ooops, something went wrong
+            </div>
         </div>
     }
 
@@ -181,7 +191,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         loadPaymentInfo: () => {
             dispatch(loadPlan())
             dispatch(fetchUserSubscriptionInfo())
-        }
+        },
     }
 }
 

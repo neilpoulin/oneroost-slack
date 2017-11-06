@@ -9,6 +9,10 @@ export const LOAD_PLAN_REQUEST = 'oneroost/payment/LOAD_PLAN_REQUEST'
 export const LOAD_PLAN_SUCCESS = 'oneroost/payment/LOAD_PLAN_SUCCESS'
 export const LOAD_PLAN_ERROR = 'oneroost/payment/LOAD_PLAN_ERROR'
 export const SET_SUBSCRIPTION = 'oneroost/payment/SET_SUBSCRIPTION'
+export const SET_FORM_VALUE = 'oneroost/payment/SET_FORM_VALUE'
+export const SET_COUPON = 'oneroost/payment/SET_COUPON'
+export const RESET_COUPON = 'oneroost/payment/RESET_COUPON'
+
 
 export const STATUS_NONE = 'none'
 export const STATUS_ACTIVE = 'active'
@@ -26,6 +30,9 @@ const initialState = Immutable.fromJS({
     hasLoaded: true,
     plan: null,
     subscription: null,
+    coupon: null,
+    couponChecked: false,
+    formInput: {},
 })
 
 export default function reducer(state=initialState, action){
@@ -55,6 +62,19 @@ export default function reducer(state=initialState, action){
         case SET_SUBSCRIPTION:
             state = state.set('subscription', action.payload)
             break
+        case SET_FORM_VALUE:
+            state = state.setIn(['formInput', ...action.payload.get('name', '').split('.')], action.payload.get('value'))
+            state = state.set('error', null)
+            break;
+        case SET_COUPON:
+            state = state.set('coupon', action.payload)
+            state = state.set('couponChecked', true)
+            break
+        case RESET_COUPON:
+            state = state.set('coupon', null)
+            state = state.set('couponChecked', false)
+            state = state.setIn(['formInput', 'couponCode'], null)
+            break;
         default:
             break
     }
@@ -62,7 +82,7 @@ export default function reducer(state=initialState, action){
 }
 
 export function processPayment(planId, token){
-    return dispatch => {
+    return (dispatch, getState) => {
         console.log('processing payment')
         dispatch({
             type: SAVE_PAYMENT_REQUEST
@@ -79,7 +99,9 @@ export function processPayment(planId, token){
             return
         }
 
-        Parse.Cloud.run('subscribe', {token, planId}).then(resp => {
+        let couponCode =  getState().payment.getIn(['formInput', 'couponCode'])
+
+        Parse.Cloud.run('subscribe', {token, planId, couponCode}).then(resp => {
             console.log('successfully handled payment', resp)
             dispatch({
                 type: SAVE_PAYMENT_SUCCESS
@@ -134,6 +156,37 @@ export function fetchUserSubscriptionInfo(){
             return subscription
         }).catch(error => {
             console.error('failed to get subscription', error)
+        })
+    }
+}
+
+export function setFormValue(name, value){
+    return {
+        type: SET_FORM_VALUE,
+        payload: {
+            name,
+            value,
+        }
+    }
+}
+
+export function getCoupon(couponCode){
+    return dispatch => {
+        return axios.get(`/coupons/${couponCode}`).then(({data: coupon}) => {
+            dispatch({
+                type: SET_COUPON,
+                payload: coupon
+            })
+            return coupon
+        }).catch(error => {
+            if (error.response.status === 404){
+                dispatch({
+                    type: SET_COUPON,
+                    payload: null
+                })
+            } else {
+                console.error('failed to get coupon', error)
+            }
         })
     }
 }

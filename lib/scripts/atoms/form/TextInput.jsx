@@ -8,6 +8,8 @@ class TextInput extends React.Component {
         placeholder: PropTypes.string,
         type: PropTypes.oneOf(['text', 'number', 'email', 'date']),
         onChange: PropTypes.func,
+        className: PropTypes.string,
+        stripeStyle: PropTypes.bool,
     }
 
     constructor(props){
@@ -24,8 +26,11 @@ class TextInput extends React.Component {
     }
 
     render () {
-        const {value, placeholder, type, className} = this.props
-        let classes = classNames(className, 'inset')
+        const {value, placeholder, type, className, stripeStyle} = this.props
+        let classes = classNames(className, {
+            inset: !stripeStyle,
+            stripe: stripeStyle
+        })
         return <div className='container'>
             <input className={classes} type={type} value={value} placeholder={placeholder} onChange={this._handleChange}/>
         </div>
