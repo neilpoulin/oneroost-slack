@@ -12,13 +12,28 @@ import {
     DOCUMENT_BUCKET
 } from 'util/Environment'
 import uuid from 'uuid'
-import {handleRequest as handleSubscription, getSubscriptionById} from './subscriptionService';
+import {handleRequest as handleSubscription, getSubscriptionById, cancelSubscription} from './subscriptionService';
 
 const roostOrange = '#ef5b25'
 var s3Client = new AWS.S3({computeChecksums: true, signatureVersion: 'v4'}); // this is the default setting
 
 export function initialize(){
     console.log('setting up cloud functions')
+
+    Parse.Cloud.define('cancelSubscription', async function(request, response){
+        let user = request.user
+        if (!user){
+            return response.error({message: 'You must be logged in to create a subscription'})
+        }
+        let subscriptionId = user.get('stripeSubscriptionId')
+        if (!subscriptionId){
+            return response.error({message: 'The user does not have an active subscription, nothing to cancel'})
+        }
+        let confirmation = await cancelSubscription(subscriptionId)
+        if(confirmation){
+            return response.success(confirmation)
+        }
+    })
 
     Parse.Cloud.define('getSubscription', async function(request, response){
         let user = request.user

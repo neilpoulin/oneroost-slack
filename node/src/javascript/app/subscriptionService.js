@@ -110,3 +110,7 @@ export async function getSubscriptionById(subscriptionId){
 export async function getCouponByCode(couponCode){
     return await Stripe.coupons.retrieve(couponCode)
 }
+
+export async function cancelSubscription(subscriptionId){
+    return await Stripe.subscriptions.del(subscriptionId)
+}

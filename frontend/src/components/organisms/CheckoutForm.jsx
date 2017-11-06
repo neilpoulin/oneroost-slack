@@ -1,11 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import {processPayment, loadPlan, fetchUserSubscriptionInfo, ACTIVE_STATUSES} from 'ducks/payment';
+import {processPayment, loadPlan, fetchUserSubscriptionInfo, ACTIVE_STATUSES, cancelSubscription} from 'ducks/payment';
 import {getSubscriptionStatus} from 'selectors/payment'
 import {StripeProvider, Elements} from 'react-stripe-elements'
 import StripeSubscriptionCheckout from './StripeSubscriptionCheckout'
 import moment from 'moment'
+import Clickable from 'atoms/Clickable'
 
 class CheckoutForm extends React.Component {
     static propTypes = {
@@ -26,10 +27,11 @@ class CheckoutForm extends React.Component {
         subscriptionStatus: PropTypes.string,
         trialDays: PropTypes.number,
         trialEndDate: PropTypes.string,
-        showPayment: PropTypes.bool,
+        isActive: PropTypes.bool,
         //actions
         processPayment: PropTypes.func.isRequired,
         loadPaymentInfo: PropTypes.func.isRequired,
+        cancel: PropTypes.func.isRequired,
     }
 
     constructor(props){
@@ -69,7 +71,8 @@ class CheckoutForm extends React.Component {
             trialDays,
             subscriptionStatus,
             trialEndDate,
-            showPayment,
+            isActive,
+            cancel,
         } = this.props
         return <div>
             <div display-if={planLoading}>
@@ -85,12 +88,16 @@ class CheckoutForm extends React.Component {
                             <th>Trial Period</th><td>{trialDays} days</td>
                         </tr>
                         <tr>
-                            <th>Status</th><td>{subscriptionStatus} <span display-if={trialEndDate}>(Ends {trialEndDate})</span></td>
+                            <th>Status</th>
+                            <td>
+                                {subscriptionStatus} <span display-if={trialEndDate}>(Ends {trialEndDate})</span>
+                                <span display-if={isActive}>(<Clickable onClick={cancel} look={'link'} text={'cancel'}/>)</span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div display-if={showPayment}>
+            <div display-if={!isActive}>
                 <StripeProvider apiKey={STRIPE_PUBLISH_KEY}>
                     <Elements>
                         <StripeSubscriptionCheckout onToken={this._onToken}/>
@@ -169,9 +176,9 @@ const mapStateToProps = (state, ownProps) => {
         }
     }
 
-    let showPayment = !ACTIVE_STATUSES.includes(response.subscriptionStatus)
+    let isActive = ACTIVE_STATUSES.includes(response.subscriptionStatus)
 
-    return {...response, showPayment}
+    return {...response, isActive}
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {
@@ -184,6 +191,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
             dispatch(loadPlan())
             dispatch(fetchUserSubscriptionInfo())
         },
+        cancel: () => {
+            dispatch(cancelSubscription())
+        }
     }
 }
 

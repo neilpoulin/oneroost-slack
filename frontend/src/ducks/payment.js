@@ -192,3 +192,14 @@ export function getCoupon(couponCode){
         })
     }
 }
+
+export function cancelSubscription(){
+    return dispatch => {
+        Parse.Cloud.run('cancelSubscription').then(subscription => {
+            dispatch({
+                type: SET_SUBSCRIPTION,
+                payload: subscription,
+            })
+        })
+    }
+}
