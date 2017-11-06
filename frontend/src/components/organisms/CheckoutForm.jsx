@@ -72,12 +72,6 @@ class CheckoutForm extends React.Component {
             showPayment,
         } = this.props
         return <div>
-            <div display-if={saveSuccess}>
-                Completed Payment
-            </div>
-            <div display-if={isSaving}>
-                Saving...
-            </div>
             <div display-if={planLoading}>
                 Loading...
             </div>
@@ -103,7 +97,12 @@ class CheckoutForm extends React.Component {
                     </Elements>
                 </StripeProvider>
             </div>
-
+            <div display-if={saveSuccess}>
+                Payment Successful
+            </div>
+            <div display-if={isSaving}>
+                Saving...
+            </div>
             <div display-if={error}>
                 Ooops, something went wrong
             </div>
@@ -170,8 +169,7 @@ const mapStateToProps = (state, ownProps) => {
         }
     }
 
-    let showPayment = ACTIVE_STATUSES.indexOf(response.subscriptionStatus) === -1
-    // !hasPayment && !isSaving && !planLoading && ACTIVE_STATUSES.indexOf(subscriptionStatus) > -1
+    let showPayment = !ACTIVE_STATUSES.includes(response.subscriptionStatus)
 
     return {...response, showPayment}
 }

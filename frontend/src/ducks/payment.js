@@ -21,7 +21,7 @@ export const STATUS_PAST_DUE = 'past_due'
 export const STATUS_CANCELED = 'canceled'
 export const STATUS_UNPAID = 'unpaid'
 
-export const ACTIVE_STATUSES = [STATUS_ACTIVE, STATUS_TRIALING]
+export const ACTIVE_STATUSES = Immutable.List([STATUS_ACTIVE, STATUS_TRIALING])
 
 const initialState = Immutable.fromJS({
     isSaving: false,

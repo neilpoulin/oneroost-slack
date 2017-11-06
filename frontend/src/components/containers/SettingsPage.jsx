@@ -19,6 +19,7 @@ import GoogleLogo from 'atoms/GoogleLogo'
 import Logo from 'atoms/Logo'
 import SlackLoginButton from './SlackLoginButton'
 import CheckoutForm from 'organisms/CheckoutForm'
+import {hasActiveSubscription} from 'selectors/payment';
 
 class SettingsPage extends React.Component {
     static propTypes = {
@@ -36,6 +37,7 @@ class SettingsPage extends React.Component {
         hasSlack: PropTypes.bool,
         saveSuccess: PropTypes.bool,
         teamImageUrl: PropTypes.string,
+        hasActiveSubscription: PropTypes.bool,
         //actions
         selectChannel: PropTypes.func.isRequired,
         refreshSlack: PropTypes.func.isRequired,
@@ -58,7 +60,8 @@ class SettingsPage extends React.Component {
             createChannelVanitySetter,
             saveSuccess,
             save,
-            teamImageUrl
+            teamImageUrl,
+            hasActiveSubscription,
         } = this.props
 
         return (
@@ -103,15 +106,17 @@ class SettingsPage extends React.Component {
                         </div>
                         <div>
                             <h2 className='heading'><GoogleLogo/>Google Settings</h2>
-
-                            <div className='action'>
-                                Connected with Google: {hasGoogle ? 'Yes!' : 'Not Yet'}
+                            <div className='action' display-if={hasGoogle}>
+                                Connected with Google
                             </div>
                             <div className='action' display-if={!hasGoogle}>
                                 <GoogleLoginButton/>
                             </div>
                             <div className='action' display-if={hasGoogle}>
-                                <ChromeExtensionButton/>
+                                <ChromeExtensionButton colorType={'primary'} disabled={!hasActiveSubscription}/>
+                                <div display-if={!hasActiveSubscription} className={'subscriptionRequired'}>
+                                    <p>An active subscription is required to get the Chrome Extension</p>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -145,7 +150,8 @@ const mapStateToProps = (state, ownProps) => {
         hasGoogle: user.get('hasGoogle', false),
         hasSlack: user.get('hasSlack', false),
         saveSuccess: slack.get('saveSuccess'),
-        teamImageUrl: user.getIn(['teamImages', 'image_102'])
+        teamImageUrl: user.getIn(['teamImages', 'image_102']),
+        hasActiveSubscription: hasActiveSubscription(state),
     }
 }
 

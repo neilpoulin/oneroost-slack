@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import Clickable from 'atoms/Clickable'
 
@@ -15,11 +16,17 @@ class ChromeExtensionButton extends React.Component {
         chromeInstallStart: PropTypes.func.isRequired,
         chromeExtensionInstallError: PropTypes.func.isRequired,
         chromeExtensionInstallSuccess: PropTypes.func.isRequired,
+        colorType: PropTypes.oneOf(['primary', 'secondary']),
         inline: PropTypes.bool,
         installing: PropTypes.bool,
         installed: PropTypes.bool,
         installError: PropTypes.any,
         installSuccess: PropTypes.bool,
+        disabled: PropTypes.bool,
+    }
+
+    static defaultProps = {
+        colorType: 'secondary'
     }
 
     constructor(props){
@@ -44,17 +51,19 @@ class ChromeExtensionButton extends React.Component {
             installed,
             installError,
             installSuccess,
-            inline
+            inline,
+            colorType,
+            disabled,
         } = this.props
 
         return <div>
             <Clickable text={`${installing ? 'Installing....' : 'Get the Chrome Extenstion'}`}
-                colorType={'secondary'}
+                colorType={colorType}
                 inline={inline}
                 onClick={this._handleGetExtensionClick}
-                disabled={installing}
+                disabled={installing || disabled}
                 display-if={!installed}
-                />
+            />
             <div display-if={installed}>
                 {`${installSuccess ? 'Congratulations! ' :''} `}You have the Chrome extension and are ready to start taking full advantage of OneRoost!
             </div>

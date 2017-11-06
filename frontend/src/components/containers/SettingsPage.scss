@@ -51,3 +51,9 @@ a {
         color: darken($roostOrange, 10)
     }
 }
+
+.subscriptionRequired{
+    font-weight: 400;
+    color: $mutedColor;
+    text-align: center;
+}
