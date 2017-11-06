@@ -62,7 +62,7 @@ class StripeSubscriptionCheckout extends React.Component {
                     <span className={couponClass}><span display-if={!couponChecked}>Coupon Code</span> <span display-if={couponChecked}>{`${couponValid ? couponTerms : 'Not Valid'}`}</span></span>
                     <TextInput fieldName={'couponCode'} errors={errors} value={couponCode} onChange={checkCoupon} stripeStyle={true}/>
                 </FormGroup>
-                <Clickable text="Pay" onClick={this._handleSubmit} disabled={!couponValid && couponChecked}/>
+                <Clickable text="Subscribe" onClick={this._handleSubmit} disabled={!couponValid && couponChecked}/>
             </div>
         );
     }

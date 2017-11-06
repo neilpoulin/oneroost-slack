@@ -1,12 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import Clickable from 'atoms/Clickable'
-import StripeCheckout from 'react-stripe-checkout'
-import {processPayment, loadPlan, fetchUserSubscriptionInfo, STATUS_ACTIVE} from 'ducks/payment';
+import {processPayment, loadPlan, fetchUserSubscriptionInfo, ACTIVE_STATUSES} from 'ducks/payment';
 import {getSubscriptionStatus} from 'selectors/payment'
 import {StripeProvider, Elements} from 'react-stripe-elements'
 import StripeSubscriptionCheckout from './StripeSubscriptionCheckout'
+import moment from 'moment'
 
 class CheckoutForm extends React.Component {
     static propTypes = {
@@ -25,6 +24,9 @@ class CheckoutForm extends React.Component {
         planInterval: PropTypes.string,
         subscription: PropTypes.object,
         subscriptionStatus: PropTypes.string,
+        trialDays: PropTypes.number,
+        trialEndDate: PropTypes.string,
+        showPayment: PropTypes.bool,
         //actions
         processPayment: PropTypes.func.isRequired,
         loadPaymentInfo: PropTypes.func.isRequired,
@@ -56,20 +58,18 @@ class CheckoutForm extends React.Component {
 
     render(){
         const {
-            email,
             STRIPE_PUBLISH_KEY,
             isSaving,
             hasPayment,
             saveSuccess,
             error,
             planAmount,
-            planDescription,
-            planId,
-            planName,
             planLoading,
             planInterval,
-            subscription,
+            trialDays,
             subscriptionStatus,
+            trialEndDate,
+            showPayment,
         } = this.props
         return <div>
             <div display-if={saveSuccess}>
@@ -85,18 +85,18 @@ class CheckoutForm extends React.Component {
                 <table>
                     <tbody>
                         <tr>
-                            <th>Plan</th><td>{planName} - {planDescription}</td>
-                        </tr>
-                        <tr>
                             <th>Price</th><td>${(planAmount / 100).toFixed(2)} / {planInterval}</td>
                         </tr>
                         <tr>
-                            <th>Status</th><td>{subscriptionStatus}</td>
+                            <th>Trial Period</th><td>{trialDays} days</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th><td>{subscriptionStatus} <span display-if={trialEndDate}>(Ends {trialEndDate})</span></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div display-if={!hasPayment && !isSaving && !planLoading && subscriptionStatus !== STATUS_ACTIVE}>
+            <div display-if={showPayment}>
                 <StripeProvider apiKey={STRIPE_PUBLISH_KEY}>
                     <Elements>
                         <StripeSubscriptionCheckout onToken={this._onToken}/>
@@ -104,28 +104,6 @@ class CheckoutForm extends React.Component {
                 </StripeProvider>
             </div>
 
-            <div display-if={!hasPayment && !isSaving && !planLoading && subscriptionStatus !== STATUS_ACTIVE && false}>
-                <StripeCheckout
-                    name={'OneRoost'}
-                    description={`${planName} - ${planDescription}`}
-                    ComponentClass="div"
-                    panelLabel="Subscribe"
-                    amount={planAmount}
-                    currency="USD"
-                    stripeKey={STRIPE_PUBLISH_KEY}
-                    locale="auto"
-                    zipCode={false}
-                    allowRememberMe
-                    token={this._onToken}
-                    reconfigureOnUpdate={false}
-                    email={email}
-                    opened={this._onOpened} // called when the checkout popin is opened (no IE6/7)
-                    closed={this._onClosed}
-                >
-                    <Clickable text={'Old Popup Subscribe'} outline/>
-                </StripeCheckout>
-
-            </div>
             <div display-if={error}>
                 Ooops, something went wrong
             </div>
@@ -164,6 +142,7 @@ const mapStateToProps = (state, ownProps) => {
             amount: planAmount,
             id: planId,
             interval: planInterval,
+            trial_period_days: trialDays,
             metadata: {
                 planName,
                 planDescription,
@@ -176,10 +155,25 @@ const mapStateToProps = (state, ownProps) => {
             planId,
             planName,
             planInterval,
+            trialDays,
         }
     }
 
-    return response
+    if (subscription){
+        let {
+            trial_end: trialEndMs,
+        } = subscription
+
+        response = {
+            ...response,
+            trialEndDate: trialEndMs ? moment(trialEndMs * 1000).format('MM/DD/YY') : null
+        }
+    }
+
+    let showPayment = ACTIVE_STATUSES.indexOf(response.subscriptionStatus) === -1
+    // !hasPayment && !isSaving && !planLoading && ACTIVE_STATUSES.indexOf(subscriptionStatus) > -1
+
+    return {...response, showPayment}
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {

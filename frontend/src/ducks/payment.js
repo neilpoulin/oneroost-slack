@@ -14,12 +14,14 @@ export const SET_COUPON = 'oneroost/payment/SET_COUPON'
 export const RESET_COUPON = 'oneroost/payment/RESET_COUPON'
 
 
-export const STATUS_NONE = 'none'
+export const STATUS_NONE = 'not subscribed'
 export const STATUS_ACTIVE = 'active'
-export const STATUS_TRAILING = 'trailing'
+export const STATUS_TRIALING = 'trialing'
 export const STATUS_PAST_DUE = 'past_due'
 export const STATUS_CANCELED = 'canceled'
 export const STATUS_UNPAID = 'unpaid'
+
+export const ACTIVE_STATUSES = [STATUS_ACTIVE, STATUS_TRIALING]
 
 const initialState = Immutable.fromJS({
     isSaving: false,
