@@ -1,6 +1,7 @@
 import StripeClient from 'stripe'
 import {
-    STRIPE_SECRET_KEY
+    STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET
 } from 'util/Environment'
 import {Parse} from 'parse/node'
 
@@ -151,6 +152,19 @@ export async function getUpcomingInvoice(customerId) {
     } catch (e) {
         console.error('unable to fetch invoices for customerId = ' + customerId, e)
         return null
+    }
+}
+
+export async function getSignedWebhookEvent(sig, body){
+    try{
+
+        console.log('signature', sig)
+        // console.log('body', req.rawBody)
+        // console.log('webhook secret', STRIPE_WEBHOOK_SECRET)
+        let event = await Stripe.webhooks.constructEvent(body, sig, STRIPE_WEBHOOK_SECRET);
+        return event;
+    } catch (e){
+        console.log('failed to process webhook event', e)
     }
 
 }

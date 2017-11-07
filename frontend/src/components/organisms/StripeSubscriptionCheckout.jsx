@@ -19,7 +19,6 @@ class StripeSubscriptionCheckout extends React.Component {
         couponChecked: PropTypes.bool,
         couponTerms: PropTypes.string,
         //actions
-        createSetter: PropTypes.func.isRequired,
         checkCoupon: PropTypes.func.isRequired
     }
 
@@ -88,24 +87,24 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        createSetter: (name) => value => {
-            dispatch(setFormValue(name, value))
-        },
-        checkCoupon: (couponCode) => {
+        checkCoupon: (couponCode='') => {
+            if (window.ONEROOST_COUPON_CHECK)
+            {
+                window.clearTimeout(window.ONEROOST_COUPON_CHECK)
+            }
+            couponCode = couponCode.trim().toUpperCase()
+            dispatch(setFormValue('couponCode', couponCode))
+
             if (!couponCode){
                 dispatch({
                     type: RESET_COUPON
                 })
                 return
             }
-            dispatch(setFormValue('couponCode', couponCode))
-            if (window.ONEROOST_COUPON_CHECK)
-            {
-                window.clearTimeout(window.ONEROOST_COUPON_CHECK)
-            }
-
             window.ONEROOST_COUPON_CHECK = window.setTimeout(() => {
-                dispatch(getCoupon(couponCode))
+                if (couponCode){
+                    dispatch(getCoupon(couponCode))
+                }
             }, 500)
         }
     }

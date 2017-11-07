@@ -60,6 +60,7 @@ const sharedProps = {
     AWS_PROFILE: 'oneroost',
     STRIPE_PUBLISH_KEY: process.env.STRIPE_PUBLISH_KEY_TEST,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY_TEST,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_ENDPOINT_SECRET_TEST,
     PARSE_MASTER_KEY: process.env.ONEROOST_PARSE_MASTER_KEY_DEV,
     PARSE_APP_ID: process.env.ONEROOST_PARSE_APP_ID_DEV,
     DATABASE_URL: 'mongodb://localhost:27017/oneroost-slack',

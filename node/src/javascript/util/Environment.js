@@ -31,6 +31,7 @@ export const LINKEDIN_CLIENT_ID = process.env.LINKEDIN_CLIENT_ID || '78v10otstxn
 //STRIPE
 export const STRIPE_PUBLISH_KEY = process.env.STRIPE_PUBLISH_KEY || ''
 export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || ''
+export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || ''
 
 //AWS
 export const DOCUMENT_BUCKET = process.env.DOCUMENT_BUCKET || 'oneroost-documents'

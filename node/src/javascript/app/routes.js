@@ -2,6 +2,7 @@ var path = require('path');
 var axios = require('axios');
 var router = require('express').Router()
 var viewRoot = path.join(__dirname, '..', '..', 'view')
+import bodyParser from 'body-parser'
 import Parse from 'parse/node'
 import {
     SLACK_CLIENT_ID,
@@ -30,7 +31,7 @@ import {
     USER_CLASSNAME,
 } from 'models/ModelConstants'
 import {getInterestLevelDisplayText, getEmoji} from 'slack/InterestLevel'
-import {getExtensionPlan, getSubscriptionById, getCouponByCode} from './subscriptionService'
+import {getExtensionPlan, getSubscriptionById, getCouponByCode, getSignedWebhookEvent} from './subscriptionService'
 
 router.post('/tokens/slack', async (req, res) => {
     console.log('POST: /tokens/slack')

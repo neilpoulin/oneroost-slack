@@ -80,7 +80,7 @@ export default function reducer(state=initialState, action){
         case RESET_COUPON:
             state = state.set('coupon', null)
             state = state.set('couponChecked', false)
-            state = state.setIn(['formInput', 'couponCode'], null)
+            state = state.setIn(['formInput', 'couponCode'], '')
             break;
         case CLEAR_MESSAGES:
             state = state.set('error', null)
@@ -211,13 +211,16 @@ export function setFormValue(name, value){
 }
 
 export function getCoupon(couponCode){
-    return dispatch => {
+    return (dispatch, getState) => {
         return axios.get(`/coupons/${couponCode}`).then(({data: coupon}) => {
-            dispatch({
-                type: SET_COUPON,
-                payload: coupon
-            })
-            return coupon
+            if (couponCode === getState().payment.getIn(['formInput', 'couponCode'])){
+                dispatch({
+                    type: SET_COUPON,
+                    payload: coupon ? coupon : null
+                })
+                return coupon ? coupon : null
+            }
+            return null
         }).catch(error => {
             if (error.response.status === 404){
                 dispatch({

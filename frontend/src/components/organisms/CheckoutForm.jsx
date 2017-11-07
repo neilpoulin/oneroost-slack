@@ -43,9 +43,9 @@ class CheckoutForm extends React.Component {
         currentPeriodEndDate: PropTypes.string,
         cancelAtPeriodEnd: PropTypes.bool,
         trialDaysRemaining: PropTypes.string,
-        invoiceTotal: PropTypes.number,
+        invoiceTotal: PropTypes.string,
         invoiceLoaded: PropTypes.bool,
-        invoiceSubTotal: PropTypes.number,
+        invoiceSubTotal: PropTypes.string,
         appliedCoupon: PropTypes.shape({
             couponCode: PropTypes.string.isRequired,
             amountOff: PropTypes.number,
