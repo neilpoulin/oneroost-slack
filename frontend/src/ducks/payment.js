@@ -12,6 +12,8 @@ export const SET_SUBSCRIPTION = 'oneroost/payment/SET_SUBSCRIPTION'
 export const SET_FORM_VALUE = 'oneroost/payment/SET_FORM_VALUE'
 export const SET_COUPON = 'oneroost/payment/SET_COUPON'
 export const RESET_COUPON = 'oneroost/payment/RESET_COUPON'
+export const CLEAR_MESSAGES = 'oneroost/payment/CLEAR_MESSAGES'
+export const SET_UPCOMING_INVOICE = 'oneroost/payment/SET_UPCOMING_INVOICE'
 
 
 export const STATUS_NONE = 'not subscribed'
@@ -41,11 +43,14 @@ export default function reducer(state=initialState, action){
     switch(action.type){
         case SAVE_PAYMENT_REQUEST:
             state = state.set('isSaving', true)
+            state = state.set('error', null)
+            state = state.set('invoice', null)
             break
         case SAVE_PAYMENT_SUCCESS:
             state = state.set('isSaving', false)
             state = state.set('saveSuccess', true)
             state = state.set('hasPayment', true)
+            state = state.set('error', null)
             state = state.set('subscriberStatus', STATUS_ACTIVE)
             break
         case SAVE_PAYMENT_ERROR:
@@ -76,6 +81,15 @@ export default function reducer(state=initialState, action){
             state = state.set('coupon', null)
             state = state.set('couponChecked', false)
             state = state.setIn(['formInput', 'couponCode'], null)
+            break;
+        case CLEAR_MESSAGES:
+            state = state.set('error', null)
+            state = state.set('saveSuccess', false)
+            state = state.set('isLoading', false)
+            state = state.set('isSaving', false)
+            break
+        case SET_UPCOMING_INVOICE:
+            state = state.set('invoice', action.payload);
             break;
         default:
             break
@@ -109,6 +123,12 @@ export function processPayment(planId, token){
                 type: SAVE_PAYMENT_SUCCESS
             })
             dispatch(fetchUserSubscriptionInfo())
+            dispatch(fetchUpcomingInvoice())
+            setTimeout(() => {
+                dispatch({
+                    type: CLEAR_MESSAGES,
+                }, 5000);
+            })
         }).catch(error => {
             console.error(error)
             dispatch({
@@ -137,6 +157,24 @@ export function loadPlan() {
                 type: LOAD_PLAN_ERROR,
                 payload: error,
             })
+        })
+    }
+}
+
+export function fetchUpcomingInvoice(){
+    return dispatch => {
+        let user = Parse.User.current()
+        if (!user){
+            console.log('no user or user id found for user', user)
+            return null;
+        }
+        Parse.Cloud.run('getUpcomingInvoice').then(invoice => {
+            dispatch({
+                type: SET_UPCOMING_INVOICE,
+                payload: invoice
+            })
+        }).catch(error => {
+            console.error(error)
         })
     }
 }
@@ -199,6 +237,10 @@ export function cancelSubscription(){
             dispatch({
                 type: SET_SUBSCRIPTION,
                 payload: subscription,
+            })
+            dispatch({
+                type: SET_UPCOMING_INVOICE,
+                payload: null,
             })
         })
     }

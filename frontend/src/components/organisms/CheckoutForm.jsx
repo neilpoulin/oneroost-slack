@@ -1,8 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import {processPayment, loadPlan, fetchUserSubscriptionInfo, ACTIVE_STATUSES, cancelSubscription} from 'ducks/payment';
-import {getSubscriptionStatus} from 'selectors/payment'
+import {
+    processPayment,
+    loadPlan,
+    fetchUserSubscriptionInfo,
+    fetchUpcomingInvoice,
+    cancelSubscription,
+    STATUS_TRIALING
+} from 'ducks/payment'
+import {
+    getStatusDisplayName,
+    getSubscriptionStatus,
+    hasActiveSubscription
+} from 'selectors/payment'
+import {} from 'selectors/payment'
 import {StripeProvider, Elements} from 'react-stripe-elements'
 import StripeSubscriptionCheckout from './StripeSubscriptionCheckout'
 import moment from 'moment'
@@ -28,6 +40,18 @@ class CheckoutForm extends React.Component {
         trialDays: PropTypes.number,
         trialEndDate: PropTypes.string,
         isActive: PropTypes.bool,
+        currentPeriodEndDate: PropTypes.string,
+        cancelAtPeriodEnd: PropTypes.bool,
+        trialDaysRemaining: PropTypes.string,
+        invoiceTotal: PropTypes.number,
+        invoiceLoaded: PropTypes.bool,
+        invoiceSubTotal: PropTypes.number,
+        appliedCoupon: PropTypes.shape({
+            couponCode: PropTypes.string.isRequired,
+            amountOff: PropTypes.number,
+            percentOff: PropTypes.number,
+            couponTerms: PropTypes.string,
+        }),
         //actions
         processPayment: PropTypes.func.isRequired,
         loadPaymentInfo: PropTypes.func.isRequired,
@@ -73,12 +97,19 @@ class CheckoutForm extends React.Component {
             trialEndDate,
             isActive,
             cancel,
+            currentPeriodEndDate,
+            trialDaysRemaining,
+            cancelAtPeriodEnd,
+            invoiceTotal,
+            invoiceLoaded,
+            invoiceSubTotal,
+            appliedCoupon,
         } = this.props
         return <div>
             <div display-if={planLoading}>
                 Loading...
             </div>
-            <div display-if={!planLoading}>
+            <div display-if={!planLoading && !isActive}>
                 <table>
                     <tbody>
                         <tr>
@@ -90,13 +121,49 @@ class CheckoutForm extends React.Component {
                         <tr>
                             <th>Status</th>
                             <td>
-                                {subscriptionStatus} <span display-if={trialEndDate}>(Ends {trialEndDate})</span>
-                                <span display-if={isActive}>(<Clickable onClick={cancel} look={'link'} text={'cancel'}/>)</span>
+                                {subscriptionStatus} <span display-if={trialDaysRemaining}>({trialDaysRemaining})</span>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <div display-if={isActive && invoiceLoaded} className='currentSubscription'>
+                <div className={'status'}>
+                    <div className={'statusName'}>{subscriptionStatus}</div>
+                    <div display-if={trialDaysRemaining}>{trialDaysRemaining}</div>
+                </div>
+                <div display-if={cancelAtPeriodEnd}>
+                    Subscription will not renew and will end on: {currentPeriodEndDate}
+                </div>
+                <div display-if={!cancelAtPeriodEnd}>
+                    <div className={'invoiceHeader'}>Next Invoice on {currentPeriodEndDate}</div>
+                    <div className='billingSummary'>
+                        <table display-if={invoiceTotal !== invoiceSubTotal}>
+                            <tbody>
+                                <tr display-if={invoiceTotal !== invoiceSubTotal}>
+                                    <td>Monthly Cost</td><td>${invoiceSubTotal}</td>
+                                </tr>
+                                <tr display-if={invoiceTotal !== invoiceSubTotal}>
+                                    <td>Discount</td><td>-${(invoiceSubTotal - invoiceTotal).toFixed(2)}</td>
+                                </tr>
+                                <tr className={'total'}>
+                                    <td>Amount Due</td><td>${invoiceTotal}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div display-if={invoiceTotal === invoiceSubTotal}>
+                            Amount Due ${invoiceTotal}
+                        </div>
+                        <div display-if={appliedCoupon} className={'couponInfo'}>
+                            Applied Coupon {appliedCoupon.couponCode}: <span>{appliedCoupon.couponTerms}</span>
+                        </div>
+                    </div>
+                </div>
+                <div className='actions'>
+                    <Clickable onClick={cancel} look={'link'} text={'Cancel Subscription'}/>
+                </div>
+            </div>
+
             <div display-if={!isActive}>
                 <StripeProvider apiKey={STRIPE_PUBLISH_KEY}>
                     <Elements>
@@ -130,6 +197,7 @@ const mapStateToProps = (state, ownProps) => {
         isLoading: planLoading,
         hasLoaded: planHasLoaded,
         subscription,
+        invoice,
     } = state.payment.toJS()
 
     let response = {
@@ -141,7 +209,7 @@ const mapStateToProps = (state, ownProps) => {
         hasPayment,
         planLoading,
         subscription,
-        subscriptionStatus: getSubscriptionStatus(state)
+        subscriptionStatus: getStatusDisplayName(getSubscriptionStatus(state))
     }
     if (!planLoading && planHasLoaded && plan){
         let {
@@ -162,21 +230,62 @@ const mapStateToProps = (state, ownProps) => {
             planName,
             planInterval,
             trialDays,
+            invoiceLoaded: false,
         }
     }
 
     if (subscription){
-        let {
+        const {
             trial_end: trialEndMs,
+            current_period_end: currentPeriodEnd,
+            cancel_at_period_end: cancelAtPeriodEnd,
         } = subscription
 
         response = {
             ...response,
-            trialEndDate: trialEndMs ? moment(trialEndMs * 1000).format('MM/DD/YY') : null
+            currentPeriodEndDate: currentPeriodEnd ? moment(currentPeriodEnd * 1000).format('MM/DD/YY') : null,
+            cancelAtPeriodEnd,
+        }
+        if (getSubscriptionStatus(state) === STATUS_TRIALING){
+            response = {
+                ...response,
+                trialEndDate: trialEndMs ? moment(trialEndMs * 1000).format('MM/DD/YY') : null,
+                trialDaysRemaining: trialEndMs ? `${moment(trialEndMs * 1000).fromNow(true)} remaining` : null,
+            }
         }
     }
 
-    let isActive = ACTIVE_STATUSES.includes(response.subscriptionStatus)
+    if (invoice){
+        const {
+            total: invoiceTotal,
+            subtotal: invoiceSubTotal,
+            discount,
+        } = invoice
+
+        response = {
+            ...response,
+            invoiceTotal: (invoiceTotal / 100).toFixed(2),
+            invoiceSubTotal: (invoiceSubTotal / 100).toFixed(2),
+            invoiceLoaded: true,
+        }
+
+        if (discount){
+            const {coupon} = discount
+            if (coupon){
+                response = {
+                    ...response,
+                    appliedCoupon: {
+                        couponCode: coupon.id,
+                        percentOff: coupon.percent_off,
+                        amountOff: coupon.amount_off,
+                        couponTerms: `${coupon.percent_off}% off for ${coupon.duration_in_months} months`
+                    }
+                }
+            }
+        }
+
+    }
+    let isActive = hasActiveSubscription(state)
 
     return {...response, isActive}
 }
@@ -190,6 +299,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         loadPaymentInfo: () => {
             dispatch(loadPlan())
             dispatch(fetchUserSubscriptionInfo())
+            dispatch(fetchUpcomingInvoice())
         },
         cancel: () => {
             dispatch(cancelSubscription())

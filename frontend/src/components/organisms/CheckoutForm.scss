@@ -1,7 +1,53 @@
-table{
-  th, td{
+@import "~variables.scss";
+
+table {
+  th, td {
     padding: .1rem 1rem .5rem 0;
     text-align: left;
     vertical-align: top;
+  }
+}
+
+.currentSubscription {
+  .actions {
+    margin-top: 1rem;
+  }
+  .status {
+    margin-bottom: 2rem;
+    .statusName{
+      font-weight: bold;
+    }
+
+  }
+}
+
+.invoiceHeader{
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.billingSummary {
+  margin-bottom: 3rem;
+  font-size: .9rem;
+  color: $mutedColor;
+
+
+  table{
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+  }
+  table, th, td {
+    border: 1px solid $mutedColor;
+  }
+
+  td {
+    text-align: right;
+    padding: .2rem .5rem;
+  }
+
+  .total{
+    td{
+      font-weight: bold;
+    }
   }
 }

@@ -12,7 +12,7 @@ import {
     DOCUMENT_BUCKET
 } from 'util/Environment'
 import uuid from 'uuid'
-import {handleRequest as handleSubscription, getSubscriptionById, cancelSubscription} from './subscriptionService';
+import {handleRequest as handleSubscription, getSubscriptionById, cancelSubscription, getUpcomingInvoice} from './subscriptionService';
 
 const roostOrange = '#ef5b25'
 var s3Client = new AWS.S3({computeChecksums: true, signatureVersion: 'v4'}); // this is the default setting
@@ -33,6 +33,25 @@ export function initialize(){
         if(confirmation){
             return response.success(confirmation)
         }
+    })
+
+    Parse.Cloud.define('getUpcomingInvoice', async function(request, response){
+        console.log('fetching upcoming invoice')
+        let user = request.user
+        if (!user){
+            console.log('no user present on request, exiting')
+            return response.error({message: 'You must be logged in to create a subscription'})
+        }
+        let customerId = user.get('stripeCustomerId')
+
+        if (!customerId){
+            console.log('no customer id found on user, exiting')
+            return response.error({message: 'The user does not have an active customer id, nothing to fetch'})
+        }
+        console.log('fetching upcoming invoice for stripe customer id = ' + customerId)
+        let upcoming = await getUpcomingInvoice(customerId)
+        console.log('found upcoming invoice, returning', upcoming)
+        return response.success(upcoming)
     })
 
     Parse.Cloud.define('getSubscription', async function(request, response){

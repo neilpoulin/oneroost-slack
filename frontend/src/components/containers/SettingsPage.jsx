@@ -120,7 +120,7 @@ class SettingsPage extends React.Component {
                             </div>
                         </div>
                         <div>
-                            <h2 className='heading'>Payment</h2>
+                            <h2 className='heading'>Billing</h2>
                             <CheckoutForm/>
                         </div>
                     </FlexBoxes>

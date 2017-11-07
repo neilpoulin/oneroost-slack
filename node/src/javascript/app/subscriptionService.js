@@ -3,16 +3,17 @@ import {
     STRIPE_SECRET_KEY
 } from 'util/Environment'
 import {Parse} from 'parse/node'
+
 const Stripe = StripeClient(STRIPE_SECRET_KEY)
 
-export function handleRequest({user, planId, token, couponCode}){
+export function handleRequest({user, planId, token, couponCode}) {
     console.log('handling subscription request', planId, token)
     return new Promise(async (resolve, reject) => {
-        try{
+        try {
             await user.fetch()
             let customerId = user.get('stripeCustomerId')
             let updates = {}
-            if (!customerId){
+            if (!customerId) {
                 customerId = await createCustomer(user)
                 console.log('successfully created new Stripe customer', customerId)
                 updates.stripeCustomerId = customerId
@@ -24,38 +25,38 @@ export function handleRequest({user, planId, token, couponCode}){
 
             if (userSubscriptionId) {
                 let currentSubscription = await getSubscriptionById(userSubscriptionId)
-                if ( currentSubscription){
+                if (currentSubscription) {
                     hasActiveSubscription = userPlanId === planId && currentSubscription.status === 'active'
                     console.log('User already has active subscription, not updating')
                     resolve({message: 'not updating users subscription - already active'})
                 }
             }
 
-            if (!hasActiveSubscription)
-            {
-                let subscription = await addUserToPlan(customerId, planId, token.id, couponCode)
+            if (!hasActiveSubscription) {
+                let plan = await getPlanById(planId)
+                let subscription = await addUserToPlan(customerId, plan, token.id, couponCode)
                 console.log('subscription created', subscription)
                 updates.stripePlanId = planId
                 updates.stripeSubscriptionId = subscription.id
             }
 
-            if (updates){
+            if (updates) {
                 user.set(updates)
                 console.log('updating user with ', updates)
                 await user.save(null, {useMasterKey: true})
                 console.log('successfully saved user')
             }
             resolve({message: 'payment successful'})
-        } catch(e){
+        } catch (e) {
             console.error(e)
             reject(e)
         }
     })
 }
 
-function createCustomer(user){
+function createCustomer(user) {
     let customerId = user.get('stripeCustomerId')
-    if (customerId){
+    if (customerId) {
         return customerId
     }
     let email = user.get('username');
@@ -71,21 +72,31 @@ function createCustomer(user){
     })
 }
 
-async function addUserToPlan(customerId, planId, tokenId, couponCode){
+async function addUserToPlan(customerId, plan, tokenId, couponCode) {
     console.log('adding user to plan')
-    return await Stripe.subscriptions.create({
+
+    let request = {
         customer: customerId,
         source: tokenId,
-        coupon: couponCode,
         items: [
             {
-                plan: planId
+                plan: plan.id
             },
         ],
-    })
+    }
+
+    if (plan.trial_period_days) {
+        request.trial_period_days = plan.trial_period_days
+    }
+
+    if (couponCode && couponCode.trim().length > 0) {
+        request.coupon = couponCode;
+    }
+
+    return await Stripe.subscriptions.create(request)
 }
 
-export async function getCurrentExtensionPlanId(){
+export async function getCurrentExtensionPlanId() {
     return Parse.Config.get().then(config => {
         let planId = config.get('extensionPlanId')
         console.log('found extension plan id', planId)
@@ -93,8 +104,12 @@ export async function getCurrentExtensionPlanId(){
     })
 }
 
-export async function getExtensionPlan(){
+export async function getExtensionPlan() {
     const planId = await getCurrentExtensionPlanId()
+    return getPlanById(planId)
+}
+
+export async function getPlanById(planId) {
     return Stripe.plans.retrieve(planId).then(plan => {
         console.log('found plan', plan)
         return plan
@@ -103,14 +118,39 @@ export async function getExtensionPlan(){
     });
 }
 
-export async function getSubscriptionById(subscriptionId){
-    return await Stripe.subscriptions.retrieve(subscriptionId)
+export async function getSubscriptionById(subscriptionId) {
+    try {
+        return await Stripe.subscriptions.retrieve(subscriptionId)
+    } catch (e) {
+        console.log('failed to get subscription for subscriptionId = ' + subscriptionId, e)
+        return null
+    }
 }
 
-export async function getCouponByCode(couponCode){
-    return await Stripe.coupons.retrieve(couponCode)
+export async function getCouponByCode(couponCode) {
+    try {
+        return await Stripe.coupons.retrieve(couponCode)
+    } catch (e) {
+        console.error('failed to get coupon code for code = ' + couponCode, e)
+        return null
+    }
 }
 
-export async function cancelSubscription(subscriptionId){
-    return await Stripe.subscriptions.del(subscriptionId)
+export async function cancelSubscription(subscriptionId) {
+    try {
+        return await Stripe.subscriptions.del(subscriptionId)
+    } catch (e) {
+        console.error('failed to cancel subscriptionId = ' + subscriptionId, e)
+        return null
+    }
+}
+
+export async function getUpcomingInvoice(customerId) {
+    try {
+        return await Stripe.invoices.retrieveUpcoming(customerId)
+    } catch (e) {
+        console.error('unable to fetch invoices for customerId = ' + customerId, e)
+        return null
+    }
+
 }
