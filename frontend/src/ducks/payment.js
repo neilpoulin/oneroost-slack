@@ -122,7 +122,7 @@ export function processPayment(planId, token){
             dispatch({
                 type: SAVE_PAYMENT_SUCCESS
             })
-            dispatch(fetchUserSubscriptionInfo())
+            dispatch(fetchSubscriptionInfo())
             dispatch(fetchUpcomingInvoice())
             setTimeout(() => {
                 dispatch({
@@ -179,7 +179,7 @@ export function fetchUpcomingInvoice(){
     }
 }
 
-export function fetchUserSubscriptionInfo(){
+export function fetchSubscriptionInfo(){
     return dispatch => {
 
         let user = Parse.User.current()

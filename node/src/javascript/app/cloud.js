@@ -25,9 +25,10 @@ export function initialize(){
         if (!user){
             return response.error({message: 'You must be logged in to create a subscription'})
         }
-        let subscriptionId = user.get('stripeSubscriptionId')
+        let slackTeam = await user.get('slackTeam').fetch()
+        let subscriptionId = slackTeam.get('stripeSubscriptionId')
         if (!subscriptionId){
-            return response.error({message: 'The user does not have an active subscription, nothing to cancel'})
+            return response.error({message: 'The team does not have an active subscription, nothing to cancel'})
         }
         let confirmation = await cancelSubscription(subscriptionId)
         if(confirmation){
@@ -42,11 +43,13 @@ export function initialize(){
             console.log('no user present on request, exiting')
             return response.error({message: 'You must be logged in to create a subscription'})
         }
-        let customerId = user.get('stripeCustomerId')
+
+        let slackTeam = await user.get('slackTeam').fetch()
+        let customerId = slackTeam.get('stripeCustomerId')
 
         if (!customerId){
-            console.log('no customer id found on user, exiting')
-            return response.error({message: 'The user does not have an active customer id, nothing to fetch'})
+            console.log('no customer id found on slackTeam, exiting')
+            return response.error({message: 'The slackTeam does not have an active customer id, nothing to fetch'})
         }
         console.log('fetching upcoming invoice for stripe customer id = ' + customerId)
         let upcoming = await getUpcomingInvoice(customerId)
@@ -59,7 +62,8 @@ export function initialize(){
         if (!user){
             return response.error({message: 'You must be logged in to create a subscription'})
         }
-        let subscriptionId = user.get('stripeSubscriptionId')
+        let slackTeam = await user.get('slackTeam').fetch()
+        let subscriptionId = slackTeam.get('stripeSubscriptionId')
         if (!subscriptionId){
             return response.success({})
         }
@@ -73,8 +77,9 @@ export function initialize(){
             return response.error({message: 'You must be logged in to create a subscription'})
         }
         user = await user.fetch()
+        let slackTeam = await user.get('slackTeam').fetch()
         let {planId, token, couponCode} = request.params
-        return handleSubscription({user, planId, token, couponCode}).then(success => {
+        return handleSubscription({user, slackTeam, planId, token, couponCode}).then(success => {
             response.success(success)
         }).catch(error => {
             response.error(error)

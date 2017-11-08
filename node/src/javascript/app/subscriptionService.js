@@ -7,12 +7,12 @@ import {Parse} from 'parse/node'
 
 const Stripe = StripeClient(STRIPE_SECRET_KEY)
 
-export function handleRequest({user, planId, token, couponCode}) {
+export function handleRequest({user, slackTeam, planId, token, couponCode}) {
     console.log('handling subscription request', planId, token)
     return new Promise(async (resolve, reject) => {
         try {
-            await user.fetch()
-            let customerId = user.get('stripeCustomerId')
+            await slackTeam.fetch()
+            let customerId = slackTeam.get('stripeCustomerId')
             let updates = {}
             if (!customerId) {
                 customerId = await createCustomer(user)
@@ -20,32 +20,32 @@ export function handleRequest({user, planId, token, couponCode}) {
                 updates.stripeCustomerId = customerId
             }
             //now we for sure have a customer
-            let userPlanId = user.get('stripePlanId')
-            let userSubscriptionId = user.get('subscriptionId')
+            let teamPlanId = slackTeam.get('stripePlanId')
+            let teamSubscriptionId = slackTeam.get('subscriptionId')
             let hasActiveSubscription = false
 
-            if (userSubscriptionId) {
-                let currentSubscription = await getSubscriptionById(userSubscriptionId)
+            if (teamSubscriptionId) {
+                let currentSubscription = await getSubscriptionById(teamSubscriptionId)
                 if (currentSubscription) {
-                    hasActiveSubscription = userPlanId === planId && currentSubscription.status === 'active'
-                    console.log('User already has active subscription, not updating')
+                    hasActiveSubscription = teamPlanId === planId && currentSubscription.status === 'active'
+                    console.log('Team already has active subscription, not updating')
                     resolve({message: 'not updating users subscription - already active'})
                 }
             }
 
             if (!hasActiveSubscription) {
                 let plan = await getPlanById(planId)
-                let subscription = await addUserToPlan(customerId, plan, token.id, couponCode)
+                let subscription = await addCustomerToPlan(customerId, plan, token.id, couponCode)
                 console.log('subscription created', subscription)
                 updates.stripePlanId = planId
                 updates.stripeSubscriptionId = subscription.id
             }
 
             if (updates) {
-                user.set(updates)
-                console.log('updating user with ', updates)
-                await user.save(null, {useMasterKey: true})
-                console.log('successfully saved user')
+                slackTeam.set(updates)
+                console.log('updating slack team with ', updates)
+                await slackTeam.save(null, {useMasterKey: true})
+                console.log('successfully updated slack team')
             }
             resolve({message: 'payment successful'})
         } catch (e) {
@@ -56,15 +56,24 @@ export function handleRequest({user, planId, token, couponCode}) {
 }
 
 function createCustomer(user) {
-    let customerId = user.get('stripeCustomerId')
+    let slackTeam = user.get('slackTeam')
+    let customerId = slackTeam.get('stripeCustomerId')
     if (customerId) {
         return customerId
     }
     let email = user.get('username');
 
     // note: may want to create this after we've collected payment info, then attach the "source"
+    let teamName = user.get('slackTeam').get('name')
+    console.log('creating customer for slackTeam', teamName)
     return Stripe.customers.create({
         email,
+        description: `Contact for ${teamName}`,
+        metadata: {
+            slackTeam: teamName,
+            userId: user.id,
+            slackTeamId: slackTeam.id
+        }
     }).then(customer => {
         console.log('Customer created from stripe', customer)
         return customer.id
@@ -73,7 +82,7 @@ function createCustomer(user) {
     })
 }
 
-async function addUserToPlan(customerId, plan, tokenId, couponCode) {
+async function addCustomerToPlan(customerId, plan, tokenId, couponCode) {
     console.log('adding user to plan')
 
     let request = {

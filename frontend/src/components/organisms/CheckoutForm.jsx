@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import {
     processPayment,
     loadPlan,
-    fetchUserSubscriptionInfo,
+    fetchSubscriptionInfo,
     fetchUpcomingInvoice,
     cancelSubscription,
     STATUS_TRIALING
@@ -298,7 +298,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         loadPaymentInfo: () => {
             dispatch(loadPlan())
-            dispatch(fetchUserSubscriptionInfo())
+            dispatch(fetchSubscriptionInfo())
             dispatch(fetchUpcomingInvoice())
         },
         cancel: () => {
