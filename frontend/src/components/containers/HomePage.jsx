@@ -167,7 +167,7 @@ class HomePage extends React.Component{
                             <p display-if={slackCopy}>{slackCopy}</p>
                             <SlackAddButton/>
                         </div>
-                        <div display-if={showWaitlist} className="emailContainer secondary">
+                        <div display-if={showWaitlist} className="emailContainer">
                             <p>{waitlistCopy}</p>
                             <div className={'waitlistActions'}>
                                 <div className={'emailInputContainer narrow'}>
