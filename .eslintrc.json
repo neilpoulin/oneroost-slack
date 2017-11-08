@@ -2,7 +2,9 @@
     "env": {
         "browser": true,
         "es6": true,
-        "node": true
+        "node": true,
+        "jasmine": true,
+        "jest/globals": true
     },
     "parser": "babel-eslint",
     "rules": {
@@ -16,6 +18,10 @@
         "react/jsx-indent-props": [1, 4],
         "react/jsx-tag-spacing": [2, {"beforeSelfClosing": "never"}],
         "react/jsx-equals-spacing": [2, "never"],
+        "jest/no-disabled-tests": "warn",
+        "jest/no-focused-tests": "error",
+        "jest/no-identical-title": "error",
+        "jest/valid-expect": "error",
         "no-unused-vars": [1, {"vars": "local","args": "none"}],
         "no-use-before-define": ["error", "nofunc"],
         "no-undefined": ["error"],
@@ -31,6 +37,6 @@
         },
         "propWrapperFunctions": [ "forbidExtraProps" ]
     },
-    "extends": ["eslint:recommended", "plugin:react/recommended"],
-    "plugins": ["react"]
+    "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:jest/recommended"],
+    "plugins": ["react", "jest"]
 }

@@ -8,7 +8,9 @@ import {
     loadPage,
     INSTALL_CHROME_EXTENSION_REQUEST,
     INSTALL_CHROME_EXTENSION_ERROR,
-    INSTALL_CHROME_EXTENSION_SUCCESS
+    INSTALL_CHROME_EXTENSION_SUCCESS,
+    setWaitlistEmail,
+    submitWaitlist,
 } from 'ducks/homePage'
 import Clickable from 'atoms/Clickable'
 import Logo from 'atoms/Logo'
@@ -17,6 +19,7 @@ import BasePage from './BasePage'
 import {authorizeSlackTeam, getOAuthState, setOAuthState} from 'ducks/user'
 import SlackAddButton from './SlackAddButton'
 import FlexBoxes from 'molecule/FlexBoxes'
+import TextInput from 'atoms/form/TextInput'
 
 class HomePage extends React.Component{
     static propTypes = {
@@ -37,6 +40,9 @@ class HomePage extends React.Component{
         hasMore: PropTypes.bool,
         isLoading: PropTypes.bool.isRequired,
         extensionUrl: PropTypes.string,
+        slackCopy: PropTypes.string,
+        showWaitlist: PropTypes.bool,
+        waitlistCopy: PropTypes.string,
         chromeInstallStart: PropTypes.func.isRequired,
         chromeExtensionInstallError: PropTypes.func.isRequired,
         chromeExtensionInstallSuccess: PropTypes.func.isRequired,
@@ -49,10 +55,17 @@ class HomePage extends React.Component{
         slackAddedSuccess: PropTypes.bool,
         location: PropTypes.any,
         state: PropTypes.string,
+        waitlistSaving: PropTypes.bool,
+        waitlistSaveSuccess: PropTypes.bool,
+        waitlistError: PropTypes.any,
+        email: PropTypes.string,
+        isValidEmail: PropTypes.bool,
         //actions
         setNav: PropTypes.func,
         getToken: PropTypes.func,
         generateOAuthState: PropTypes.func,
+        setEmail: PropTypes.func.isRequired,
+        submitEmail: PropTypes.func.isRequired
     }
 
     constructor(props){
@@ -100,12 +113,20 @@ class HomePage extends React.Component{
             paragraphs,
             hasMore,
             isLoading,
-            redirectUri,
+            slackCopy,
+            showWaitlist,
+            waitlistCopy,
             slackAddedSuccess,
             location,
-            state,
             videos,
+            email,
+            isValidEmail,
+            waitlistSaving,
+            waitlistSaveSuccess,
+            waitlistError,
             //actions
+            setEmail,
+            submitEmail,
         } = this.props
 
         const $footer = <div className="container">
@@ -130,7 +151,7 @@ class HomePage extends React.Component{
             navTextColor={'white'}
             suppressPadding={true}
             showHome={false}
-            >
+        >
             <div className={'main'} >
                 <section className="background-primary textured">
                     <div className="container">
@@ -142,8 +163,29 @@ class HomePage extends React.Component{
                             <h1>{heroTitle}</h1>
                             <p className="tagline" display-if={heroSubTitle}>{heroSubTitle}</p>
                         </div>
-                        <div className="emailContainer form-group" display-if={ctaButtonText}>
+                        <div className="emailContainer" display-if={ctaButtonText}>
+                            <p display-if={slackCopy}>{slackCopy}</p>
                             <SlackAddButton/>
+                        </div>
+                        <div display-if={showWaitlist} className="emailContainer secondary">
+                            <p>{waitlistCopy}</p>
+                            <div className={'waitlistActions'}>
+                                <div className={'emailInputContainer narrow'}>
+                                    <TextInput onChange={setEmail}
+                                        value={email}
+                                        type={'email'}
+                                        placeholder={'enter your work email'}
+                                        className={'emailInput' + (email ? ' active' : '')}
+                                    />
+                                </div>
+                                <div className={'narrow'}>
+                                    <Clickable onClick={submitEmail}
+                                        text={waitlistSaveSuccess ? 'Thanks!' : 'Keep me posted'}
+                                        colorType={'white'}
+                                        disabled={!isValidEmail || waitlistSaveSuccess}
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <div display-if={ctaSubText} className={'actionSubTextContainer'}>
                             {ctaSubText}
@@ -174,12 +216,12 @@ class HomePage extends React.Component{
                 </section>
                 <section className="textInfo background-light" display-if={paragraphs && paragraphs.length > 0}>
                     {paragraphs.map(({title, content}, i) =>
-                    <div className="info" key={`content_${i}`}>
-                        <h3 className="title">{title}</h3>
-                        <p className="content">
-                            {content}
-                        </p>
-                    </div>
+                        <div className="info" key={`content_${i}`}>
+                            <h3 className="title">{title}</h3>
+                            <p className="content">
+                                {content}
+                            </p>
+                        </div>
                     )}
                 </section>
                 <footer className="" display-if={hasMore}>
@@ -200,8 +242,11 @@ const mapStateToProps = (state, ownProps) => {
         ctaSubText,
         ctaButtonText,
         paragraphs,
+        slackCopy,
         videos,
         isLoading,
+        showWaitlist,
+        waitlistCopy,
         extensionUrl,
         chromeExtension: {
             installing,
@@ -209,6 +254,13 @@ const mapStateToProps = (state, ownProps) => {
             error: installError,
             success: installSuccess,
         },
+        waitlist: {
+            email,
+            emailValid: isValidEmail,
+            saving: waitlistSaving,
+            saveSuccess: waitlistSaveSuccess,
+            error: waitlistError,
+        }
     } = homePage
     const config = state.config
     const redirectUri = `${window.location.origin}`
@@ -229,11 +281,19 @@ const mapStateToProps = (state, ownProps) => {
         videos,
         isLoading,
         hasMore,
+        slackCopy,
+        showWaitlist,
+        waitlistCopy,
         extensionUrl,
         installing,
         installed,
         installError,
         installSuccess,
+        email,
+        isValidEmail,
+        waitlistSaving,
+        waitlistSaveSuccess,
+        waitlistError,
         slackAddedSuccess: state.user.get('slackAddedSuccess'),
     }
 }
@@ -269,6 +329,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         },
         getToken: (code, redirectUri) => dispatch(authorizeSlackTeam(code, redirectUri)),
         generateOAuthState: () => dispatch(setOAuthState()),
+        setEmail: (email) => dispatch(setWaitlistEmail(email)),
+        submitEmail: () => {
+            dispatch(submitWaitlist())
+        },
     }
 }
 

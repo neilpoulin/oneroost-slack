@@ -251,11 +251,13 @@ router.get('/coupons/:couponCode', async (req, res) => {
 
 router.post('/webhooks/stripe', async (req,res,) => {
     try{
-        console.log('attempting to process stripe webhook event', req.rawBody)
+        console.log('[Stripe WebHook] attempting to process stripe webhook event', req.rawBody)
         let sig = req.headers['stripe-signature'];
         let event = await getSignedWebhookEvent(sig, req.rawBody)
         if (!event){
-            console.error('Failed to sign Stripe webhook event. requset', req.rawBody)
+            console.error('[Stripe WebHook] Failed to sign Stripe webhook event. requset', req.rawBody)
+            res.status = 500
+            return res.send({'message': 'failed to sign the stripe webhook event'})
         }
         console.log('[Stripe WebHook]', event)
 
@@ -273,11 +275,11 @@ router.post('/webhooks/stripe', async (req,res,) => {
         }
         let stripeEvent = new StripeEvent()
         stripeEvent.set(eventData)
-        stripeEvent.save().catch(error => console.error('Failed to save webhook event', eventData))
+        stripeEvent.save().catch(error => console.error('[Stripe WebHook] Failed to save webhook event', eventData))
 
         return res.send({received: true})
     } catch (e){
-        console.error('failed to process webhook!', req)
+        console.error('[Stripe WebHook] failed to process webhook!', req)
         res.status = 500
         res.send({error: 'server error', message: e.message})
     }

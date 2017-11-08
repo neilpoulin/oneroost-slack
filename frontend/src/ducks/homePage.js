@@ -1,5 +1,7 @@
 import Immutable from 'immutable'
 import Parse from 'parse'
+import Waitlist from 'models/Waitlist'
+import {isValidEmail} from 'util/Validators'
 
 export const GET_PAGE_CONFIG = 'oneroost/homePage/GET_HOME_PAGE_CONFIG'
 export const SET_PAGE_CONFIG = 'oneroost/homePage/SET_PAGE_CONFIG'
@@ -7,6 +9,10 @@ export const SET_PAGE_CONFIG = 'oneroost/homePage/SET_PAGE_CONFIG'
 export const INSTALL_CHROME_EXTENSION_REQUEST = 'oneroost/homePage/INSTALL_CHROME_EXTENSION_REQUEST'
 export const INSTALL_CHROME_EXTENSION_SUCCESS = 'oneroost/homePage/INSTALL_CHROME_EXTENSION_SUCCESS'
 export const INSTALL_CHROME_EXTENSION_ERROR = 'oneroost/homePage/INSTALL_CHROME_EXTENSION_ERROR'
+export const SET_WAITLIST_EMAIL = 'oneroost/homePage/SET_WAITLIST_EMAIL'
+export const SUBMIT_WAITLIST_REQUEST = 'oneroost/homePage/SUBMIT_WAITLIST_REQUEST'
+export const SUBMIT_WAITLIST_SUCCESS = 'oneroost/homePage/SUBMIT_WAITLIST_SUCCESS'
+export const SUBMIT_WAITLIST_ERROR = 'oneroost/homePage/SUBMIT_WAITLIST_ERROR'
 
 export const initialState = Immutable.fromJS({
     heroTitle: null,
@@ -22,6 +28,13 @@ export const initialState = Immutable.fromJS({
         installed: false,
         success: false,
         error: null
+    },
+    waitlist:{
+        email: '',
+        emailValid: false,
+        saving: false,
+        saveSuccess: false,
+        error: null,
     }
 })
 
@@ -48,6 +61,25 @@ export default function reducer(state=initialState, action){
             state = state.setIn(['chromeExtension', 'success'], false)
             state = state.setIn(['chromeExtension', 'error'], action.payload)
             break;
+        case SET_WAITLIST_EMAIL:
+            state = state.setIn(['waitlist', 'email'], action.payload.get('email'));
+            state = state.setIn(['waitlist', 'emailValid'], action.payload.get('isValid'));
+            state = state.setIn(['waitlist', 'saveSuccess'], false)
+            break
+        case SUBMIT_WAITLIST_REQUEST:
+            state = state.setIn(['waitlist', 'saving'], true)
+            state = state.setIn(['waitlist', 'error'], null)
+            break
+        case SUBMIT_WAITLIST_SUCCESS:
+            state = state.setIn(['waitlist', 'saving'], false)
+            state = state.setIn(['waitlist', 'saveSuccess'], true)
+            state = state.setIn(['waitlist', 'error'], null)
+            break
+        case SUBMIT_WAITLIST_ERROR:
+            state = state.setIn(['waitlist', 'saving'], false)
+            state = state.setIn(['waitlist', 'saveSuccess'], false)
+            state = state.setIn(['waitlist', 'error'], action.payload.error)
+            break
         default:
             break;
     }
@@ -65,6 +97,34 @@ export function loadPage(){
                 type: SET_PAGE_CONFIG,
                 payload: config.get('homePage', {}),
             })
+        })
+    }
+}
+
+
+
+export function setWaitlistEmail(email){
+    return dispatch => {
+        dispatch({
+            type: SET_WAITLIST_EMAIL,
+            payload: {
+                email,
+                isValid: isValidEmail(email)
+            },
+        })
+    }
+}
+
+export function submitWaitlist(){
+    return (dispatch, getState) => {
+        const email = getState().homePage.getIn(['waitlist', 'email'])
+        dispatch({type: SUBMIT_WAITLIST_REQUEST})
+        let waitlist = new Waitlist()
+        waitlist.set({email})
+        waitlist.save().then(saved => {
+            dispatch({type: SUBMIT_WAITLIST_SUCCESS})
+        }).catch(error => {
+            console.error('Failed to save waitlist', error)
         })
     }
 }

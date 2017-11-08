@@ -106,3 +106,11 @@ a {
 .btn-outline-secondary{
     @include button-outline-style($btnSecondaryBg)
 }
+
+.btn-outline-white{
+    @include button-outline-style(white)
+}
+
+.btn-white{
+    @include button-style(white, $roostOrange)
+}

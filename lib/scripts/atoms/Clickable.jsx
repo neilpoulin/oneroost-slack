@@ -8,6 +8,7 @@ const LOOK_LINK = 'link'
 
 const COLOR_PRIMARY = 'primary'
 const COLOR_SECONDARY = 'secondary'
+const COLOR_WHITE = 'white'
 
 class Clickable extends React.Component {
     static propTypes = {
@@ -15,7 +16,7 @@ class Clickable extends React.Component {
         onClick: PropTypes.func,
         look: PropTypes.oneOf([LOOK_BUTTON, LOOK_LINK]),
         outline: PropTypes.bool,
-        colorType: PropTypes.oneOf([COLOR_PRIMARY, COLOR_SECONDARY]),
+        colorType: PropTypes.oneOf([COLOR_PRIMARY, COLOR_SECONDARY, COLOR_WHITE]),
         className: PropTypes.string,
         target: PropTypes.string,
         href: PropTypes.string,
