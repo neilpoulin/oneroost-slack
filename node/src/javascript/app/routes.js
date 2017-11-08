@@ -26,6 +26,7 @@ import {
     getImagesFromTeam,
 } from 'slack/slackService'
 import SlackTeam from 'models/SlackTeam'
+import StripeEvent from 'models/StripeEvent'
 import {
     INBOUND_CLASSNAME,
     USER_CLASSNAME,
@@ -246,6 +247,43 @@ router.get('/coupons/:couponCode', async (req, res) => {
         res.send(error)
     })
 })
+
+
+router.post('/webhooks/stripe', async (req,res,) => {
+    try{
+        console.log('attempting to process stripe webhook event', req.rawBody)
+        let sig = req.headers['stripe-signature'];
+        let event = await getSignedWebhookEvent(sig, req.rawBody)
+        if (!event){
+            console.error('Failed to sign Stripe webhook event. requset', req.rawBody)
+        }
+        console.log('[Stripe WebHook]', event)
+
+        const {
+            id: event_id,
+            type,
+            data={object: {}}
+        } = event
+
+        let eventData = {
+            event_id,
+            type,
+            customer: data.object.customer,
+            data: data.object
+        }
+        let stripeEvent = new StripeEvent()
+        stripeEvent.set(eventData)
+        stripeEvent.save().catch(error => console.error('Failed to save webhook event', eventData))
+
+        return res.send({received: true})
+    } catch (e){
+        console.error('failed to process webhook!', req)
+        res.status = 500
+        res.send({error: 'server error', message: e.message})
+    }
+
+})
+
 
 router.get('*', function(req, res) {
     res.sendFile(path.join(viewRoot, 'index.html'));

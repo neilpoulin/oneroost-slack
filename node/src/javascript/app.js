@@ -16,35 +16,7 @@ import {
 
 var app = express();
 setup(app);
-
-
-app.post('/webhooks/stripe', addRawBody, async (req,res) => {
-    console.log('attempting to process stripe webhook event', req.body)
-    let sig = req.headers['stripe-signature'];
-    let event = await getSignedWebhookEvent(sig, req.rawBody)
-    console.log('[Stripe WebHook]', event)
-    return res.send({received: true})
-})
-
-function addRawBody(req, res, next) {
-    console.log('adding raw body', req)
-    req.setEncoding('utf8');
-
-    var data = '';
-
-    req.on('data', function(chunk) {
-        data += chunk;
-    });
-
-    req.on('end', function() {
-        req.rawBody = data;
-
-        next();
-    });
-}
-
-
-
+app.post('/webhooks/stripe', bodyParser.json({verify:function(req,res,buf){req.rawBody=buf}}))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }))
 
