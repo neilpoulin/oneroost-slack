@@ -222,7 +222,7 @@ router.get('/googleUsers', async (req, res) => {
 })
 
 router.get('/plans/extension/current', async (req, res) => {
-    return getExtensionPlan().then(plan => {
+    getExtensionPlan().then(plan => {
         res.send(plan);
     }).catch(error => {
         res.status(500)

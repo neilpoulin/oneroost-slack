@@ -64,7 +64,7 @@ export default function reducer(state=initialState, action){
         case LOAD_PLAN_SUCCESS:
             state = state.set('isLoading', false)
             state = state.set('hasLoaded', true)
-            state = state.set('plan', action.payload.toJS())
+            state = state.set('plan', action.payload)
             break
         case SET_SUBSCRIPTION:
             state = state.set('subscription', action.payload)
@@ -90,6 +90,7 @@ export default function reducer(state=initialState, action){
             break
         case SET_UPCOMING_INVOICE:
             state = state.set('invoice', action.payload);
+            state = state.set('hasPayment', true)
             break;
         default:
             break
@@ -148,10 +149,13 @@ export function loadPlan() {
         })
         axios.get('/plans/extension/current').then(({data: plan}) => {
             console.log('fetched plan', plan)
-            dispatch({
-                type: LOAD_PLAN_SUCCESS,
-                payload: plan,
-            })
+            if (plan && typeof plan === 'object'){
+                dispatch({
+                    type: LOAD_PLAN_SUCCESS,
+                    payload: plan,
+                })
+            }
+
         }).catch(error => {
             dispatch({
                 type: LOAD_PLAN_ERROR,

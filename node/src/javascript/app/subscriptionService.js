@@ -125,6 +125,7 @@ export async function getPlanById(planId) {
         return plan
     }).catch(error => {
         console.error('failed to get plan', error)
+        return null
     });
 }
 

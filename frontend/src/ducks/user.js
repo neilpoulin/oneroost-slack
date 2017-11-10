@@ -3,6 +3,7 @@ import axios from 'axios'
 import Parse from 'parse'
 import SlackTeam from 'models/SlackTeam'
 import Cookie from 'js-cookie'
+import {fetchUpcomingInvoice, fetchSubscriptionInfo} from 'ducks/payment'
 
 export const SLACK_AUTH_REQUEST = 'oneroost/login/SLACK_AUTH_REQUEST'
 export const SLACK_AUTH_SUCCESS = 'oneroost/login/SLACK_AUTH_SUCCESS'
@@ -271,6 +272,8 @@ export function userLoggedIn(user){
             type: LOGIN_SUCCESS,
             payload: user.toJSON()
         })
+        dispatch(fetchUpcomingInvoice())
+        dispatch(fetchSubscriptionInfo())
         let authData = user.get('authData')
         if (authData){
             Object.keys(authData).forEach(provider => {
