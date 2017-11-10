@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import qs from 'qs'
-import {loginWithSlack, setOAuthState, getOAuthState} from 'ducks/user'
+import {loginWithSlack, setOAuthState, getOAuthState, installSlack} from 'ducks/user'
 import {Redirect} from 'react-router'
 import {withRouter} from 'react-router-dom'
 import BasePage from './BasePage'
@@ -27,9 +27,15 @@ class LoginPage extends React.Component{
         redirectUri: PropTypes.string,
         installSuccess: PropTypes.bool,
         state: PropTypes.string,
+        install: PropTypes.bool,
         //actions
         getToken: PropTypes.func.isRequired,
         generateOAuthState: PropTypes.func,
+    }
+
+    static defaultProps = {
+        redirectPath: 'login',
+        install: false,
     }
 
     componentDidMount(){
@@ -106,7 +112,8 @@ class LoginPage extends React.Component{
 
 const mapStateToProps = (state, ownProps) => {
     const {config, user} = state
-    const {location} = ownProps
+    const {location, install} = ownProps
+    let {redirectPath} = ownProps
     let params = {
         state: getOAuthState()
     }
@@ -123,14 +130,21 @@ const mapStateToProps = (state, ownProps) => {
         teamName: user.get('teamName'),
         userName: user.get('firstName') + ' ' + user.get('lastName'),
         userEmail: user.get('email'),
-        redirectUri: `${window.location.origin}/login`,
+        redirectUri: `${window.location.origin}/${(install && !user.get('installSuccess')) ? 'install-success' : 'login'}`,
         hasSlack: user.get('hasSlack', false),
     }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        getToken: (code, redirectUri) => dispatch(loginWithSlack(code, redirectUri)),
+        getToken: (code, redirectUri) => {
+            if (ownProps.install){
+                dispatch(installSlack(code, redirectUri))
+            }else {
+                dispatch(loginWithSlack(code, redirectUri))
+            }
+
+        },
         generateOAuthState: () => dispatch(setOAuthState())
     }
 }

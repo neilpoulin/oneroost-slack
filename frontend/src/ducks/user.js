@@ -7,6 +7,9 @@ import Cookie from 'js-cookie'
 export const SLACK_AUTH_REQUEST = 'oneroost/login/SLACK_AUTH_REQUEST'
 export const SLACK_AUTH_SUCCESS = 'oneroost/login/SLACK_AUTH_SUCCESS'
 export const SLACK_AUTH_ERROR = 'oneroost/login/SLACK_AUTH_ERROR'
+export const SLACK_INSTALL_REQUEST = 'oneroost/user/SLACK_INSTALL_REQUEST'
+export const SLACK_INSTALL_ERROR = 'oneroost/user/SLACK_INSTALL_ERROR'
+export const SLACK_INSTALL_SUCCESS = 'oneroost/user/SLACK_INSTALL_SUCCESS'
 
 export const SLACK_ADDED_SUCCESS = 'oneroost/login/SLACK_ADDED_SUCCESS'
 
@@ -21,6 +24,7 @@ export const LOGOUT = 'oneroost/login/LOGOUT'
 const initialState = Immutable.Map({
     isLoggedIn: false,
     isLoading: false,
+    installSuccess: false,
     userId: null,
     error: null,
     slackAccessToken: null,
@@ -43,6 +47,22 @@ export default function reducer(state=initialState, action){
     switch(action.type){
         case SLACK_AUTH_REQUEST:
             return state.set('isLoading', true)
+
+        case SLACK_INSTALL_REQUEST:
+            state = state.set('isLoading', true)
+            break
+        case SLACK_INSTALL_ERROR:
+            state = state.set('isLoading', false)
+            state = state.set('error', action.payload.get('error'))
+            state = state.set('installSuccess', false)
+            break
+        case SLACK_INSTALL_SUCCESS:
+            state = state.set('isLoading', false)
+            state = state.set('slackAccessToken', action.payload.get('accessToken'))
+            state = state.set('error', null)
+            state = state.set('isLoggedIn', false)
+            state = state.set('installSuccess', true)
+            return state
         case SLACK_AUTH_SUCCESS:
             state = state.set('isLoading', false)
             state = state.set('slackAccessToken', action.payload.get('accessToken'))
@@ -135,6 +155,36 @@ export function authorizeSlackTeam(code, redirectUri){
             console.log('authorized slack team slack team')
             dispatch({
                 type: SLACK_ADDED_SUCCESS,
+            })
+        })
+    }
+}
+
+export function installSlack(code, redirectUri){
+    return dispatch => {
+        dispatch({
+            type: SLACK_INSTALL_REQUEST,
+        })
+
+        axios.post('/tokens/slack', {
+            code,
+            redirectUri,
+        }).then(({data: {access_token: accessToken, user, team, slackTeam}}) => {
+            console.log('slack app install flow - got access token')
+            dispatch({
+                type: SLACK_INSTALL_SUCCESS,
+                payload: {
+                    accessToken,
+                    user,
+                    team,
+                    slackTeam,
+                }
+            })
+        }).catch(error => {
+            console.log('failed to install slack app')
+            dispatch({
+                type: SLACK_INSTALL_ERROR,
+                error,
             })
         })
     }

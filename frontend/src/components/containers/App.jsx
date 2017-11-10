@@ -21,7 +21,7 @@ const history = createBrowserHistory();
 history.listen((location) => {
     try{
         const path = location.pathname
-        console.log("tracking page view: " + path);
+        console.log('tracking page view: ' + path);
         logPageView({path})
     }
     catch (e){
@@ -36,7 +36,7 @@ const App = ({
         <div display-if={hasLoaded}>
             <Route exact path="/" component={HomePage}/>
             <Route path="/login" component={LoginPage}/>
-            <Route path="/install-success" render={() => <LoginPage installSuccess={true}/>}/>
+            <Route path="/install-success" render={() => <LoginPage installSuccess={true} redirectPath={'install-success'} install={true}/>}/>
             <Route path={'/teams/:teamId'} component={TeamInboundPage}/>
             <PrivateRoute path='/settings' component={SettingsPage}/>
             <Route path='/support' component={SupportPage}/>
