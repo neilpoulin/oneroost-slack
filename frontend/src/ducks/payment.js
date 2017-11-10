@@ -168,6 +168,11 @@ export function fetchUpcomingInvoice(){
             console.log('no user or user id found for user', user)
             return null;
         }
+        let slackTeam = user.get('slackTeam');
+        if(!slackTeam || !slackTeam.get('stripeCustomerId')){
+            console.log('no stripe customer id, so not fetching invoice')
+            return null;
+        }
         Parse.Cloud.run('getUpcomingInvoice').then(invoice => {
             dispatch({
                 type: SET_UPCOMING_INVOICE,

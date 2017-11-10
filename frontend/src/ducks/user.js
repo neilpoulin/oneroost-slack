@@ -60,7 +60,6 @@ export default function reducer(state=initialState, action){
             state = state.set('isLoading', false)
             state = state.set('slackAccessToken', action.payload.get('accessToken'))
             state = state.set('error', null)
-            state = state.set('isLoggedIn', false)
             state = state.set('installSuccess', true)
             return state
         case SLACK_AUTH_SUCCESS:

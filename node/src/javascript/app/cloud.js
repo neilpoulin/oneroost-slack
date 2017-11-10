@@ -49,7 +49,7 @@ export function initialize(){
 
         if (!customerId){
             console.log('no customer id found on slackTeam, exiting')
-            return response.error({message: 'The slackTeam does not have an active customer id, nothing to fetch'})
+            return response.success({message: 'The slackTeam does not have an active customer id, nothing to fetch'})
         }
         console.log('fetching upcoming invoice for stripe customer id = ' + customerId)
         let upcoming = await getUpcomingInvoice(customerId)
