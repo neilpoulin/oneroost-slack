@@ -4,6 +4,8 @@ $hoverDarken: 5;
 $activeDarken: 10;
 $padding: .5rem;
 $borderWeight: .1rem;
+$roundBorderRadius: 3rem;
+
 
 a {
     text-decoration: none;
@@ -19,6 +21,7 @@ a {
     text-align: center;
     display: flex;
     justify-content: center;
+    height: 100%;
     &.disabled{
         background-color: lightgray;
         border-color: darkgray;
@@ -31,6 +34,20 @@ a {
 
     &:active:not(.disabled){
         box-shadow: inset 0px 0px 8px 0px rgba(0, 0, 0, 0.3);
+    }
+
+    &.roundLeft{
+        border-bottom-left-radius: $roundBorderRadius;
+        border-top-left-radius: $roundBorderRadius;
+    }
+
+    &.roundRight{
+        border-bottom-right-radius: $roundBorderRadius;
+        border-top-right-radius: $roundBorderRadius;
+    }
+
+    &.nowrap{
+        white-space: nowrap;
     }
 }
 

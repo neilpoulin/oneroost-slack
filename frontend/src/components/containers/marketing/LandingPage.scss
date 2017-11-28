@@ -1,0 +1,81 @@
+@import "~variables";
+
+.main {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Gotham Book";
+  position: relative;
+  padding: 4rem 0;
+
+}
+
+p {
+  color: $secondaryColor;
+}
+
+section{
+  display: flex;
+  flex-direction: row;
+  $imageWidth: 60%;
+  align-items: center;
+  > .image{
+    width: $imageWidth;
+    img {
+      width: 100%
+    };
+  }
+  > .copy{
+    width: 100% - $imageWidth;
+    white-space: pre-line;
+    padding: 2rem;
+    h2{
+      font-size: 2rem;
+      @include font-bold;
+    }
+    p{
+      font-size: 1.2rem;
+      @include font-body;
+    }
+  }
+
+  &:nth-child(2n + 1){
+    flex-direction: row-reverse;
+  }
+
+}
+
+@media (max-width: $screen-md-min) {
+  $imageWidth: 55%;
+  section{
+    > .image{
+      width: $imageWidth;
+    }
+    > .copy{
+      width: 100% - $imageWidth;
+    }
+  }
+
+}
+
+@media (max-width: $screen-sm-min) {
+  .main{
+    padding: 0;
+    padding-top: 4rem;
+  }
+
+  section{
+    $flex-direction: column-reverse;
+    flex-flow: $flex-direction wrap;
+    &:nth-child(2n + 1){
+      flex-direction: $flex-direction;
+    }
+    > .image{
+      width: 100%;
+      flex-shrink: 0;
+    }
+    > .copy{
+      width: 100%;
+      flex-shrink: 0;
+    }
+  }
+
+}

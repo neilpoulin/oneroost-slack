@@ -23,6 +23,9 @@ class Clickable extends React.Component {
         inline: PropTypes.bool,
         to: PropTypes.string,
         disabled: PropTypes.bool,
+        roundLeft: PropTypes.bool,
+        roundRight: PropTypes.bool,
+        nowrap: PropTypes.bool,
     }
 
     static defaultProps = {
@@ -36,6 +39,9 @@ class Clickable extends React.Component {
         inline: false,
         to: null,
         disabled: false,
+        roundLeft: false,
+        roundRight: false,
+        nowrap: false,
     }
 
     constructor(props){
@@ -62,6 +68,9 @@ class Clickable extends React.Component {
             inline,
             to,
             disabled,
+            roundLeft,
+            roundRight,
+            nowrap,
         } = this.props
         let classes = classNames(className, {
             [`btn-outline-${colorType}`]: outline,
@@ -71,6 +80,9 @@ class Clickable extends React.Component {
             [`link-${colorType}`]: !outline && look === LOOK_LINK,
             'inline': inline,
             'disabled': disabled,
+            roundRight: roundRight,
+            roundLeft: roundLeft,
+            nowrap: nowrap,
         })
         if(to){
             return <Link className={classes} to={to} onClick={this._handleClick}>{text}</Link>

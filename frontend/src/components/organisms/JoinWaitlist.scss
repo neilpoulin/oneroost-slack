@@ -1,0 +1,25 @@
+@import "~variables";
+
+.container{
+  &.inline{
+    display: flex;
+    flex-direction: row;
+    .emailInputContainer{
+      flex-grow: 1;
+
+    }
+
+    .actionContainer{
+
+    }
+  }
+
+
+}
+
+
+@media (max-width: $screen-sm-min) {
+  .actionContainer{
+    //font-size: .8rem;
+  }
+}

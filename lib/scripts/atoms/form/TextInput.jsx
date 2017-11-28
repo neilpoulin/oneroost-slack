@@ -10,6 +10,13 @@ class TextInput extends React.Component {
         onChange: PropTypes.func,
         className: PropTypes.string,
         stripeStyle: PropTypes.bool,
+        roundLeft: PropTypes.bool,
+        roundRight: PropTypes.bool,
+    }
+
+    static defaultProps = {
+        roundLeft: false,
+        roundRight: false,
     }
 
     constructor(props){
@@ -26,10 +33,20 @@ class TextInput extends React.Component {
     }
 
     render () {
-        const {value, placeholder, type, className, stripeStyle} = this.props
+        const {
+            value,
+            placeholder,
+            type,
+            className,
+            stripeStyle,
+            roundRight,
+            roundLeft,
+        } = this.props
         let classes = classNames(className, {
             inset: !stripeStyle,
-            stripe: stripeStyle
+            stripe: stripeStyle,
+            roundRight: roundRight,
+            roundLeft: roundLeft,
         })
         return <div className='container'>
             <input className={classes} type={type} value={value} placeholder={placeholder} onChange={this._handleChange}/>

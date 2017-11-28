@@ -9,6 +9,13 @@ $headerColor: #4A4A4A;
 
 // Fonts
 $font-path: './../../fonts';
+@mixin font-bold {
+    font-family: "Gotham Bold";
+}
+
+@mixin font-body {
+    font-family: "Gotham Book";
+}
 
 // Buttons
 $btnPrimaryColor: white;

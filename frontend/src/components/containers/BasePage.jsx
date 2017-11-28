@@ -51,7 +51,7 @@ class BasePage extends React.Component {
                 textColor={navTextColor}
                 display-if={showNav}
                 showHome={showHome}
-                />
+            />
             <div className={pageClasses}>
                 {children}
             </div>

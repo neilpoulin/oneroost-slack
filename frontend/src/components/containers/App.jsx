@@ -8,6 +8,8 @@ import {
 import LoginPage from 'LoginPage'
 import {connect} from 'react-redux'
 import HomePage from './HomePage'
+import BuyerLandingPage from 'marketing/BuyerLandingPage'
+import SellerLandingPage from 'marketing/SellerLandingPage'
 import SettingsPage from './SettingsPage'
 import TeamInboundPage from './TeamInboundPage'
 import PrivateRoute from './PrivateRoute'
@@ -35,6 +37,8 @@ const App = ({
     <Router history={history}>
         <div display-if={hasLoaded}>
             <Route exact path="/" component={HomePage}/>
+            <Route exact path="/lp/sellers" component={SellerLandingPage}/>
+            <Route exact path="/lp/buyers" component={BuyerLandingPage}/>
             <Route path="/login" component={LoginPage}/>
             <Route path="/install-success" render={() => <LoginPage installSuccess={true} redirectPath={'install-success'} install={true}/>}/>
             <Route path={'/teams/:teamId'} component={TeamInboundPage}/>

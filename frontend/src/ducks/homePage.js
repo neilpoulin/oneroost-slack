@@ -23,6 +23,8 @@ export const initialState = Immutable.fromJS({
     videos: [],
     extensionUrl: null,
     isLoading: false,
+    sellerLandingPage: {},
+    buyerLandingPage: {},
     chromeExtension: {
         installing: false,
         installed: false,
@@ -101,7 +103,23 @@ export function loadPage(){
     }
 }
 
+export function loadLandingPage(){
+    return dispatch => {
+        dispatch({
+            type: GET_PAGE_CONFIG
+        })
 
+        Parse.Config.get().then(config => {
+            dispatch({
+                type: SET_PAGE_CONFIG,
+                payload: {
+                    'buyerLandingPage': config.get('buyerLandingPage', {}),
+                    'sellerLandingPage': config.get('sellerLandingPage', {})
+                },
+            })
+        })
+    }
+}
 
 export function setWaitlistEmail(email){
     return dispatch => {
