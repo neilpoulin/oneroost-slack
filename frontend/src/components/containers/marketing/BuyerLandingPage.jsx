@@ -125,10 +125,6 @@ class HomePage extends React.Component{
             submitEmail,
         } = this.props
 
-        const $footer = <div className="container">
-            &copy; 2017 OneRoost | <Clickable look='link' text='Privacy' to='/privacy'/> | <Clickable to='/support' look='link' text='Support'/>
-        </div>
-
         if (isLoading){
             return null
         }
@@ -164,7 +160,12 @@ class HomePage extends React.Component{
                         </div>
                     </section>)}
                 <footer className="">
-                    {$footer}
+                    <Logo/>
+                    <div className="links">
+                        <Clickable look='link' text='Privacy' to='/privacy' colorType={'white'}/>
+                        <Clickable to='/support' look='link' text='Support' colorType={'white'}/>
+                        <Clickable to='/login' look='link' text='Log In' colorType={'white'}/>
+                    </div>
                 </footer>
             </div>
         </BasePage>
@@ -223,32 +224,13 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         loadPage: () => {
             dispatch(loadLandingPage())
         },
-        chromeInstallStart: () => {
-            dispatch({
-                type: INSTALL_CHROME_EXTENSION_REQUEST
-            })
-        },
-        chromeExtensionInstallSuccess: (event) => {
-            console.log('installed successfully')
-            dispatch({
-                type: INSTALL_CHROME_EXTENSION_SUCCESS
-            })
-        },
-        chromeExtensionInstallError: (error) => {
-            console.error('failed to install: ', error)
-            dispatch({
-                type: INSTALL_CHROME_EXTENSION_ERROR,
-                payload: error,
-            })
-        },
+
         setNav: () => {
             dispatch(setNavProperty({
                 name: 'show',
                 value: false,
             }))
         },
-        getToken: (code, redirectUri) => dispatch(authorizeSlackTeam(code, redirectUri)),
-        generateOAuthState: () => dispatch(setOAuthState()),
         setEmail: (email) => dispatch(setWaitlistEmail(email)),
         submitEmail: () => {
             dispatch(submitWaitlist())

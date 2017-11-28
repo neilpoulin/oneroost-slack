@@ -67,6 +67,12 @@ a {
     &:hover{
         color: $secondaryColor;
     }
+    &-white{
+        color: white;
+        &:hover{
+            color: $roostOrange;
+        }
+    }
 }
 
 .inline{

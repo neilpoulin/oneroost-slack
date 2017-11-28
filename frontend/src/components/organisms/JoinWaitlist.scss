@@ -4,6 +4,7 @@
   &.inline{
     display: flex;
     flex-direction: row;
+    justify-content: center;
     .emailInputContainer{
       flex-grow: 1;
 
