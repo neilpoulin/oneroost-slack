@@ -8,52 +8,132 @@
 
 }
 
-p {
-  color: $secondaryColor;
+h2 {
+  font-size: 2rem;
+  @include font-bold;
 }
 
-section{
+section {
   display: flex;
   flex-direction: row;
   $imageWidth: 60%;
   align-items: center;
   margin-bottom: 3rem;
-  > .image{
+  > .image {
     width: $imageWidth;
     img {
       width: 100%
-    };
+    }
+  ;
   }
-  > .copy{
+  > .copy {
     width: 100% - $imageWidth;
     white-space: pre-line;
     padding: 2rem;
-    h2{
-      font-size: 2rem;
-      @include font-bold;
-    }
-    p{
+
+    p {
       font-size: 1.2rem;
       @include font-body;
+      color: $secondaryColor;
     }
   }
 
-  &:nth-child(2n + 1){
+  &:nth-child(2n + 1) {
     flex-direction: row-reverse;
   }
 
 }
 
-footer{
+.signup{
+  padding: 3rem 10rem 5rem 10rem;
+  text-align: center;
+  h2{
+    margin-bottom: 2rem;
+  }
+}
+
+.testimonials {
+  background-color: $roostOrange;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  .testimonial {
+    padding: 1rem 4rem;
+    display: flex;
+    flex-direction:row;
+    justify-content: space-around;
+    align-items: center;
+    &:nth-child(2n){
+      flex-direction: row-reverse;
+    }
+
+    .text{
+      padding: 1rem;
+      .user, .company {
+        font-size: .9rem;
+        margin-top: 0;
+        margin-bottom: .5rem;
+      }
+      .company {
+        @include font-bold;
+      }
+      .quote {
+        quotes: "\201C" "\201D";
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        display: inline-block;
+        position: relative;
+        $quoteSize: 3.5rem;
+        $quoteMargin: .4rem;
+        $quoteTop: -.6rem;
+        $quoteLeft: -1.8rem;
+        &:before{
+          content: open-quote;
+          font-size: $quoteSize;
+          position: absolute;
+          top: $quoteTop;
+          //left: $quoteLeft;
+          left: -2rem;
+
+        }
+        &:after{
+          content: close-quote;
+          margin-left: $quoteMargin;
+          font-size: $quoteSize;
+          position: absolute;
+          //top: $quoteTop;
+          bottom: -1.8rem;
+        }
+      }
+    }
+
+    .avatar{
+      width: 8rem;
+      height: 8rem;
+      border-radius: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      img{
+        width: 100%;
+      }
+    }
+
+  }
+
+}
+
+footer {
   padding: 2rem;
   background-color: $mutedColor;
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  .link{
+  .link {
     margin-right: 4rem;
-    &:last-child{
+    &:last-child {
       margin-right: 0;
     }
   ;
@@ -62,11 +142,11 @@ footer{
 
 @media (max-width: $screen-md-min) {
   $imageWidth: 55%;
-  section{
-    > .image{
+  section {
+    > .image {
       width: $imageWidth;
     }
-    > .copy{
+    > .copy {
       width: 100% - $imageWidth;
     }
   }
@@ -74,33 +154,42 @@ footer{
 }
 
 @media (max-width: $screen-sm-min) {
-  .main{
+  .main {
     padding: 0;
     padding-top: 4rem;
   }
 
-  section{
+  section {
     $flex-direction: column-reverse;
     flex-flow: $flex-direction wrap;
-    &:nth-child(2n + 1){
+    &:nth-child(2n + 1) {
       flex-direction: $flex-direction;
     }
-    > .image{
+    > .image {
       width: 100%;
       flex-shrink: 0;
     }
-    > .copy{
+    > .copy {
       width: 100%;
       flex-shrink: 0;
     }
   }
 
-  footer{
+  footer {
     flex-direction: column;
 
-    .link{
+    .link {
       margin-right: 2rem;
     }
   }
 
+  .testimonials {
+    flex-direction: column;
+    .testimonial {
+      flex-direction:column;
+      &:nth-child(2n){
+        flex-direction: column;
+      }
+    }
+  }
 }

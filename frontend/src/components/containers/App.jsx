@@ -37,8 +37,8 @@ const App = ({
     <Router history={history}>
         <div display-if={hasLoaded}>
             <Route exact path="/" component={HomePage}/>
-            <Route exact path="/lp/sellers" component={SellerLandingPage}/>
-            <Route exact path="/lp/buyers" component={BuyerLandingPage}/>
+            <Route exact path="/sellers" component={SellerLandingPage}/>
+            <Route exact path="/buyers" component={BuyerLandingPage}/>
             <Route path="/login" component={LoginPage}/>
             <Route path="/install-success" render={() => <LoginPage installSuccess={true} redirectPath={'install-success'} install={true}/>}/>
             <Route path={'/teams/:teamId'} component={TeamInboundPage}/>

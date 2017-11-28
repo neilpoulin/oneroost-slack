@@ -23,59 +23,37 @@ import JoinWaitlist from 'organisms/JoinWaitlist'
 class HomePage extends React.Component{
     static propTypes = {
         loadPage: PropTypes.func.isRequired,
-        heroTitle: PropTypes.string,
-        heroSubTitle: PropTypes.string,
-        ctaSubText: PropTypes.string,
-        ctaButtonText: PropTypes.string,
-        paragraphs: PropTypes.arrayOf(PropTypes.shape({
-            title: PropTypes.string,
-            content: PropTypes.string,
-            imageUrl: PropTypes.string,
-        })),
         videos: PropTypes.arrayOf(PropTypes.shape({
             title: PropTypes.string,
             caption: PropTypes.string,
             url: PropTypes.string.isRequired,
         })),
-        hasMore: PropTypes.bool,
+
         isLoading: PropTypes.bool.isRequired,
-        extensionUrl: PropTypes.string,
-        slackCopy: PropTypes.string,
-        showWaitlist: PropTypes.bool,
-        waitlistCopy: PropTypes.string,
-        chromeInstallStart: PropTypes.func.isRequired,
-        chromeExtensionInstallError: PropTypes.func.isRequired,
-        chromeExtensionInstallSuccess: PropTypes.func.isRequired,
-        installing: PropTypes.bool,
-        installed: PropTypes.bool,
-        installError: PropTypes.any,
-        installSuccess: PropTypes.bool,
-        redirectUri: PropTypes.string,
-        code: PropTypes.string,
-        slackAddedSuccess: PropTypes.bool,
-        location: PropTypes.any,
-        state: PropTypes.string,
-        waitlistSaving: PropTypes.bool,
-        waitlistSaveSuccess: PropTypes.bool,
-        waitlistError: PropTypes.any,
-        email: PropTypes.string,
+
         isValidEmail: PropTypes.bool,
         sections: PropTypes.arrayOf(PropTypes.shape({
             title: PropTypes.string,
             description: PropTypes.string,
             showWaitlist: PropTypes.bool,
         })),
+        testimonials: PropTypes.arrayOf(PropTypes.shape({
+            quote: PropTypes.string.isRequired,
+            imageUrl: PropTypes.string,
+            name: PropTypes.string.isRequired,
+            title: PropTypes.string,
+            companyName: PropTypes.string.isRequired,
+            companyUrl: PropTypes.string,
+        })),
         //actions
         setNav: PropTypes.func,
         getToken: PropTypes.func,
-        generateOAuthState: PropTypes.func,
         setEmail: PropTypes.func.isRequired,
         submitEmail: PropTypes.func.isRequired
     }
 
     constructor(props){
         super(props)
-        this._handleGetExtensionClick = this._handleGetExtensionClick.bind(this)
     }
 
     componentWillMount(){
@@ -83,58 +61,21 @@ class HomePage extends React.Component{
     }
 
     componentDidMount(){
-        document.title = 'OneRoost'
+        document.title = 'OneRoost | Buyers'
         this.props.loadPage()
-        const {code, redirectUri, state, generateOAuthState} = this.props
-        if (code){
-            if (state === getOAuthState()){
-                this.props.getToken(code, redirectUri)
-            } else {
-                console.error('state param did not match: returned =' + state + ', saved = ' + getOAuthState())
-            }
-
-        } else {
-            generateOAuthState()
-        }
-    }
-
-    _handleGetExtensionClick(event){
-        const {extensionUrl, chromeExtensionInstallError, chromeExtensionInstallSuccess, chromeInstallStart} = this.props
-        if (window.chrome && window.chrome.webstore && window.chrome.webstore.install){
-            chromeInstallStart()
-            window.chrome.webstore.install(extensionUrl, () => chromeExtensionInstallSuccess(event), chromeExtensionInstallError)
-        }
-        else {
-            window.open(extensionUrl)
-        }
     }
 
     render () {
         const {
             isLoading,
-            slackAddedSuccess,
-            location,
-            email,
-            isValidEmail,
-            waitlistSaving,
-            waitlistSaveSuccess,
-            waitlistError,
             sections,
-            //actions
-            setEmail,
-            submitEmail,
+            testimonials,
         } = this.props
 
         if (isLoading){
             return null
         }
 
-        if (slackAddedSuccess){
-            return <Redirect to={{
-                pathname: '/install-success',
-                state: { from: location }
-            }}/>
-        }
 
         var page =
         <BasePage showNav={true}
@@ -145,20 +86,53 @@ class HomePage extends React.Component{
             showHome={true}
         >
             <div className={'main'} >
-                {sections.map(({title, showWaitlist, description, imageUrl}, i) =>
-                    <section key={`section_${i}`}>
-                        <div display-if={imageUrl} className={'image'}>
-                            <img src={`/static/images/${imageUrl}`}/>
+                <div>
+                    {sections.map(({title, showWaitlist, description, imageUrl}, i) =>
+                        <section key={`section_${i}`}>
+                            <div display-if={imageUrl} className={'image'}>
+                                <img src={`${imageUrl}`}/>
+                            </div>
+                            <div display-if={showWaitlist} className="copy">
+                                <h2>{title}</h2>
+                                <p>{description}</p>
+                                <JoinWaitlist display-if={showWaitlist}
+                                    buttonText='Join the Beta'
+                                    inline={true}
+                                />
+                            </div>
+                        </section>)}
+                </div>
+                <div className={'testimonials'} display-if={testimonials}>
+                    {testimonials.map(({quote, imageUrl, name, title, companyName, companyUrl}, i) =>
+                        <div key={`testimonial_${i}`} className={'testimonial'}>
+                            <div className={'avatar'}>
+                                <img src={imageUrl}/>
+                            </div>
+                            <div className={'text'}>
+                                <q className='quote'>{quote}</q>
+                                <p className='user'>
+                                    {name} <span className="title" display-if={title}> - {title}</span>
+                                </p>
+                                <p className='company'>
+                                    <Clickable display-if={companyUrl}
+                                        look={'link'}
+                                        colorType={'white'}
+                                        text={companyName}
+                                        to={companyUrl}
+                                    />
+                                    <span display-if={!companyUrl}>{companyName}</span>
+                                </p>
+                            </div>
+
                         </div>
-                        <div display-if={showWaitlist} className="copy">
-                            <h2>{title}</h2>
-                            <p>{description}</p>
-                            <JoinWaitlist display-if={showWaitlist}
-                                buttonText='Join the Beta'
-                                inline={true}
-                            />
-                        </div>
-                    </section>)}
+                    )}
+                </div>
+                <div className={'signup'}>
+                    <h2>Sign up now</h2>
+                    <JoinWaitlist buttonText='Join the Beta'
+                        inline={true}
+                    />
+                </div>
                 <footer className="">
                     <Logo/>
                     <div className="links">
@@ -179,43 +153,15 @@ const mapStateToProps = (state, ownProps) => {
     let {
         buyerLandingPage: {
             sections=[],
-        },
-        chromeExtension: {
-            installing,
-            installed,
-            error: installError,
-            success: installSuccess,
-        },
-        waitlist: {
-            email,
-            emailValid: isValidEmail,
-            saving: waitlistSaving,
-            saveSuccess: waitlistSaveSuccess,
-            error: waitlistError,
+            testimonials=[],
         },
         isLoading,
     } = homePage
-    const redirectUri = `${window.location.origin}`
-    let params = {state: getOAuthState()}
-    if (location.search){
-        const {code, state: stateParam, error} = qs.parse(location.search, { ignoreQueryPrefix: true })
-        params = {code, state: stateParam, error}
-    }
+
     return {
-        ...params,
-        redirectUri,
         isLoading,
         sections,
-        installing,
-        installed,
-        installError,
-        installSuccess,
-        email,
-        isValidEmail,
-        waitlistSaving,
-        waitlistSaveSuccess,
-        waitlistError,
-        slackAddedSuccess: state.user.get('slackAddedSuccess'),
+        testimonials,
     }
 }
 
