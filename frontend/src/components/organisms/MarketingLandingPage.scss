@@ -45,10 +45,13 @@ h2 {
     margin-bottom: 4rem;
     display: flex;
     flex-direction:row;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     &:nth-child(2n){
       flex-direction: row-reverse;
+      .text{
+        text-align: right;
+      }
     }
 
     .text{
@@ -99,6 +102,7 @@ h2 {
       overflow: hidden;
       display: flex;
       align-items: center;
+      margin: 0 2rem;
       img{
         width: 100%;
       }
