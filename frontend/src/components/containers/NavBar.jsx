@@ -18,16 +18,31 @@ class NavBar extends React.Component {
         backgroundStyle: PropTypes.oneOf(['default', 'transparent']),
         textColor: PropTypes.oneOf(['white', 'default']),
         showHome: PropTypes.bool,
+        showBuyers: PropTypes.bool,
+        showSellers: PropTypes.bool,
+        showRoostReport: PropTypes.bool,
     }
 
     static defaultProps = {
         fixed: true,
         backgroundStyle: 'default',
         showHome: true,
+        showBuyers: false,
+        showSellers: false,
+        showRoostReport: false,
     }
 
     render () {
-        const {isLoggedIn, fixed, backgroundStyle, textColor, showHome} = this.props
+        const {
+            isLoggedIn,
+            fixed,
+            backgroundStyle,
+            textColor,
+            showHome,
+            showBuyers,
+            showSellers,
+            showRoostReport,
+        } = this.props
 
         const containerClasses = classNames('navContainer', {
             'fixed': fixed,
@@ -40,6 +55,9 @@ class NavBar extends React.Component {
                 <li className='navLink' display-if={showHome}><Link to="/"><Logo/></Link></li>
             </ul>
             <ul className='nav'>
+                <li className='navLink' display-if={showBuyers}><NavLink to="/buyers">Buyers</NavLink></li>
+                <li className='navLink' display-if={showSellers}><NavLink to="/sellers">Sellers</NavLink></li>
+                <li className='navLink' display-if={showRoostReport}><NavLink to="/roost-report">Roost Report</NavLink></li>
                 <li className='navLink' display-if={isLoggedIn}><NavLink to="/settings">Settings</NavLink></li>
                 <li className='navLink' display-if={!isLoggedIn}><NavLink to="/login">Login</NavLink></li>                
             </ul>

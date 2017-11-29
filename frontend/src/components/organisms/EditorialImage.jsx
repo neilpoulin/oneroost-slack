@@ -47,11 +47,31 @@ class EditorialImage extends React.Component {
                     buttonText='Join the Beta'
                     inline={true}
                 />
-                <div display-if={testimonials}>
-                    {testimonials.map(({quote, name, companyName, companyUrl, title}, i) => (
-                        <div key={`inline_testimonial_${i}`}>
-                            <q>{quote}</q>
-                            <p>{name}, {title}, {companyName}</p>
+                <div display-if={testimonials} className={'testimonials'}>
+                    {testimonials.map(({quote, name, companyName, companyUrl, title, imageUrl}, i) => (
+                        <div key={`inline_testimonial_${i}`} className={'testimonial'}>
+                            <div className='text'>
+                                <q className={'quote'}>{quote}</q>
+                                <caption className={'caption'}>
+                                    <div className={'user'}>
+                                        <div>{name}, {title}</div>
+                                        <div className='company' display-if={companyName}>
+                                            <Clickable display-if={companyUrl}
+                                                look={'link'}
+                                                colorType={'secondary'}
+                                                text={companyName}
+                                                href={companyUrl}
+                                                target={'_blank'}
+                                            />
+                                            <span display-if={!companyUrl}>{companyName}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className='avatar' display-if={imageUrl}>
+                                        <img src={imageUrl}/>
+                                    </div>
+                                </caption>
+                            </div>
                         </div>
                     ))}
                 </div>

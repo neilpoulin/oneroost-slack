@@ -28,68 +28,68 @@ h2 {
   display: flex;
   flex-direction: column;
   padding: 1rem;
-  .testimonial {
-    padding: 1rem 4rem;
+}
+
+.testimonial {
+  padding: 1rem 4rem;
+  display: flex;
+  flex-direction:row;
+  justify-content: space-around;
+  align-items: center;
+  &:nth-child(2n){
+    flex-direction: row-reverse;
+  }
+
+  .text{
+    padding: 1rem;
+    .user, .company {
+      font-size: .9rem;
+      margin-top: 0;
+      margin-bottom: .5rem;
+    }
+    .company {
+      @include font-bold;
+    }
+    .quote {
+      quotes: "\201C" "\201D";
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+      position: relative;
+      $quoteSize: 3.5rem;
+      $quoteMargin: .4rem;
+      $quoteTop: -.6rem;
+      $quoteLeft: -1.8rem;
+      &:before{
+        content: open-quote;
+        font-size: $quoteSize;
+        position: absolute;
+        top: $quoteTop;
+        //left: $quoteLeft;
+        left: -2rem;
+
+      }
+      &:after{
+        content: close-quote;
+        margin-left: $quoteMargin;
+        font-size: $quoteSize;
+        position: absolute;
+        //top: $quoteTop;
+        bottom: -1.8rem;
+      }
+    }
+  }
+
+  .avatar{
+    width: 8rem;
+    height: 8rem;
+    border-radius: 100%;
+    overflow: hidden;
     display: flex;
-    flex-direction:row;
-    justify-content: space-around;
     align-items: center;
-    &:nth-child(2n){
-      flex-direction: row-reverse;
+    img{
+      width: 100%;
     }
-
-    .text{
-      padding: 1rem;
-      .user, .company {
-        font-size: .9rem;
-        margin-top: 0;
-        margin-bottom: .5rem;
-      }
-      .company {
-        @include font-bold;
-      }
-      .quote {
-        quotes: "\201C" "\201D";
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        display: inline-block;
-        position: relative;
-        $quoteSize: 3.5rem;
-        $quoteMargin: .4rem;
-        $quoteTop: -.6rem;
-        $quoteLeft: -1.8rem;
-        &:before{
-          content: open-quote;
-          font-size: $quoteSize;
-          position: absolute;
-          top: $quoteTop;
-          //left: $quoteLeft;
-          left: -2rem;
-
-        }
-        &:after{
-          content: close-quote;
-          margin-left: $quoteMargin;
-          font-size: $quoteSize;
-          position: absolute;
-          //top: $quoteTop;
-          bottom: -1.8rem;
-        }
-      }
-    }
-
-    .avatar{
-      width: 8rem;
-      height: 8rem;
-      border-radius: 100%;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      img{
-        width: 100%;
-      }
-    }
-
   }
 
 }

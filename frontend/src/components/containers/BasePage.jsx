@@ -8,6 +8,7 @@ class BasePage extends React.Component {
         children: PropTypes.any,
         showNav: PropTypes.bool.isRequired,
         fixedNav: PropTypes.bool.isRequired,
+        navProps: PropTypes.object,
         navBackgroundStyle: PropTypes.string,
         navTextColor: PropTypes.string,
         horizontalPadding: PropTypes.bool,
@@ -38,7 +39,8 @@ class BasePage extends React.Component {
             horizontalPadding,
             bottomPadding,
             suppressPadding,
-            showHome
+            showHome,
+            navProps,
         } = this.props
         const pageClasses = classNames('pageBase', {
             'navPadding': showNav && fixedNav,
@@ -51,6 +53,7 @@ class BasePage extends React.Component {
                 textColor={navTextColor}
                 display-if={showNav}
                 showHome={showHome}
+                {...navProps}
             />
             <div className={pageClasses}>
                 {children}

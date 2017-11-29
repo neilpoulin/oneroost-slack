@@ -92,6 +92,7 @@ class MarketingLandingPage extends React.Component {
                                             colorType={'white'}
                                             text={companyName}
                                             to={companyUrl}
+                                            target={'_blank'}
                                         />
                                         <span display-if={!companyUrl}>{companyName}</span>
                                     </p>
