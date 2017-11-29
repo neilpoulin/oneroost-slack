@@ -8,6 +8,7 @@ class FeatureGrid extends React.Component {
         items: PropTypes.arrayOf(PropTypes.shape({
             icon: PropTypes.string,
             title: PropTypes.string,
+            imageUrl: PropTypes.string,
             description: PropTypes.string,
         })),
     }
@@ -20,10 +21,11 @@ class FeatureGrid extends React.Component {
         return <div className={'container'}>
             <h2>{title}</h2>
             <div display-if={items} className={'itemsContainer'}>
-                {items.map(({icon, title, description}, i) =>
+                {items.map(({icon, title, description, imageUrl}, i) =>
                     <div className={'gridItem'} key={`feature_grid_item_${i}`}>
                         <FeatureGridItem
                             icon={icon}
+                            imageUrl={imageUrl}
                             title={title}
                             description={description}
                         />

@@ -13,12 +13,6 @@ import MarketingLandingPage from 'organisms/MarketingLandingPage'
 class SellerLandingPage extends React.Component{
     static propTypes = {
         loadPage: PropTypes.func.isRequired,
-        // videos: PropTypes.arrayOf(PropTypes.shape({
-        //     title: PropTypes.string,
-        //     caption: PropTypes.string,
-        //     url: PropTypes.string.isRequired,
-        // })),
-
         isLoading: PropTypes.bool.isRequired,
 
         sections: PropTypes.arrayOf(PropTypes.shape({
@@ -34,14 +28,6 @@ class SellerLandingPage extends React.Component{
                 companyUrl: PropTypes.string,
             }))
         })),
-        // testimonials: PropTypes.arrayOf(PropTypes.shape({
-        //     quote: PropTypes.string.isRequired,
-        //     imageUrl: PropTypes.string,
-        //     name: PropTypes.string.isRequired,
-        //     title: PropTypes.string,
-        //     companyName: PropTypes.string.isRequired,
-        //     companyUrl: PropTypes.string,
-        // })),
         featureGrid: PropTypes.shape({
             items: PropTypes.array,
             title: PropTypes.string,

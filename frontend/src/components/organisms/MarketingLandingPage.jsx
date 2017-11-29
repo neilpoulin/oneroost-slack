@@ -55,7 +55,7 @@ class MarketingLandingPage extends React.Component {
 
         var page =
                 <div className={'main'} >
-                    <div display-if={sections}>
+                    <div display-if={sections} className={'editorialImages'}>
                         {sections.map(({title,
                             showWaitlist,
                             description,
@@ -107,7 +107,7 @@ class MarketingLandingPage extends React.Component {
                         <FeatureGrid items={featureGrid.items} title={featureGrid.title}/>
                     </div>
                     <div className={'signup'} display-if={showSignup}>
-                        <h2>Sign up now</h2>
+                        <h2>Get Early Access</h2>
                         <JoinWaitlist buttonText='Join the Beta'
                             inline={true}
                         />

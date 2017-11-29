@@ -41,9 +41,9 @@ class EditorialImage extends React.Component {
         return <section className={`start-${firstImagePosition}`}>
             <div display-if={imageUrl} className={'image'}>
                 <img src={`${imageUrl}`}/>
-                <caption className={'caption'} display-if={imageCaption}>
+                <div className={'caption'} display-if={imageCaption}>
                     {imageCaption}
-                </caption>
+                </div>
             </div>
             <div className="copy">
                 <h2>{title}</h2>
@@ -57,7 +57,7 @@ class EditorialImage extends React.Component {
                         <div key={`inline_testimonial_${i}`} className={'testimonial'}>
                             <div className='text'>
                                 <q className={'quote'}>{quote}</q>
-                                <caption className={'caption'}>
+                                <div className={'caption'}>
                                     <div className={'user'}>
                                         <div>{name}, {title}</div>
                                         <div className='company' display-if={companyName}>
@@ -75,7 +75,7 @@ class EditorialImage extends React.Component {
                                     <div className='avatar' display-if={imageUrl}>
                                         <img src={imageUrl}/>
                                     </div>
-                                </caption>
+                                </div>
                             </div>
                         </div>
                     ))}

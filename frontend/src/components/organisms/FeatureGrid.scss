@@ -6,6 +6,10 @@ h2 {
   text-align: center;
 }
 
+.container{
+  padding: 1rem 0;
+}
+
 .itemsContainer{
   display: flex;
   flex-wrap: wrap;
@@ -15,4 +19,32 @@ h2 {
     width: 33.333%;
     box-sizing: border-box;
   }
+}
+
+
+@media (max-width: $screen-md-min) {
+  .itemsContainer{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction:row;
+    padding: 2rem;
+    .gridItem{
+      width: 50%;
+      box-sizing: border-box;
+    }
+  }
+}
+
+@media (max-width: $screen-sm-min) {
+  .itemsContainer{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction:row;
+    padding: 2rem;
+    .gridItem{
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+
 }
