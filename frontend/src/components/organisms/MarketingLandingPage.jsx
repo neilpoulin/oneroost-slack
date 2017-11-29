@@ -108,9 +108,11 @@ class MarketingLandingPage extends React.Component {
                     </div>
                     <div className={'signup'} display-if={showSignup}>
                         <h2>Get Early Access</h2>
-                        <JoinWaitlist buttonText='Join the Beta'
-                            inline={true}
-                        />
+                        <div className={'waitlistForm'}>
+                            <JoinWaitlist buttonText='Join the Beta'
+                                inline={true}
+                            />
+                        </div>
                     </div>
                     <footer className="">
                         <Logo/>

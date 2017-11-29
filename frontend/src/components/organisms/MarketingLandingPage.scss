@@ -16,8 +16,15 @@ h2 {
 
 
 .signup{
-  padding: 3rem 10rem 5rem 10rem;
+  padding: 3rem 0;
   text-align: center;
+
+  .waitlistForm{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
   h2{
     margin-bottom: 2rem;
   }
@@ -35,6 +42,7 @@ h2 {
   padding: 1rem;
   .testimonial {
     padding: 1rem 4rem;
+    margin-bottom: 4rem;
     display: flex;
     flex-direction:row;
     justify-content: space-around;
@@ -45,6 +53,7 @@ h2 {
 
     .text{
       padding: 1rem;
+      margin: 0 1rem;
       .user, .company {
         font-size: .9rem;
         margin-top: 0;
@@ -137,6 +146,7 @@ footer {
     flex-direction: column;
     .testimonial {
       flex-direction:column;
+      padding: 1rem;
       &:nth-child(2n){
         flex-direction: column;
       }
