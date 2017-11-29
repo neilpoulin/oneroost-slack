@@ -67,6 +67,9 @@ const sharedProps = {
     DOCUMENT_BUCKET: 'oneroost-documents',
     GA_TRACKING_CODE: 'UA-87950724-3',
     INTERCOM_APP_ID: process.env.INTERCOM_APP_ID_DEV,
+    SLACK_CLIENT_ID: process.env.SLACK_CLIENT_ID,
+    SLACK_CLIENT_SECRET: process.env.SLACK_CLIENT_SECRET,
+    SLACK_VERIFICATION_TOKEN: process.env.SLACK_VERIFICATION_TOKEN,
     // VERBOSE: 1, //used for parse server verbose mode
 }
 

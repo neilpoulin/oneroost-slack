@@ -67,7 +67,7 @@ class SellerLandingPage extends React.Component{
             navTextColor={'default'}
             suppressPadding={true}
             showHome={true}
-            navProps={{showSellers: true, showBuyers: true}}
+            navProps={{showSellers: false, showBuyers: true}}
         >
             <MarketingLandingPage
                 sections={sections}
