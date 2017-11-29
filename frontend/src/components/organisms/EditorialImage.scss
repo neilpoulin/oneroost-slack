@@ -1,0 +1,74 @@
+@import "~variables";
+
+
+h2 {
+  font-size: 2rem;
+  @include font-bold;
+}
+
+section {
+  display: flex;
+  flex-direction: row;
+  $imageWidth: 60%;
+  align-items: center;
+  margin-bottom: 3rem;
+  > .image {
+    width: $imageWidth;
+    img {
+      width: 100%
+    }
+  ;
+  }
+  > .copy {
+    width: 100% - $imageWidth;
+    white-space: pre-line;
+    padding: 2rem;
+
+    p {
+      font-size: 1.2rem;
+      @include font-body;
+      color: $secondaryColor;
+    }
+  }
+
+  &.start-right:nth-child(2n + 1) {
+    flex-direction: row-reverse;
+  }
+
+  &.start-left:nth-child(2n) {
+    flex-direction: row-reverse;
+  }
+
+}
+
+@media (max-width: $screen-md-min) {
+  $imageWidth: 55%;
+  section {
+    > .image {
+      width: $imageWidth;
+    }
+    > .copy {
+      width: 100% - $imageWidth;
+    }
+  }
+
+}
+
+@media (max-width: $screen-sm-min) {
+  section {
+    $flex-direction: column-reverse;
+    flex-flow: $flex-direction wrap;
+    &:nth-child(2n + 1), &:nth-child(2n) {
+      flex-direction: $flex-direction;
+    }
+
+    > .image {
+      width: 100%;
+      flex-shrink: 0;
+    }
+    > .copy {
+      width: 100%;
+      flex-shrink: 0;
+    }
+  }
+}

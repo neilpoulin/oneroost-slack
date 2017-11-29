@@ -1,0 +1,18 @@
+@import "~variables";
+
+h2 {
+  font-size: 2rem;
+  @include font-bold;
+  text-align: center;
+}
+
+.itemsContainer{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction:row;
+  padding: 2rem;
+  .gridItem{
+    width: 33.333%;
+    box-sizing: border-box;
+  }
+}
