@@ -26,6 +26,8 @@ class BuyerLandingPage extends React.Component{
             title: PropTypes.string,
             description: PropTypes.string,
             showWaitlist: PropTypes.bool,
+            imageUrl: PropTypes.string,
+            imageCaption: PropTypes.string,
         })),
         testimonials: PropTypes.arrayOf(PropTypes.shape({
             quote: PropTypes.string.isRequired,

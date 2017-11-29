@@ -62,7 +62,8 @@ class MarketingLandingPage extends React.Component {
                             imageUrl,
                             testimonials,
                             showVendorLink,
-                            vendorInboundUrl}, i) =>
+                            vendorInboundUrl,
+                            imageCaption}, i) =>
                             <EditorialImage key={`editorial_image_${i}`}
                                 title={title}
                                 showWaitlist={showWaitlist}
@@ -72,6 +73,7 @@ class MarketingLandingPage extends React.Component {
                                 vendorInboundUrl={vendorInboundUrl}
                                 showVendorLink={showVendorLink}
                                 firstImagePosition={firstImagePosition}
+                                imageCaption={imageCaption}
                             />
                         )}
                     </div>

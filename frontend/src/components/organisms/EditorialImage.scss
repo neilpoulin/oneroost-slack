@@ -17,6 +17,15 @@ section {
     img {
       width: 100%
     }
+
+    .caption{
+      display: block;
+      color: $mutedColor;
+      padding: 0 1rem;
+      white-space: pre-line;
+      text-align: left;
+      font-size: .8rem;
+    }
   ;
   }
   > .copy {
@@ -33,10 +42,20 @@ section {
 
   &.start-right:nth-child(2n + 1) {
     flex-direction: row-reverse;
+    .image {
+      .caption {
+        text-align: right;
+      }
+    }
   }
 
   &.start-left:nth-child(2n) {
     flex-direction: row-reverse;
+    .image {
+      .caption {
+        text-align: right;
+      }
+    }
   }
 
 }
@@ -85,8 +104,6 @@ section {
           }
         }
       }
-
-
 
       .quote {
         quotes: "\201C" "\201D";

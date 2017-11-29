@@ -11,6 +11,7 @@ class EditorialImage extends React.Component {
         vendorInboundUrl: PropTypes.string,
         description: PropTypes.string,
         imageUrl: PropTypes.string,
+        imageCaption: PropTypes.string,
         testimonials: PropTypes.arrayOf(PropTypes.shape({
             quote: PropTypes.string,
             name: PropTypes.string,
@@ -35,10 +36,14 @@ class EditorialImage extends React.Component {
             showVendorLink,
             vendorInboundUrl,
             firstImagePosition,
+            imageCaption,
         } = this.props
         return <section className={`start-${firstImagePosition}`}>
             <div display-if={imageUrl} className={'image'}>
                 <img src={`${imageUrl}`}/>
+                <caption className={'caption'} display-if={imageCaption}>
+                    {imageCaption}
+                </caption>
             </div>
             <div className="copy">
                 <h2>{title}</h2>
