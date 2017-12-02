@@ -32,7 +32,7 @@ import {
     USER_CLASSNAME,
 } from 'models/ModelConstants'
 import {getInterestLevelDisplayText, getEmoji} from 'slack/InterestLevel'
-import {getExtensionPlan, getSubscriptionById, getCouponByCode, getSignedWebhookEvent} from './subscriptionService'
+import {getExtensionPlan, getSubscriptionById, getCouponByCode, getSignedWebhookEvent, getPlanById} from './subscriptionService'
 
 router.post('/tokens/slack', async (req, res) => {
     console.log('POST: /tokens/slack')
@@ -219,6 +219,17 @@ router.post('/webhooks/slack', async (req, res) => {
 
 router.get('/googleUsers', async (req, res) => {
     
+})
+
+router.get('/plans/stripe/:planId', async (req, res) => {
+    try{
+        let plan = await getPlanById(req.params.planId)
+        res.send(plan);
+    } catch(e){
+        console.error('failed to fetch plan', e);
+        res.status(500)
+        res.send({error: e, message: 'failed to fetch plan'})
+    }
 })
 
 router.get('/plans/extension/current', async (req, res) => {

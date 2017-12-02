@@ -16,6 +16,7 @@ import ProductSubmissionPage from './ProductSubmissionPage'
 import PrivateRoute from './PrivateRoute'
 import SupportPage from './SupportPage'
 import PrivacyPage from './PrivacyPage'
+import CheckoutPlanPage from './CheckoutPlanPage'
 import { createBrowserHistory } from 'history';
 import {logPageView} from 'analytics';
 
@@ -47,6 +48,7 @@ const App = ({
             <PrivateRoute path='/settings' component={SettingsPage}/>
             <Route path='/support' component={SupportPage}/>
             <Route path='/privacy' component={PrivacyPage}/>
+            <Route path='/checkout/:planId' component={CheckoutPlanPage}/>
         </div>
     </Router>
 )

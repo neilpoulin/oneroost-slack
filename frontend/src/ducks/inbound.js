@@ -22,6 +22,8 @@ export const VENDOR_SIGNUP_SUCCESS = 'oneroost/inbound/VENDOR_SIGNUP_SUCCESS'
 export const VENDOR_SIGNUP_ERROR = 'oneroost/inbound/VENDOR_SIGNUP_ERROR'
 export const SET_PRODUCT_INBOUND_SLACK_TEAM_ID = 'oneroost/inbound/SET_PRODUCT_INBOUND_SLACK_TEAM_ID'
 export const RESET_STATE = 'oneroost/inbound/RESET_STATE'
+export const SET_SELLER_PLANS = 'oneroost/inbound/SET_SELLER_PLANS'
+
 const DEFAULT_SAVE_ERROR_MESSAGE = 'Something went wrong submitting the form. Please try again later.'
 
 const initialState = Immutable.fromJS({
@@ -38,6 +40,7 @@ const initialState = Immutable.fromJS({
     vendorSignupSuccess: false,
     vendorSignupError: null,
     submittedInbound: null,
+    sellerPlans: [],
     formInput: {
         tags: [],
         testimonials: [],
@@ -118,6 +121,9 @@ export default function reducer(state=initialState, action){
         case SET_PRODUCT_INBOUND_SLACK_TEAM_ID:
             state = state.set('productInboundSlackTeamId')
             break;
+        case SET_SELLER_PLANS:
+            state = state.set('sellerPlans', action.payload)
+            break
         default:
             break
     }
@@ -294,6 +300,21 @@ export function submitVendor(){
                     friendlyText: 'Something went wrong while signing up. Please try again later.',
                     ...error},
             })
+        })
+    }
+}
+
+
+export function loadSellerPlans(){
+    return dispatch => {
+        Parse.Config.get().then(config => {
+            let plans = config.get('sellerPlans')
+            if (plans){
+                dispatch({
+                    type: SET_SELLER_PLANS,
+                    payload: plans,
+                })
+            }
         })
     }
 }
