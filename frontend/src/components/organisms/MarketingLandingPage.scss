@@ -59,19 +59,23 @@ h2 {
       margin: 0 1rem;
       .user, .company {
         font-size: .9rem;
-        margin-top: 0;
         margin-bottom: .5rem;
+      }
+      .user{
+        margin-top: 1rem;
       }
       .company {
         @include font-bold;
+        margin-top: 0;
       }
       .quote {
         quotes: "\201C" "\201D";
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
         display: inline;
         position: relative;
-        $quoteSize: 3.5rem;
+        text-align: justify;
+        $quoteSize: 3rem;
         $quoteMargin: .4rem;
         $quoteTop: -.6rem;
         $quoteLeft: -1.8rem;
@@ -103,6 +107,7 @@ h2 {
       display: flex;
       align-items: center;
       margin: 0 2rem;
+      flex-shrink: 0;
       img{
         width: 100%;
       }

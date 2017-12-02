@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import BasePage from 'BasePage'
 import CheckoutForm from 'organisms/CheckoutForm'
 import {loadPlanById} from 'ducks/checkout';
-
+import atob from 'atob'
 
 class CheckoutPlanPage extends React.Component {
     static propTypes = {
@@ -72,7 +72,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         loadPlan: () => {
             // console.log(match)
-            dispatch(loadPlanById(match.params.planId))
+            let planId = atob(match.params.planId)
+            dispatch(loadPlanById(planId))
             // dispatch(loadPlanFromState())
         }
     }

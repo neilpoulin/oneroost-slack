@@ -7,16 +7,17 @@ import {withRouter} from 'react-router-dom'
 import FlexBoxes from 'molecule/FlexBoxes'
 import PriceCircle from 'atoms/checkout/PriceCircle'
 import Clickable from 'atoms/Clickable'
+import btoa from 'btoa'
 
 class ProductSubmissionReview extends React.Component {
     static propTypes = {
         teamName: PropTypes.string.isRequired,
         plans: PropTypes.arrayOf(PropTypes.shape({
-            stripePlanId: PropTypes.string.isRequired,
             name: PropTypes.string,
             features: PropTypes.arrayOf(PropTypes.string),
             backgroundColor: PropTypes.string,
             textColor: PropTypes.string,
+            encodedPlanId: PropTypes.string.isRequired,
             cta: PropTypes.string,
             price: PropTypes.string,
             period: PropTypes.string,
@@ -72,7 +73,7 @@ class ProductSubmissionReview extends React.Component {
                                 </ul>
                             </div>
                             <div className={'actions'}>
-                                <Clickable text={`${plan.cta}`} to={`/checkout/${plan.stripePlanId}`}/>
+                                <Clickable text={`${plan.cta}`} to={`/checkout/${plan.encodedPlanId}`}/>
                             </div>
                         </div>
                     )}
@@ -89,6 +90,7 @@ class ProductSubmissionReview extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     let plans = state.inbound.get('sellerPlans', []).map(plan => {
         return plan.set('price', plan.get('price').toFixed(2))
+            .set('encodedPlanId',  btoa(plan.get('stripePlanId')))
     })
 
     return {
