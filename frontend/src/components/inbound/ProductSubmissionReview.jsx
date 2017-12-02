@@ -15,9 +15,12 @@ class ProductSubmissionReview extends React.Component {
             stripePlanId: PropTypes.string.isRequired,
             name: PropTypes.string,
             features: PropTypes.arrayOf(PropTypes.string),
-            color: PropTypes.string,
+            backgroundColor: PropTypes.string,
+            textColor: PropTypes.string,
+            cta: PropTypes.string,
             price: PropTypes.string,
             period: PropTypes.string,
+
         })),
         //actions
         submit: PropTypes.func.isRequired,
@@ -69,7 +72,7 @@ class ProductSubmissionReview extends React.Component {
                                 </ul>
                             </div>
                             <div className={'actions'}>
-                                <Clickable text={`Choose ${plan.name}`} to={`/checkout/${plan.stripePlanId}`}/>
+                                <Clickable text={`${plan.cta}`} to={`/checkout/${plan.stripePlanId}`}/>
                             </div>
                         </div>
                     )}
