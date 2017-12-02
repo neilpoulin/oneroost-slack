@@ -20,6 +20,8 @@ export const SUBMIT_REQUEST = 'oneroost/inbound/SUBMIT_REQUEST'
 export const VENDOR_SIGNUP_REQUEST = 'oneroost/inbound/VENDOR_SIGNUP_REQUEST'
 export const VENDOR_SIGNUP_SUCCESS = 'oneroost/inbound/VENDOR_SIGNUP_SUCCESS'
 export const VENDOR_SIGNUP_ERROR = 'oneroost/inbound/VENDOR_SIGNUP_ERROR'
+export const SET_PRODUCT_INBOUND_SLACK_TEAM_ID = 'oneroost/inbound/SET_PRODUCT_INBOUND_SLACK_TEAM_ID'
+export const RESET_STATE = 'oneroost/inbound/RESET_STATE'
 const DEFAULT_SAVE_ERROR_MESSAGE = 'Something went wrong submitting the form. Please try again later.'
 
 const initialState = Immutable.fromJS({
@@ -44,6 +46,9 @@ const initialState = Immutable.fromJS({
 
 export default function reducer(state=initialState, action){
     switch (action.type) {
+        case RESET_STATE:
+            state = initialState
+            break;
         case LOAD_TEAM_REQUEST:
             state = state.set('isLoading', true)
             state = state.set('teamId', action.payload.get('teamId'))
@@ -110,6 +115,9 @@ export default function reducer(state=initialState, action){
                 friendlyText: action.payload.getIn(['message', 'friendlyText'], DEFAULT_SAVE_ERROR_MESSAGE)
             }))
             break;
+        case SET_PRODUCT_INBOUND_SLACK_TEAM_ID:
+            state = state.set('productInboundSlackTeamId')
+            break;
         default:
             break
     }
@@ -161,6 +169,9 @@ export function getSlackTeamById(teamId){
 export function loadTeam(teamId){
     return dispatch => {
         dispatch({
+            type: RESET_STATE
+        })
+        dispatch({
             type: LOAD_TEAM_REQUEST,
             payload: {
                 teamId
@@ -172,6 +183,22 @@ export function loadTeam(teamId){
                 type: LOAD_TEAM_SUCCESS,
                 payload: team.toJSON(),
             })
+        })
+    }
+}
+
+export function loadProductInboundTeam(){
+    return dispatch => {
+        dispatch({
+            type: RESET_STATE
+        })
+        Parse.Config.get().then(config => {
+            let slackTeamId = config.get('inboundProductSlackTeamId')
+            dispatch({
+                type: SET_PRODUCT_INBOUND_SLACK_TEAM_ID,
+                payload: config.get('inboundProductSlackTeamId'),
+            })
+            dispatch(loadTeam(slackTeamId))
         })
     }
 }

@@ -29,6 +29,11 @@ class CustomerValidation extends React.Component {
         setCaseStudyUrl: PropTypes.func,
         clearCaseStudy: PropTypes.func,
         caseStudyUrl: PropTypes.string,
+        continueButtonText: PropTypes.string,
+    }
+
+    static defaultProps = {
+        continueButtonText: 'Continue',
     }
 
     componentDidMount() {
@@ -41,6 +46,7 @@ class CustomerValidation extends React.Component {
             caseStudyFilePath,
             teamName,
             caseStudyUrl,
+            continueButtonText,
             //actions
             saveAndContinue,
             createTestimonialSetter,
@@ -67,7 +73,7 @@ class CustomerValidation extends React.Component {
                             showUrlInput={true}
                             onUrlChange={setCaseStudyUrl}
                             url={caseStudyUrl}
-                            />
+                        />
                     </div>
                     {testimonials.map((testimonial, i) => {
                         return <div key={`testimonial-${i}`} className='content'>
@@ -91,7 +97,7 @@ class CustomerValidation extends React.Component {
                 </FlexBoxes>
             </div>
             <div>
-                <Clickable onClick={saveAndContinue} text={'Continue'}/>
+                <Clickable onClick={saveAndContinue} text={continueButtonText}/>
             </div>
         </div>
     }

@@ -1,0 +1,15 @@
+.container{
+  background-color: aquamarine;
+  border-radius: 100%;
+  $diameter: 8rem;
+  height: $diameter;
+  width: $diameter;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.price{
+  font-size: 1.8rem;
+}

@@ -65,7 +65,7 @@ class ProductService extends React.Component {
                             value={elevatorPitch}
                             onChange={createSetter('elevatorPitch')}
                             rows={10}
-                            />
+                        />
                     </FormGroup>
                 </div>
                 <div>
@@ -79,7 +79,7 @@ class ProductService extends React.Component {
                             value={relevancy}
                             onChange={createSetter('relevancy')}
                             rows={10}
-                            />
+                        />
                     </FormGroup>
                 </div>
                 <div>
@@ -94,7 +94,7 @@ class ProductService extends React.Component {
                         showUrlInput={true}
                         onUrlChange={setPitchUrl}
                         url={pitchDeckUrl}
-                        />
+                    />
                 </div>
             </FlexBoxes>
             <div>

@@ -10,20 +10,36 @@
     // background: lightgray;
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px solid gray;
+    //border-bottom: 1px solid gray;
     background-color: $globalBg;
+    box-shadow: 0 1px 5px 0 rgba(0,0,0,0.1);
     &.fixed{
         position: fixed;
     }
     &.transparent{
         background-color: transparent;
         border-bottom: 0px;
+        box-shadow: none;
     }
     &.color-white{
         color: white;
         .nav{
             .navLink a{
                 color: white;
+            }
+        }
+    }
+    &.color-primary{
+        color: $roostOrange;
+        &:hover{
+            color: $secondaryColor;
+        }
+        .nav {
+            .navLink a {
+                color: $roostOrange;
+                &:hover{
+                    color: $secondaryColor;
+                }
             }
         }
     }

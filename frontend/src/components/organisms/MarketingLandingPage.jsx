@@ -93,7 +93,7 @@ class MarketingLandingPage extends React.Component {
                                             look={'link'}
                                             colorType={'white'}
                                             text={companyName}
-                                            to={companyUrl}
+                                            href={companyUrl}
                                             target={'_blank'}
                                         />
                                         <span display-if={!companyUrl}>{companyName}</span>
@@ -106,14 +106,7 @@ class MarketingLandingPage extends React.Component {
                     <div display-if={featureGrid && featureGrid.items}>
                         <FeatureGrid items={featureGrid.items} title={featureGrid.title}/>
                     </div>
-                    <div className={'signup'} display-if={showSignup}>
-                        <h2>Get Early Access</h2>
-                        <div className={'waitlistForm'}>
-                            <JoinWaitlist buttonText='Join the Beta'
-                                inline={true}
-                            />
-                        </div>
-                    </div>
+
                     <footer className="">
                         <Logo/>
                         <div className="links">

@@ -81,7 +81,7 @@ class EditorialImage extends React.Component {
                     ))}
                 </div>
                 <div display-if={showVendorLink}>
-                    <Clickable to={vendorInboundUrl} text={'Submit Your Product'}/>
+                    <Clickable to={'/submit-product'} text={'Submit Your Product'}/>
                 </div>
             </div>
         </section>

@@ -67,9 +67,9 @@ class BuyerLandingPage extends React.Component{
 
 
         return <BasePage showNav={true}
-            fixedNav={false}
-            navBackgroundStyle='transparent'
-            navTextColor={'default'}
+            fixedNav={true}
+            navBackgroundStyle=''
+            navTextColor={'primary'}
             suppressPadding={true}
             showHome={true}
             navProps={{showSellers: true, showBuyers: false}}

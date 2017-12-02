@@ -16,7 +16,7 @@ class NavBar extends React.Component {
         isLoggedIn: PropTypes.bool,
         hasSlack: PropTypes.bool,
         backgroundStyle: PropTypes.oneOf(['default', 'transparent']),
-        textColor: PropTypes.oneOf(['white', 'default']),
+        textColor: PropTypes.oneOf(['white', 'default', 'primary']),
         showHome: PropTypes.bool,
         showBuyers: PropTypes.bool,
         showSellers: PropTypes.bool,

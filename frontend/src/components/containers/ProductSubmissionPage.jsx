@@ -1,20 +1,24 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
+
 import CompanyInfo from 'inbound/CompanyInfo'
 import ProductService from 'inbound/ProductService'
-import ProcessOverview from 'inbound/ProcessOverview'
+import ProductSubmissionProcessOverview from 'inbound/ProductSubmissionProcessOverview'
 import CustomerValidation from 'inbound/CustomerValidation'
-import Review from 'inbound/Review'
+import Review from 'inbound/ProductSubmissionReview'
 import PageTabs from 'inbound/PageTabs'
 import {
     Route,
+    NavLink
 } from 'react-router-dom'
 import BasePage from './BasePage'
 import BackButton from 'molecule/BackButton'
 import Logo from 'atoms/Logo'
 import {Link, withRouter} from 'react-router-dom'
-import {loadTeam, setFormValue} from 'ducks/inbound'
+import {loadProductInboundTeam, setFormValue} from 'ducks/inbound'
+import PoweredByOneRoostLink from 'molecules/PoweredByOneRoostLink'
+
 
 const links = [
     {
@@ -39,7 +43,8 @@ const links = [
     }
 ]
 
-class TeamInboundPage extends React.Component {
+
+class ProductSubmissionPage extends React.Component {
     static propTypes = {
         teamName: PropTypes.string,
         match: PropTypes.any,
@@ -76,18 +81,18 @@ class TeamInboundPage extends React.Component {
                 <div className='backContainer' display-if={match.url !== location.pathname}>
                     <BackButton/>
                 </div>
-                <Route onChange={() => window.scrollTo(0, 0)} exact path={`${match.url}`} render={() => <ProcessOverview
+                <Route onChange={() => window.scrollTo(0, 0)} exact path={`${match.url}`} render={() => <ProductSubmissionProcessOverview
                     teamId={teamId}
                     teamName={teamName}
                     nextRoute={`${match.url}/company`}/>}
                 />
                 <Route path={`${match.url}/company`} render={() => <CompanyInfo teamName={teamName} nextRoute={`${match.url}/product`}/>}/>
                 <Route path={`${match.url}/product`} render={()=> <ProductService teamName={teamName} nextRoute={`${match.url}/case-studies`}/>}/>
-                <Route path={`${match.url}/case-studies`} render={()=> <CustomerValidation teamName={teamName} nextRoute={`${match.url}/review`}/>}/>
+                <Route path={`${match.url}/case-studies`} render={()=> <CustomerValidation teamName={teamName} nextRoute={`${match.url}/review`} continueButtonText={'Submit'}/> }/>
                 <Route path={`${match.url}/review`} render={()=> <Review teamName={teamName}/>}/>
             </div>
             <footer>
-                <Link to='/' className='link'>Powered by <Logo/></Link>
+                <PoweredByOneRoostLink/>
             </footer>
         </BasePage>
     }
@@ -107,14 +112,12 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-    const {match} = ownProps
     return {
         loadTeam: () => {
-            console.log(match)
-            dispatch(setFormValue('inboundType', 'TEAM'))
-            dispatch(loadTeam(match.params.teamId))
+            dispatch(setFormValue('inboundType', 'PRODUCT'))
+            dispatch(loadProductInboundTeam())
         },
     }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(TeamInboundPage))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProductSubmissionPage))

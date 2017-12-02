@@ -66,7 +66,7 @@ class JoinWaitlist extends React.Component {
                 <Clickable onClick={submitEmail}
                     text={waitlistSaveSuccess ? buttonSuccessText : buttonText}
                     colorType={'primary'}
-                    disabled={!isValidEmail || waitlistSaveSuccess}
+                    disabled={waitlistSaveSuccess}
                     roundRight={true}
                     nowrap={true}
                 />

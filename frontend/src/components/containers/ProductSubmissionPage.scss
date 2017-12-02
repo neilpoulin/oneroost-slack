@@ -1,0 +1,12 @@
+@import "./TeamInboundPage";
+
+.container{
+  padding-top: 4rem;
+}
+
+
+@media (max-width: $screen-sm-min) {
+  .container {
+    padding-top: 0;
+  }
+}

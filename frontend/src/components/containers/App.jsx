@@ -12,6 +12,7 @@ import BuyerLandingPage from 'marketing/BuyerLandingPage'
 import SellerLandingPage from 'marketing/SellerLandingPage'
 import SettingsPage from './SettingsPage'
 import TeamInboundPage from './TeamInboundPage'
+import ProductSubmissionPage from './ProductSubmissionPage'
 import PrivateRoute from './PrivateRoute'
 import SupportPage from './SupportPage'
 import PrivacyPage from './PrivacyPage'
@@ -36,12 +37,13 @@ const App = ({
 }) => (
     <Router history={history}>
         <div display-if={hasLoaded}>
-            <Route exact path="/" component={HomePage}/>
+            <Route exact path="/" component={BuyerLandingPage}/>
             <Route exact path="/sellers" component={SellerLandingPage}/>
             <Route exact path="/buyers" component={BuyerLandingPage}/>
             <Route path="/login" component={LoginPage}/>
             <Route path="/install-success" render={() => <LoginPage installSuccess={true} redirectPath={'install-success'} install={true}/>}/>
             <Route path={'/teams/:teamId'} component={TeamInboundPage}/>
+            <Route path={'/submit-product'} component={ProductSubmissionPage}/>
             <PrivateRoute path='/settings' component={SettingsPage}/>
             <Route path='/support' component={SupportPage}/>
             <Route path='/privacy' component={PrivacyPage}/>

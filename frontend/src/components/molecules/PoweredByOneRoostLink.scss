@@ -1,0 +1,10 @@
+@import "~variables";
+
+.link{
+  text-decoration: none;
+  color: black;
+  &:hover{
+    color: $roostOrange;
+    text-decoration: none;
+  }
+}
