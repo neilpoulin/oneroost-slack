@@ -57,6 +57,7 @@ h2 {
     .text{
       padding: 1rem;
       margin: 0 1rem;
+      text-align: justify;
       .user, .company {
         font-size: .9rem;
         margin-bottom: .5rem;
@@ -75,6 +76,7 @@ h2 {
         display: inline;
         position: relative;
         text-align: justify;
+        white-space: pre-line;
         $quoteSize: 3rem;
         $quoteMargin: .4rem;
         $quoteTop: -.6rem;

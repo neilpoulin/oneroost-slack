@@ -8,7 +8,6 @@ import atob from 'atob'
 
 class CheckoutPlanPage extends React.Component {
     static propTypes = {
-        isLoading: PropTypes.bool,
         plan: PropTypes.shape({
             name: PropTypes.string,
             price: PropTypes.string,
@@ -24,13 +23,12 @@ class CheckoutPlanPage extends React.Component {
 
     render(){
         const {
-            isLoading,
             plan,
         } = this.props
         return <BasePage>
             <div>
                 <h1>Checkout</h1>
-                <div display-if={!isLoading && plan}>
+                <div display-if={plan}>
                     <p>Plan: {plan.name}</p>
                     <p>${plan.price} / {plan.period}</p>
                 </div>
@@ -44,12 +42,6 @@ class CheckoutPlanPage extends React.Component {
 const mapStateToProps = (state, ownProps) => {
     let checkout = state.checkout.toJS();
     let plan = checkout.plan
-    // if (checkout.isLoading){
-    //     return {
-    //         isLoading: checkout.isLoading || !checkout.hasLoaded,
-    //     }
-    // }
-
     let planInfo = {}
     if (plan){
         planInfo = {
