@@ -43,7 +43,7 @@ class Review extends React.Component {
                         Note:  OneRoost blocks all subsequent emails from your company until {teamName} has indicated interest in engaging in the opportunity.  Don’t worry though, you can share new materials down the road.
                     </p>
                 </div>
-                <div>
+                <div className='actions'>
                     <Clickable text={saving ? 'Saving...' : `Submit to ${teamName}`} onClick={submit} disabled={saving}/>
                 </div>
             </div>
@@ -76,7 +76,6 @@ class Review extends React.Component {
                         </div>
                         <p display-if={vendorSignupSuccess} className='success'>{'Your information was successfully submitted. We\'ll notify you when we have any updates!'}</p>
                     </section>
-
                 </div>
             </div>
             <div display-if={hasError} className='error'>

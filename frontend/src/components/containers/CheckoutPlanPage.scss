@@ -29,6 +29,21 @@
 
 }
 
+.vendor{
+  text-align: center;
+  margin-top: 2rem;
+
+}
+
+.vendorId{
+  padding: 1rem;
+  border: 2px dotted $secondaryColor;
+  text-align: center;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 1.5rem;
+  background-color: white;
+}
 
 .planContainer{
   width: 300px;

@@ -69,7 +69,7 @@ class CompanyInfo extends React.Component {
                 <div>
                     <h3>Company Info</h3>
                     <FormGroup label='Company Name'>
-                        <TextInput onChange={createSetter('companyName')} value={companyName}/>
+                        <TextInput onChange={createSetter('companyName')} value={companyName} placeholder={'Acme, Inc'}/>
                     </FormGroup>
                     <FormGroup label='Website' >
                         <TextInput placeholder="https://www.company.com" onChange={createSetter('website')} value={website}/>

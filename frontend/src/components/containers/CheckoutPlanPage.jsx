@@ -32,6 +32,11 @@ class CheckoutPlanPage extends React.Component {
         email: PropTypes.string,
         error: PropTypes.object,
         validEmail: PropTypes.bool,
+        checkoutSuccess: PropTypes.bool,
+        vendor: PropTypes.shape({
+            objectId: PropTypes.string,
+            stripeSubscriptionId: PropTypes.string,
+        }),
         //own props
         initialEmail: PropTypes.string,
 
@@ -53,12 +58,14 @@ class CheckoutPlanPage extends React.Component {
             error,
             createSetter,
             validEmail,
+            checkoutSuccess,
+            vendor,
         } = this.props
         return <BasePage navProps={{showLoginLink: false}}>
             <div className='container'>
                 <h1>Checkout</h1>
                 <div className={'main'}>
-                    <section className='payment'>
+                    <section className='payment' display-if={!checkoutSuccess}>
                         <h3 className='title'>Payment Information</h3>
                         <div className={'personalInfo'}>
                             Confirm Your Email
@@ -69,6 +76,18 @@ class CheckoutPlanPage extends React.Component {
                             <SubscriptionPaymentForm planId={planId} email={email} paymentType={'PRODUCT'} enabled={validEmail}/>
                         </div>
                     </section>
+                    <section display-if={checkoutSuccess}>
+                        <h3>Congratulations!</h3>
+                        <div>
+                            You have successfully subscribed to OneRoost.
+                        </div>
+                        <div display-if={vendor} className={'vendor'}>
+                            <h4>Your Vendor ID is</h4>
+                            <div className='vendorId'>
+                                {vendor.objectId}
+                            </div>
+                        </div>
+                    </section>
                     <section className='planContainer'>
                         <h3 className={'title'}>Selected Plan</h3>
                         <div className='planCard'>
@@ -76,7 +95,7 @@ class CheckoutPlanPage extends React.Component {
                         </div>
                     </section>
                 </div>
-                <div className={'how-it-works'}>
+                <div className={'how-it-works'} display-if={!checkoutSuccess}>
                     30-day money-back guarantee. No questions asked.
                 </div>
             </div>
@@ -115,6 +134,8 @@ const mapStateToProps = (state, ownProps) => {
     }
 
     let validEmail = isValidEmail(checkout.email)
+    let checkoutSuccess = state.payment.get('hasVendorPayment')
+    let vendor = state.payment.get('vendor').toJS()
 
     return {
         isLoading: checkout.isLoading,
@@ -124,6 +145,8 @@ const mapStateToProps = (state, ownProps) => {
         error: checkout.error,
         email: checkout.email || '',
         validEmail,
+        checkoutSuccess,
+        vendor,
     }
 }
 

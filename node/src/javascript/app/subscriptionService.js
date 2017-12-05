@@ -83,7 +83,7 @@ export function handleVendorRequest({planId, token, couponCode, email, inboundId
             })
             let savedVendor = await vendor.save()
             console.info('saved vendor', vendor.toJSON())
-            resolve({message: 'vendor payment submitted successfully'})
+            resolve({message: 'vendor payment submitted successfully', vendor: vendor.toJSON()})
         } catch (e) {
             console.error(e)
             reject(e)
