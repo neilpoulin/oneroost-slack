@@ -1,0 +1,15 @@
+@import "./TeamInboundPage";
+
+.container{
+  &:not(.showNav){
+    padding-top: 5rem;
+  }
+
+}
+
+
+@media (max-width: $screen-sm-min) {
+  .container {
+    padding-top: 0;
+  }
+}

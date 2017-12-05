@@ -15,6 +15,9 @@ export const RESET_COUPON = 'oneroost/payment/RESET_COUPON'
 export const CLEAR_MESSAGES = 'oneroost/payment/CLEAR_MESSAGES'
 export const SET_UPCOMING_INVOICE = 'oneroost/payment/SET_UPCOMING_INVOICE'
 
+export const SAVE_VENDOR_PAYMENT_REQUEST = 'oneroost/payment/SAVE_VENDOR_PAYMENT_REQUEST'
+export const SAVE_VENDOR_PAYMENT_SUCCESS = 'oneroost/payment/SAVE_VENDOR_PAYMENT_SUCCESS'
+export const SAVE_VENDOR_PAYMENT_ERROR = 'oneroost/payment/SAVE_VENDOR_PAYMENT_ERROR'
 
 export const STATUS_NONE = 'not subscribed'
 export const STATUS_ACTIVE = 'active'
@@ -46,12 +49,31 @@ export default function reducer(state=initialState, action){
             state = state.set('error', null)
             state = state.set('invoice', null)
             break
+        case SAVE_VENDOR_PAYMENT_REQUEST:
+            state = state.set('isSaving', true)
+            state = state.set('error', null)
+            state = state.set('invoice', null)
+            state = state.set('vendor', null)
+            break
         case SAVE_PAYMENT_SUCCESS:
             state = state.set('isSaving', false)
             state = state.set('saveSuccess', true)
             state = state.set('hasPayment', true)
             state = state.set('error', null)
             state = state.set('subscriberStatus', STATUS_ACTIVE)
+            break
+        case SAVE_VENDOR_PAYMENT_SUCCESS:
+            state = state.set('isSaving', false)
+            state = state.set('saveVendorSuccess', true)
+            state = state.set('hasVendorPayment', true)
+            state = state.set('vendor', action.payload.get('vendor'))
+            state = state.set('error', null)
+            state = state.set('vendorSubscriberStatus', STATUS_ACTIVE)
+            break
+        case SAVE_VENDOR_PAYMENT_ERROR:
+            state = state.set('isSaving', false)
+            state = state.set('saveVendorSuccess', false)
+            state = state.set('error', action.payload.get('error'))
             break
         case SAVE_PAYMENT_ERROR:
             state = state.set('isSaving', false)
@@ -98,7 +120,46 @@ export default function reducer(state=initialState, action){
     return state
 }
 
-export function processPayment(planId, token){
+
+export function processVendorPayment({planId, token, email}){
+    return (dispatch, getState) => {
+        console.log('processing gueset payment')
+        dispatch({
+            type: SAVE_VENDOR_PAYMENT_REQUEST
+        })
+
+        const state = getState(0)
+        let couponCode =  state.payment.getIn(['formInput', 'couponCode'])
+        let inboundId = state.inbound.getIn(['submittedInbound', 'objectId'])
+
+        Parse.Cloud.run('subscribeVendor', {token, planId, couponCode, email, inboundId}).then(resp => {
+            console.log('successfully handled payment', resp)
+            dispatch({
+                type: SAVE_VENDOR_PAYMENT_SUCCESS,
+                payload: {
+                    vendor: resp.vendor
+                }
+            })
+            // dispatch(fetchSubscriptionInfo())
+            // dispatch(fetchUpcomingInvoice())
+            setTimeout(() => {
+                dispatch({
+                    type: CLEAR_MESSAGES,
+                }, 5000);
+            })
+        }).catch(error => {
+            console.error(error)
+            dispatch({
+                type: SAVE_VENDOR_PAYMENT_ERROR,
+                payload: {
+                    error
+                },
+            })
+        })
+    }
+}
+
+export function processPayment({planId, token}){
     return (dispatch, getState) => {
         console.log('processing payment')
         dispatch({

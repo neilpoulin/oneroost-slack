@@ -1,6 +1,7 @@
 @import "~variables";
 
 .container{
+  margin-bottom: 1rem;
   &.inline{
     display: flex;
     flex-direction: row;

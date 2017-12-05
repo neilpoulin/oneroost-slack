@@ -1,0 +1,14 @@
+@import "~variables.scss";
+
+.content{
+  padding: 0 0rem;
+  max-width: 60rem;
+  p{
+    text-align: justify;
+  }
+}
+
+.actions{
+  display: flex;
+  justify-content: center;
+}

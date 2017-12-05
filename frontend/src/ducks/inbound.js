@@ -20,6 +20,10 @@ export const SUBMIT_REQUEST = 'oneroost/inbound/SUBMIT_REQUEST'
 export const VENDOR_SIGNUP_REQUEST = 'oneroost/inbound/VENDOR_SIGNUP_REQUEST'
 export const VENDOR_SIGNUP_SUCCESS = 'oneroost/inbound/VENDOR_SIGNUP_SUCCESS'
 export const VENDOR_SIGNUP_ERROR = 'oneroost/inbound/VENDOR_SIGNUP_ERROR'
+export const SET_PRODUCT_INBOUND_SLACK_TEAM_ID = 'oneroost/inbound/SET_PRODUCT_INBOUND_SLACK_TEAM_ID'
+export const RESET_STATE = 'oneroost/inbound/RESET_STATE'
+export const SET_SELLER_PLANS = 'oneroost/inbound/SET_SELLER_PLANS'
+
 const DEFAULT_SAVE_ERROR_MESSAGE = 'Something went wrong submitting the form. Please try again later.'
 
 const initialState = Immutable.fromJS({
@@ -35,7 +39,9 @@ const initialState = Immutable.fromJS({
     vendorSignupSaving: false,
     vendorSignupSuccess: false,
     vendorSignupError: null,
+    vendor: null,
     submittedInbound: null,
+    sellerPlans: [],
     formInput: {
         tags: [],
         testimonials: [],
@@ -44,6 +50,9 @@ const initialState = Immutable.fromJS({
 
 export default function reducer(state=initialState, action){
     switch (action.type) {
+        case RESET_STATE:
+            state = initialState
+            break;
         case LOAD_TEAM_REQUEST:
             state = state.set('isLoading', true)
             state = state.set('teamId', action.payload.get('teamId'))
@@ -102,6 +111,7 @@ export default function reducer(state=initialState, action){
             state = state.set('vendorSignupSaving', false)
             state = state.set('vendorSignupSuccess', true)
             state = state.set('vendorSignupError', null)
+            state = state.set('vendor', action.payload)
             break;
         case VENDOR_SIGNUP_ERROR:
             state = state.set('vendorSignupSaving', false)
@@ -110,6 +120,12 @@ export default function reducer(state=initialState, action){
                 friendlyText: action.payload.getIn(['message', 'friendlyText'], DEFAULT_SAVE_ERROR_MESSAGE)
             }))
             break;
+        case SET_PRODUCT_INBOUND_SLACK_TEAM_ID:
+            state = state.set('productInboundSlackTeamId')
+            break;
+        case SET_SELLER_PLANS:
+            state = state.set('sellerPlans', action.payload)
+            break
         default:
             break
     }
@@ -161,17 +177,38 @@ export function getSlackTeamById(teamId){
 export function loadTeam(teamId){
     return dispatch => {
         dispatch({
+            type: RESET_STATE
+        })
+        dispatch({
             type: LOAD_TEAM_REQUEST,
             payload: {
                 teamId
             }
         })
         dispatch(loadTagOptions())
-        getSlackTeamById(teamId).then(team => {
+        return getSlackTeamById(teamId).then(team => {
             dispatch({
                 type: LOAD_TEAM_SUCCESS,
                 payload: team.toJSON(),
             })
+        })
+    }
+}
+
+export function loadProductInboundTeam(){
+    return dispatch => {
+        dispatch({
+            type: RESET_STATE
+        })
+        return Parse.Config.get().then(config => {
+            let slackTeamId = config.get('inboundProductSlackTeamId')
+            dispatch({
+                type: SET_PRODUCT_INBOUND_SLACK_TEAM_ID,
+                payload: config.get('inboundProductSlackTeamId'),
+            })
+            return dispatch(loadTeam(slackTeamId))
+        }).then(() => {
+            dispatch(setFormValue('inboundType', 'PRODUCT'))
         })
     }
 }
@@ -215,8 +252,8 @@ export function submitInbound(){
         dispatch({
             type: SUBMIT_REQUEST
         })
-        dispatch(saveInbound()).then(inbound => {
-            Parse.Cloud.run('submitInboundProposal', {inboundId: inbound.id}).then((result) => {
+        return dispatch(saveInbound()).then(inbound => {
+            return Parse.Cloud.run('submitInboundProposal', {inboundId: inbound.id}).then((result) => {
                 console.log(result)
                 inbound.set('submitted', true)
                 inbound.set('submittedDate', new Date())
@@ -234,19 +271,28 @@ export function submitInbound(){
                         message: error.message.error,
                     }
                 })
+                throw error
             })
         }).catch(error => {
             console.error(error)
+            throw error
         })
     }
 }
 
 export function submitVendor(){
     return (dispatch, getState) => {
+
+        const {vendorSignupSuccess, formInput: {name, email}, submittedInbound} = getState().inbound.toJS()
+        if (vendorSignupSuccess)
+        {
+            console.log('vendor already signed up')
+            return null;
+        }
+
         dispatch({
             type: VENDOR_SIGNUP_REQUEST
         })
-        const {formInput: {name, email}, submittedInbound} = getState().inbound.toJS()
         let inbound = Inbound.createWithoutData(submittedInbound.objectId)
 
         let vendor = new Vendor()
@@ -257,7 +303,8 @@ export function submitVendor(){
         })
         vendor.save().then(savedVendor => {
             dispatch({
-                type: VENDOR_SIGNUP_SUCCESS
+                type: VENDOR_SIGNUP_SUCCESS,
+                payload: savedVendor.toJSON()
             })
         }).catch(error => {
             dispatch({
@@ -267,6 +314,21 @@ export function submitVendor(){
                     friendlyText: 'Something went wrong while signing up. Please try again later.',
                     ...error},
             })
+        })
+    }
+}
+
+
+export function loadSellerPlans(){
+    return dispatch => {
+        Parse.Config.get().then(config => {
+            let plans = config.get('sellerPlans')
+            if (plans){
+                dispatch({
+                    type: SET_SELLER_PLANS,
+                    payload: plans,
+                })
+            }
         })
     }
 }

@@ -12,7 +12,13 @@ import {
     DOCUMENT_BUCKET
 } from 'util/Environment'
 import uuid from 'uuid'
-import {handleRequest as handleSubscription, getSubscriptionById, cancelSubscription, getUpcomingInvoice} from './subscriptionService';
+import {
+    handleRequest as handleSubscription,
+    handleVendorRequest as handleVendorSubscription,
+    getSubscriptionById,
+    cancelSubscription,
+    getUpcomingInvoice
+} from './subscriptionService';
 
 const roostOrange = '#ef5b25'
 var s3Client = new AWS.S3({computeChecksums: true, signatureVersion: 'v4'}); // this is the default setting
@@ -80,6 +86,15 @@ export function initialize(){
         let slackTeam = await user.get('slackTeam').fetch()
         let {planId, token, couponCode} = request.params
         return handleSubscription({user, slackTeam, planId, token, couponCode}).then(success => {
+            response.success(success)
+        }).catch(error => {
+            response.error(error)
+        })
+    })
+
+    Parse.Cloud.define('subscribeVendor', async function (request, response){
+        let {planId, token, couponCode, email, inboundId} = request.params
+        return handleVendorSubscription({planId, token, couponCode, inboundId, email}).then(success => {
             response.success(success)
         }).catch(error => {
             response.error(error)

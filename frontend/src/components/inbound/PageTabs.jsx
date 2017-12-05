@@ -1,21 +1,34 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 import {withRouter, NavLink} from 'react-router-dom'
 
 class PageTabs extends React.Component {
     static propTypes = {
         match: PropTypes.any,
+        fixed: PropTypes.bool,
+        links: PropTypes.arrayOf(PropTypes.shape({
+            path: PropTypes.string.isRequired,
+            text: PropTypes.string.isRequired,
+        }))
     }
+
+    static defaultProps = {
+        links: [],
+        fixed: false,
+    }
+
     render () {
         const {
-            match
+            match,
+            links,
+            fixed,
         } = this.props
-        return <ul className='tabs list-unstyled'>
-            <li className='tab'><NavLink className='link' exact to={`${match.url}`}>Overview</NavLink></li>
-            <li className='tab'><NavLink className='link' to={`${match.url}/company`}>Company</NavLink></li>
-            <li className='tab'><NavLink className='link' to={`${match.url}/product`}>Product /{'\u00a0'}Service</NavLink></li>
-            <li className='tab'><NavLink className='link' to={`${match.url}/case-studies`}>Customer Validation</NavLink></li>
-            <li className='tab'><NavLink className='link' to={`${match.url}/review`}>Review &{'\u00a0'}Submit</NavLink></li>
+        let containerClassnames = classNames('tabs', 'list-unstyled', {fixed: fixed})
+        return <ul className={containerClassnames}>
+            {links.map(({path, text}, i) =>
+                <li key={`pagetabs_${i}`} className='tab'><NavLink className='link' exact to={`${match.url}${(path && !path.startsWith('/')) ? `/${path}`: path  }`}>{text}</NavLink></li>
+            )}
         </ul>
     }
 }

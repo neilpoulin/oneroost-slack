@@ -57,21 +57,27 @@ h2 {
     .text{
       padding: 1rem;
       margin: 0 1rem;
+      text-align: justify;
       .user, .company {
         font-size: .9rem;
-        margin-top: 0;
         margin-bottom: .5rem;
+      }
+      .user{
+        margin-top: 1rem;
       }
       .company {
         @include font-bold;
+        margin-top: 0;
       }
       .quote {
         quotes: "\201C" "\201D";
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        display: inline-block;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        display: inline;
         position: relative;
-        $quoteSize: 3.5rem;
+        text-align: justify;
+        white-space: pre-line;
+        $quoteSize: 3rem;
         $quoteMargin: .4rem;
         $quoteTop: -.6rem;
         $quoteLeft: -1.8rem;
@@ -90,7 +96,7 @@ h2 {
           font-size: $quoteSize;
           position: absolute;
           //top: $quoteTop;
-          bottom: -1.8rem;
+          bottom: -1.6rem;
         }
       }
     }
@@ -103,6 +109,7 @@ h2 {
       display: flex;
       align-items: center;
       margin: 0 2rem;
+      flex-shrink: 0;
       img{
         width: 100%;
       }
@@ -135,7 +142,7 @@ footer {
 @media (max-width: $screen-sm-min) {
   .main {
     padding: 0;
-    padding-top: 4rem;
+    padding-top: 1rem;
   }
 
   footer {
@@ -151,8 +158,12 @@ footer {
     .testimonial {
       flex-direction:column;
       padding: 1rem;
+
       &:nth-child(2n){
         flex-direction: column;
+        .text{
+          text-align: left;
+        }
       }
     }
   }

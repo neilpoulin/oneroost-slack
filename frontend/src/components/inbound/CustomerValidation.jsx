@@ -10,7 +10,8 @@ import TextArea from 'atoms/form/TextArea'
 import FormGroup from 'molecule/FormGroup'
 import Immutable from 'immutable'
 import FileUploadForm from 'organisms/FileUploadForm'
-import {setFormValue, saveInbound, updateTestimonal, deleteTestimonial, createTestimonial} from 'ducks/inbound'
+import SubmitInbound from 'molecules/SubmitInboundButton'
+import {setFormValue, saveInbound, updateTestimonal, deleteTestimonial, createTestimonial, submitInbound} from 'ducks/inbound'
 
 class CustomerValidation extends React.Component {
     static propTypes = {
@@ -29,6 +30,15 @@ class CustomerValidation extends React.Component {
         setCaseStudyUrl: PropTypes.func,
         clearCaseStudy: PropTypes.func,
         caseStudyUrl: PropTypes.string,
+        continueButtonText: PropTypes.string,
+        //ownprops
+        submitOnContinue: PropTypes.bool,
+        navigateNext: PropTypes.func,
+    }
+
+    static defaultProps = {
+        continueButtonText: 'Continue',
+        submitOnContinue: false,
     }
 
     componentDidMount() {
@@ -41,6 +51,8 @@ class CustomerValidation extends React.Component {
             caseStudyFilePath,
             teamName,
             caseStudyUrl,
+            continueButtonText,
+            submitOnContinue,
             //actions
             saveAndContinue,
             createTestimonialSetter,
@@ -49,6 +61,7 @@ class CustomerValidation extends React.Component {
             setCaseStudyFilePath,
             setCaseStudyUrl,
             clearCaseStudy,
+            navigateNext,
         } = this.props
 
         return <div className='container'>
@@ -67,7 +80,7 @@ class CustomerValidation extends React.Component {
                             showUrlInput={true}
                             onUrlChange={setCaseStudyUrl}
                             url={caseStudyUrl}
-                            />
+                        />
                     </div>
                     {testimonials.map((testimonial, i) => {
                         return <div key={`testimonial-${i}`} className='content'>
@@ -90,8 +103,11 @@ class CustomerValidation extends React.Component {
                     </div>
                 </FlexBoxes>
             </div>
-            <div>
-                <Clickable onClick={saveAndContinue} text={'Continue'}/>
+            <div display-if={!submitOnContinue} className='actions'>
+                <Clickable onClick={saveAndContinue} text={continueButtonText}/>
+            </div>
+            <div display-if={submitOnContinue} className='actions'>
+                <SubmitInbound buttonText={`Submit to ${teamName}`} afterSave={navigateNext}/>
             </div>
         </div>
     }
@@ -100,10 +116,14 @@ class CustomerValidation extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
     const formInput = state.inbound.get('formInput', Immutable.Map())
+    let error = state.inbound.get('error')
+    const errorText = (error && error.friendlyText) ? error.friendlyText : 'Something went wrong, please try again later.';
     return {
         testimonials: formInput.get('testimonials', Immutable.List()).toJS(),
         caseStudyFilePath: formInput.get('caseStudyFilePath'),
         caseStudyUrl: formInput.get('caseStudyUrl'),
+        hasError: !!error,
+        errorText,
     }
 }
 
@@ -112,10 +132,18 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         createSetter: (name) => (value) => {
             dispatch(setFormValue(name, value))
         },
-
+        navigateNext: () => {
+            ownProps.history.push(ownProps.nextRoute)
+        },
         saveAndContinue: () => {
             dispatch(saveInbound()).then(saved => {
-                ownProps.history.push(ownProps.nextRoute)
+                if (ownProps.submitOnContinue){
+                    dispatch(submitInbound()).then(() => {
+                        ownProps.history.push(ownProps.nextRoute)
+                    })
+                } else {
+                    ownProps.history.push(ownProps.nextRoute)
+                }
             })
         },
         createTestimonialSetter: (index, name) => value => {

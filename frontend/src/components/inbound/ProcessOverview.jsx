@@ -32,7 +32,7 @@ class ProcessOverview extends React.Component {
                     In the event you have any questions, ask away via the orange chat icon in the lower right.
                 </p>
             </div>
-            <div>
+            <div className='actions'>
                 <Clickable to={nextRoute} text='Continue'/>
             </div>
         </div>

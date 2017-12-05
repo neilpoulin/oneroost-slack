@@ -6,9 +6,11 @@ import inbound from './ducks/inbound'
 import homePage from './ducks/homePage'
 import basePage from './ducks/basePage'
 import payment from './ducks/payment'
+import checkout from './ducks/checkout'
 
 const reducers = combineReducers({
     basePage,
+    checkout,
     config,
     inbound,
     homePage,

@@ -53,38 +53,27 @@ class CompanyInfo extends React.Component {
             <Header title="Company Information" subtitle={'Share a bit about your organization'}/>
             <FlexBoxes defaultContentStyles={true}>
                 <div>
-                    <h3>Basics</h3>
-                    <FormGroup label='Company Name'>
-                        <TextInput onChange={createSetter('companyName')} value={companyName}/>
-                    </FormGroup>
+                    <h3>Personal Info</h3>
+
                     <FormGroup label='Your Name'>
                         <TextInput placeholder="Jon Doe" onChange={createSetter('fullName')} value={fullName}/>
                     </FormGroup>
                     <FormGroup label='Email' >
                         <TextInput placeholder="name@company.com" onChange={createSetter('email')} type='email' value={email}/>
                     </FormGroup>
-                    <FormGroup label='Website' >
-                        <TextInput placeholder="https://www.company.com" onChange={createSetter('website')} value={website}/>
-                    </FormGroup>
+
                     <FormGroup label='Phone Number'>
                         <TextInput placeholder="555-122-5329" onChange={createSetter('phoneNumber')} value={phoneNumber}/>
                     </FormGroup>
                 </div>
                 <div>
-                    <h3>Categories</h3>
-                    <p className='description'>
-                        Which categories best represent your offering, e.g. CRM, applicant tracking, etc.
-                    </p>
-                    <Creatable
-                        name="form-field-name"
-                        multi={true}
-                        value={tags}
-                        options={tagOptions}
-                        clearable={false}
-                        placeholder={'Enter tags...'}
-                        noResultsText={'Enter a new tag...'}
-                        onChange={createSetter('tags')}
-                    />
+                    <h3>Company Info</h3>
+                    <FormGroup label='Company Name'>
+                        <TextInput onChange={createSetter('companyName')} value={companyName} placeholder={'Acme, Inc'}/>
+                    </FormGroup>
+                    <FormGroup label='Website' >
+                        <TextInput placeholder="https://www.company.com" onChange={createSetter('website')} value={website}/>
+                    </FormGroup>
                 </div>
                 <div >
                     <h3>Target Buyer</h3>
@@ -102,9 +91,22 @@ class CompanyInfo extends React.Component {
                             onChange={({value}) => createSetter('channelId')(value)}
                         />
                     </FormGroup>
+                    <p className='description'>
+                        Which categories best represent your offering, e.g. CRM, applicant tracking, etc.
+                    </p>
+                    <Creatable
+                        name="form-field-name"
+                        multi={true}
+                        value={tags}
+                        options={tagOptions}
+                        clearable={false}
+                        placeholder={'Enter tags...'}
+                        noResultsText={'Enter a new tag...'}
+                        onChange={createSetter('tags')}
+                    />
                 </div>
             </FlexBoxes>
-            <div>
+            <div className='actions'>
                 <Clickable onClick={saveAndContinue} text={'Continue'}/>
             </div>
         </div>

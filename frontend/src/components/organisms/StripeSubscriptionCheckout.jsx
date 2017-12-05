@@ -6,20 +6,25 @@ import {CardElement} from 'react-stripe-elements'
 import Clickable from 'atoms/Clickable'
 import FormGroup from 'molecule/FormGroup'
 import TextInput from 'atoms/form/TextInput'
-import {setFormValue, getCoupon, RESET_COUPON} from 'ducks/payment'
+import {setFormValue, getCoupon, RESET_COUPON, SAVE_PAYMENT_ERROR} from 'ducks/payment'
 import classNames from 'classnames'
 
 class StripeSubscriptionCheckout extends React.Component {
     static propTypes = {
         stripe: PropTypes.object.isRequired,
-        onToken: PropTypes.func.isRequired,
         couponCode: PropTypes.string,
-        errors: PropTypes.object,
+        error: PropTypes.object,
         couponValid: PropTypes.bool,
         couponChecked: PropTypes.bool,
         couponTerms: PropTypes.string,
+        isSaving: PropTypes.bool,
+        //own props
+        validate: PropTypes.func,
+        onToken: PropTypes.func.isRequired,
+        enabled: PropTypes.bool,
         //actions
-        checkCoupon: PropTypes.func.isRequired
+        checkCoupon: PropTypes.func.isRequired,
+        setError: PropTypes.func.isRequired
     }
 
     _handleSubmit = (ev) => {
@@ -32,6 +37,8 @@ class StripeSubscriptionCheckout extends React.Component {
             console.log('Received Stripe token:', token);
             if (token){
                 this.props.onToken(token)
+            } else {
+                this.props.setError('Unable to process payment. Please ensure all fields are filled out.')
             }
         });
 
@@ -41,10 +48,12 @@ class StripeSubscriptionCheckout extends React.Component {
         const {
             couponCode,
             checkCoupon,
-            errors,
+            error,
             couponChecked,
             couponTerms,
             couponValid,
+            isSaving,
+            enabled,
         } = this.props
         let couponClass = classNames({
             coupon: couponChecked && couponCode,
@@ -59,9 +68,12 @@ class StripeSubscriptionCheckout extends React.Component {
                 </FormGroup>
                 <FormGroup >
                     <span className={couponClass}><span display-if={!couponChecked}>Coupon Code</span> <span display-if={couponChecked}>{`${couponValid ? couponTerms : 'Not Valid'}`}</span></span>
-                    <TextInput fieldName={'couponCode'} errors={errors} value={couponCode} onChange={checkCoupon} stripeStyle={true}/>
+                    <TextInput fieldName={'couponCode'} errors={error} value={couponCode} onChange={checkCoupon} stripeStyle={true}/>
                 </FormGroup>
-                <Clickable text="Subscribe" onClick={this._handleSubmit} disabled={!couponValid && couponChecked}/>
+                <Clickable text={`${isSaving ? 'Saving...' : 'Subscribe'}`} onClick={this._handleSubmit} disabled={(!couponValid && couponChecked) || isSaving || !enabled}/>
+                <div display-if={error}>
+                    {error.message}
+                </div>
             </div>
         );
     }
@@ -81,7 +93,8 @@ const mapStateToProps = (state, ownProps) => {
         couponValid,
         couponChecked: payment.couponChecked,
         couponTerms,
-        errors: {}
+        isSaving: payment.isSaving,
+        error: payment.error,
     }
 }
 
@@ -106,6 +119,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                     dispatch(getCoupon(couponCode))
                 }
             }, 500)
+        },
+        setError: (message) => {
+            dispatch({
+                type: SAVE_PAYMENT_ERROR,
+                payload: {
+                    error: {
+                        message,
+                    }
+                }
+            })
         }
     }
 }

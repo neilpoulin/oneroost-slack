@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {
-    processPayment,
     loadPlan,
     fetchSubscriptionInfo,
     fetchUpcomingInvoice,
@@ -15,10 +14,9 @@ import {
     hasActiveSubscription
 } from 'selectors/payment'
 import {} from 'selectors/payment'
-import {StripeProvider, Elements} from 'react-stripe-elements'
-import StripeSubscriptionCheckout from './StripeSubscriptionCheckout'
 import moment from 'moment'
 import Clickable from 'atoms/Clickable'
+import SubscriptionPaymentForm from './SubscriptionPaymentForm'
 
 class CheckoutForm extends React.Component {
     static propTypes = {
@@ -53,25 +51,18 @@ class CheckoutForm extends React.Component {
             couponTerms: PropTypes.string,
         }),
         //actions
-        processPayment: PropTypes.func.isRequired,
         loadPaymentInfo: PropTypes.func.isRequired,
         cancel: PropTypes.func.isRequired,
     }
 
     constructor(props){
         super(props)
-        this._onToken= this._onToken.bind(this)
         this._onOpened= this._onOpened.bind(this)
         this._onClosed= this._onClosed.bind(this)
     }
 
     componentDidMount(){
         this.props.loadPaymentInfo()
-    }
-
-    _onToken(token) {
-        const {planId} = this.props
-        this.props.processPayment(planId, token)
     }
 
     _onOpened(args){
@@ -104,6 +95,7 @@ class CheckoutForm extends React.Component {
             invoiceLoaded,
             invoiceSubTotal,
             appliedCoupon,
+            planId,
         } = this.props
         return <div>
             <div display-if={planLoading}>
@@ -164,12 +156,8 @@ class CheckoutForm extends React.Component {
                 </div>
             </div>
 
-            <div display-if={!isActive}>
-                <StripeProvider apiKey={STRIPE_PUBLISH_KEY}>
-                    <Elements>
-                        <StripeSubscriptionCheckout onToken={this._onToken}/>
-                    </Elements>
-                </StripeProvider>
+            <div display-if={!isActive && planId}>
+                <SubscriptionPaymentForm planId={planId}/>
             </div>
             <div display-if={saveSuccess}>
                 Payment Successful
@@ -292,10 +280,6 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        processPayment: (planId, token) => {
-            dispatch(processPayment(planId, token))
-            console.log(token)
-        },
         loadPaymentInfo: () => {
             dispatch(loadPlan())
             dispatch(fetchSubscriptionInfo())

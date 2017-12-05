@@ -1,11 +1,22 @@
 @import "~variables";
-$borderThickness: 3px;
+$borderThickness: 4px;
 $transitionDuration: .2s;
 .tabs{
     display: flex;
     margin-bottom: 2rem;
     font-size: 1.2rem;
     justify-content: space-around;
+
+    &.fixed{
+        z-index: 9000;
+        box-shadow: 0 1px 5px 0 rgba(0,0,0,0.1);
+        top: 0;
+        left: 0;
+        right: 0;
+        position: fixed;
+        background-color: $globalBg;
+        padding-top: 1rem;
+    }
     .tab{
         margin: 0rem 1rem;
         flex-grow: 1;
@@ -13,7 +24,7 @@ $transitionDuration: .2s;
         .link{
             text-decoration: none;
             color: $primaryTextColor;
-            padding: .5rem 0.25rem;
+            padding: .7rem 0.25rem;
             transition: border $transitionDuration;
             display: inline-block;
             text-align: center;
