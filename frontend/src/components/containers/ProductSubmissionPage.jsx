@@ -36,10 +36,6 @@ const links = [
     {
         text: 'Customer Validation',
         path: 'case-studies'
-    },
-    {
-        text: `Review &${'\u00a0'}Submit`,
-        path: '/review'
     }
 ]
 
@@ -51,9 +47,14 @@ class ProductSubmissionPage extends React.Component {
         location: PropTypes.any,
         isLoading: PropTypes.bool,
         teamId: PropTypes.string,
+        showNav: PropTypes.bool,
         //actions
         loadTeam: PropTypes.func.isRequired,
 
+    }
+
+    static defaultProps = {
+        showNav: false,
     }
 
     componentDidMount() {
@@ -67,15 +68,16 @@ class ProductSubmissionPage extends React.Component {
             isLoading,
             teamId,
             teamName,
+            showNav,
         } = this.props
 
         if (isLoading){
             return null
         }
 
-        return <BasePage showNav={false}>
-            <div className="container">
-                <div className='tabs'>
+        return <BasePage showNav={showNav} navProps={{showLoginLink: false}}>
+            <div className={`container ${showNav ? 'showNav' : ''}`}>
+                <div className='tabs' display-if={`${match.url}/review` !== location.pathname}>
                     <PageTabs links={links} fixed={true}/>
                 </div>
                 <div className='backContainer' display-if={match.url !== location.pathname}>
@@ -88,7 +90,7 @@ class ProductSubmissionPage extends React.Component {
                 />
                 <Route path={`${match.url}/company`} render={() => <CompanyInfo teamName={teamName} nextRoute={`${match.url}/product`}/>}/>
                 <Route path={`${match.url}/product`} render={()=> <ProductService teamName={teamName} nextRoute={`${match.url}/case-studies`}/>}/>
-                <Route path={`${match.url}/case-studies`} render={()=> <CustomerValidation teamName={teamName} nextRoute={`${match.url}/review`} continueButtonText={'Submit'}/> }/>
+                <Route path={`${match.url}/case-studies`} render={()=> <CustomerValidation teamName={teamName} nextRoute={`${match.url}/review`} continueButtonText={'Submit'} submitOnContinue={true}/> }/>
                 <Route path={`${match.url}/review`} render={()=> <Review teamName={teamName}/>}/>
             </div>
             <footer>
@@ -104,10 +106,13 @@ const mapStateToProps = (state, ownProps) => {
     const isLoading = inbound.get('isLoading')
     const hasLoaded = inbound.get('hasLoaded')
     const teamName = inbound.get('teamName')
+    const match = ownProps.match
+    const showNav = `${match.url}/review` === location.pathname
     return {
         teamId,
         isLoading: isLoading || !hasLoaded,
         teamName,
+        showNav,
     }
 }
 

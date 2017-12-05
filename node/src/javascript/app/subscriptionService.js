@@ -3,6 +3,9 @@ import {
     STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET
 } from 'util/Environment'
+
+import Vendor from 'models/Vendor'
+import Inbound from 'models/Inbound'
 import {Parse} from 'parse/node'
 
 const Stripe = StripeClient(STRIPE_SECRET_KEY)
@@ -15,7 +18,7 @@ export function handleRequest({user, slackTeam, planId, token, couponCode}) {
             let customerId = slackTeam.get('stripeCustomerId')
             let updates = {}
             if (!customerId) {
-                customerId = await createCustomer(user)
+                customerId = await createCustomer({user})
                 console.log('successfully created new Stripe customer', customerId)
                 updates.stripeCustomerId = customerId
             }
@@ -55,31 +58,77 @@ export function handleRequest({user, slackTeam, planId, token, couponCode}) {
     })
 }
 
-function createCustomer(user) {
-    let slackTeam = user.get('slackTeam')
-    let customerId = slackTeam.get('stripeCustomerId')
-    if (customerId) {
-        return customerId
-    }
-    let email = user.get('username');
+export function handleVendorRequest({planId, token, couponCode, email, inboundId}) {
+    console.log('handling subscription request', planId, token)
+    return new Promise(async (resolve, reject) => {
+        try {
 
-    // note: may want to create this after we've collected payment info, then attach the "source"
-    let teamName = user.get('slackTeam').get('name')
-    console.log('creating customer for slackTeam', teamName)
+            //TODO: fetch customer id from somewhere, so we can sync it up
+            let customerId = await createCustomer({email})
+            console.log('successfully created new Stripe customer', customerId)
+
+            //now we for sure have a customer
+
+            let plan = await getPlanById(planId)
+            let subscription = await addCustomerToPlan(customerId, plan, token.id, couponCode)
+            console.log('vendor subscription created', subscription)
+
+            let vendor = new Vendor()
+            vendor.set({
+                email,
+                inbound: inboundId ? Inbound.createWithoutData(inboundId) : null,
+                stripeCustomerId: customerId,
+                stripePlanId: planId,
+                stripeSubscriptionId: subscription.id
+            })
+            let savedVendor = await vendor.save()
+            console.info('saved vendor', vendor.toJSON())
+            resolve({message: 'vendor payment submitted successfully'})
+        } catch (e) {
+            console.error(e)
+            reject(e)
+        }
+    })
+}
+
+
+function createCustomer({user, email}) {
+    let metadata = {}
+    let customerDescription = ''
+    if (user){
+        let slackTeam = user.get('slackTeam')
+        let customerId = slackTeam.get('stripeCustomerId')
+        if (customerId) {
+            return customerId
+        }
+        email = user.get('username');
+        let teamName = user.get('slackTeam').get('name')
+        metadata = {
+            ...metadata,
+            slackTeam: teamName,
+            userId: user ? user.id : null,
+            slackTeamId: slackTeam ? slackTeam.id : null,
+        }
+        customerDescription = `Contact for ${teamName}`
+        console.log('creating customer for slackTeam', teamName)
+    } else {
+        metadata = {
+            ...metadata,
+            subscriptionType: 'PRODUCT'
+        }
+    }
+
     return Stripe.customers.create({
         email,
-        description: `Contact for ${teamName}`,
-        metadata: {
-            slackTeam: teamName,
-            userId: user.id,
-            slackTeamId: slackTeam.id
-        }
+        description: customerDescription,
+        metadata,
     }).then(customer => {
         console.log('Customer created from stripe', customer)
         return customer.id
     }).catch(e => {
         console.error('failed to create customer', e)
     })
+
 }
 
 async function addCustomerToPlan(customerId, plan, tokenId, couponCode) {

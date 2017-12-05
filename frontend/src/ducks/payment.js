@@ -98,7 +98,53 @@ export default function reducer(state=initialState, action){
     return state
 }
 
-export function processPayment(planId, token){
+
+export function processVendorPayment({planId, token, email}){
+    return (dispatch, getState) => {
+        console.log('processing gueset payment')
+        dispatch({
+            type: SAVE_PAYMENT_REQUEST
+        })
+
+        // let user = Parse.User.current()
+        // if (!user){
+        //     dispatch({
+        //         type: SAVE_PAYMENT_ERROR,
+        //         payload:{
+        //             error: 'You are not logged in - could not process payment'
+        //         }
+        //     })
+        //     return
+        // }
+        const state = getState(0)
+        let couponCode =  state.payment.getIn(['formInput', 'couponCode'])
+        let inboundId = state.inbound.getIn(['submittedInbound', 'objectId'])
+
+        Parse.Cloud.run('subscribeVendor', {token, planId, couponCode, email, inboundId}).then(resp => {
+            console.log('successfully handled payment', resp)
+            dispatch({
+                type: SAVE_PAYMENT_SUCCESS
+            })
+            // dispatch(fetchSubscriptionInfo())
+            // dispatch(fetchUpcomingInvoice())
+            setTimeout(() => {
+                dispatch({
+                    type: CLEAR_MESSAGES,
+                }, 5000);
+            })
+        }).catch(error => {
+            console.error(error)
+            dispatch({
+                type: SAVE_PAYMENT_ERROR,
+                payload: {
+                    error
+                },
+            })
+        })
+    }
+}
+
+export function processPayment({planId, token}){
     return (dispatch, getState) => {
         console.log('processing payment')
         dispatch({

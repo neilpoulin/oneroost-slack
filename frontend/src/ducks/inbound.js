@@ -39,6 +39,7 @@ const initialState = Immutable.fromJS({
     vendorSignupSaving: false,
     vendorSignupSuccess: false,
     vendorSignupError: null,
+    vendor: null,
     submittedInbound: null,
     sellerPlans: [],
     formInput: {
@@ -110,6 +111,7 @@ export default function reducer(state=initialState, action){
             state = state.set('vendorSignupSaving', false)
             state = state.set('vendorSignupSuccess', true)
             state = state.set('vendorSignupError', null)
+            state = state.set('vendor', action.payload)
             break;
         case VENDOR_SIGNUP_ERROR:
             state = state.set('vendorSignupSaving', false)
@@ -184,7 +186,7 @@ export function loadTeam(teamId){
             }
         })
         dispatch(loadTagOptions())
-        getSlackTeamById(teamId).then(team => {
+        return getSlackTeamById(teamId).then(team => {
             dispatch({
                 type: LOAD_TEAM_SUCCESS,
                 payload: team.toJSON(),
@@ -198,13 +200,15 @@ export function loadProductInboundTeam(){
         dispatch({
             type: RESET_STATE
         })
-        Parse.Config.get().then(config => {
+        return Parse.Config.get().then(config => {
             let slackTeamId = config.get('inboundProductSlackTeamId')
             dispatch({
                 type: SET_PRODUCT_INBOUND_SLACK_TEAM_ID,
                 payload: config.get('inboundProductSlackTeamId'),
             })
-            dispatch(loadTeam(slackTeamId))
+            return dispatch(loadTeam(slackTeamId))
+        }).then(() => {
+            dispatch(setFormValue('inboundType', 'PRODUCT'))
         })
     }
 }
@@ -248,8 +252,8 @@ export function submitInbound(){
         dispatch({
             type: SUBMIT_REQUEST
         })
-        dispatch(saveInbound()).then(inbound => {
-            Parse.Cloud.run('submitInboundProposal', {inboundId: inbound.id}).then((result) => {
+        return dispatch(saveInbound()).then(inbound => {
+            return Parse.Cloud.run('submitInboundProposal', {inboundId: inbound.id}).then((result) => {
                 console.log(result)
                 inbound.set('submitted', true)
                 inbound.set('submittedDate', new Date())
@@ -267,19 +271,28 @@ export function submitInbound(){
                         message: error.message.error,
                     }
                 })
+                throw error
             })
         }).catch(error => {
             console.error(error)
+            throw error
         })
     }
 }
 
 export function submitVendor(){
     return (dispatch, getState) => {
+
+        const {vendorSignupSuccess, formInput: {name, email}, submittedInbound} = getState().inbound.toJS()
+        if (vendorSignupSuccess)
+        {
+            console.log('vendor already signed up')
+            return null;
+        }
+
         dispatch({
             type: VENDOR_SIGNUP_REQUEST
         })
-        const {formInput: {name, email}, submittedInbound} = getState().inbound.toJS()
         let inbound = Inbound.createWithoutData(submittedInbound.objectId)
 
         let vendor = new Vendor()
@@ -290,7 +303,8 @@ export function submitVendor(){
         })
         vendor.save().then(savedVendor => {
             dispatch({
-                type: VENDOR_SIGNUP_SUCCESS
+                type: VENDOR_SIGNUP_SUCCESS,
+                payload: savedVendor.toJSON()
             })
         }).catch(error => {
             dispatch({

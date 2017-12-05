@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 class PriceCircle extends React.Component {
     static propTypes = {
-        price: PropTypes.number,
+        formattedPrice: PropTypes.string,
         period: PropTypes.string,
         backgroundColor: PropTypes.string,
         textColor: PropTypes.string,
@@ -14,9 +14,9 @@ class PriceCircle extends React.Component {
     }
 
     render(){
-        const {price, period, backgroundColor, textColor} = this.props
+        const {formattedPrice, period, backgroundColor, textColor} = this.props
         return <div className={'container'} style={{backgroundColor, color: textColor}}>
-            <div className='price'>${price}</div>
+            <div className='price'>{formattedPrice}</div>
             <div display-if={period} className='period'>{period}</div>
         </div>
     }

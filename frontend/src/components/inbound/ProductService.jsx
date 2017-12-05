@@ -97,7 +97,7 @@ class ProductService extends React.Component {
                     />
                 </div>
             </FlexBoxes>
-            <div>
+            <div className='actions'>
                 <Clickable onClick={saveAndContinue} text={'Continue'}/>
             </div>
         </div>

@@ -5,9 +5,8 @@ import {submitInbound, submitVendor, loadSellerPlans} from 'ducks/inbound'
 import Header from './Header'
 import {withRouter} from 'react-router-dom'
 import FlexBoxes from 'molecule/FlexBoxes'
-import PriceCircle from 'atoms/checkout/PriceCircle'
-import Clickable from 'atoms/Clickable'
 import btoa from 'btoa'
+import PlanSummaryCard from 'molecules/PlanSummaryCard'
 
 class ProductSubmissionReview extends React.Component {
     static propTypes = {
@@ -19,7 +18,7 @@ class ProductSubmissionReview extends React.Component {
             textColor: PropTypes.string,
             encodedPlanId: PropTypes.string.isRequired,
             cta: PropTypes.string,
-            price: PropTypes.string,
+            price: PropTypes.number,
             period: PropTypes.string,
 
         })),
@@ -44,8 +43,7 @@ class ProductSubmissionReview extends React.Component {
         return <div className='content'>
             <Header title="Success!"
                 subtitle={`Your proposal has been submitted to ${teamName}`}/>
-
-            <div >
+            <div>
                 <div className='instructions'>
                     <div className=''>
                         <h3>Success!</h3>
@@ -57,25 +55,7 @@ class ProductSubmissionReview extends React.Component {
             <div className={'pricing'}>
                 <FlexBoxes>
                     {plans.map((plan, i) =>
-                        <div key={`seller_plans_${i}`} className={'tier'}>
-                            <div className={'content'}>
-                                <h3 className={'tierName'}>{plan.name}</h3>
-                                <div className={'priceCircle'}>
-                                    <PriceCircle price={plan.price} period={plan.period}
-                                        backgroundColor={plan.backgroundColor}
-                                        textColor={plan.textColor}/>
-                                </div>
-
-                                <ul className={'features'} display-if={plan.features}>
-                                    {plan.features.map((feature, j) =>
-                                        <li key={`plan_${i}_featre_${j}`}>{feature}</li>
-                                    )}
-                                </ul>
-                            </div>
-                            <div className={'actions'}>
-                                <Clickable text={`${plan.cta}`} to={`/checkout/${plan.encodedPlanId}`}/>
-                            </div>
-                        </div>
+                        <PlanSummaryCard plan={plan} key={`plans_${i}`}/>
                     )}
                 </FlexBoxes>
             </div>
@@ -89,7 +69,7 @@ class ProductSubmissionReview extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
     let plans = state.inbound.get('sellerPlans', []).map(plan => {
-        return plan.set('price', plan.get('price').toFixed(2))
+        return plan.set('formattedPrice', `$${plan.get('price', 0).toFixed(2)}`)
             .set('encodedPlanId',  btoa(plan.get('stripePlanId')))
     })
 

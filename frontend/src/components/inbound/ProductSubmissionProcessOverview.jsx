@@ -24,7 +24,7 @@ class ProductSubmissionProcessOverview extends React.Component {
                 </p>
 
             </div>
-            <div>
+            <div className='actions'>
                 <Clickable to={nextRoute} text='Continue'/>
             </div>
         </div>

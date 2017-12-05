@@ -7,6 +7,9 @@
     padding-left: 4rem;
     padding-right: 4rem;
     padding-top: 4rem;
+    &.showNav{
+        padding-top: 0;
+    }
 }
 
 .backContainer{

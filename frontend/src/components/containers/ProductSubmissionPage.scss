@@ -1,7 +1,10 @@
 @import "./TeamInboundPage";
 
 .container{
-  padding-top: 5rem;
+  &:not(.showNav){
+    padding-top: 5rem;
+  }
+
 }
 
 
