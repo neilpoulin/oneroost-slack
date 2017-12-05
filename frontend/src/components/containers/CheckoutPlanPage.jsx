@@ -134,8 +134,9 @@ const mapStateToProps = (state, ownProps) => {
     }
 
     let validEmail = isValidEmail(checkout.email)
-    let checkoutSuccess = state.payment.get('hasVendorPayment')
-    let vendor = state.payment.get('vendor').toJS()
+    const payment = state.payment.toJS()
+    let checkoutSuccess = payment.hasVendorPayment
+    let vendor = payment.vendor
 
     return {
         isLoading: checkout.isLoading,
