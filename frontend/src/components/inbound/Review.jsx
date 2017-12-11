@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import {submitInbound, submitVendor} from 'ducks/inbound'
+import {submitInbound, submitVendor, saveInbound} from 'ducks/inbound'
 import Header from './Header'
 import {withRouter} from 'react-router-dom'
 import Clickable from 'atoms/Clickable'
@@ -12,6 +12,21 @@ import FormGroup from 'molecule/FormGroup'
 class Review extends React.Component {
     static propTypes = {
         teamName: PropTypes.string.isRequired,
+        match: PropTypes.any,
+        location: PropTypes.any,
+        isLoading: PropTypes.bool,
+        teamId: PropTypes.string,
+        showNav: PropTypes.bool,
+        saving: PropTypes.bool,
+        submitted: PropTypes.bool,
+        hasError: PropTypes.bool,
+        errorText: PropTypes.string,
+        email: PropTypes.string,
+        vendorSignupSuccess: PropTypes.bool,
+
+        //actions
+        submit: PropTypes.func,
+        vendorSignUp: PropTypes.func,
     }
 
     componentDidMount() {
@@ -108,7 +123,14 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         submit: () => {
-            dispatch(submitInbound())
+            if (ownProps.nextRoute){
+                dispatch(submitInbound()).then(saved => {
+                    ownProps.history.push(ownProps.nextRoute)
+                })
+            }
+            else {
+                dispatch(submitInbound())
+            }
         },
         vendorSignUp: () => {
             dispatch(submitVendor())

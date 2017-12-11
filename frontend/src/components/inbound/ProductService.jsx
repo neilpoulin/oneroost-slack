@@ -52,7 +52,7 @@ class ProductService extends React.Component {
             clearPitch,
         } = this.props
         return <div>
-            <Header title="Product / Service Information" subtitle={`Tell us more about what you’re offering and how it helps ${teamName}`}/>
+            <Header title="Product / Service Information" subtitle={`Let prospective buyers know what makes you unique and effective`}/>
             <FlexBoxes defaultContentStyles={true}>
                 <div>
                     <h3>Elevator Pitch</h3>
@@ -60,7 +60,7 @@ class ProductService extends React.Component {
                         Tell us what is special about your offering
                     </p>
                     <FormGroup label='' helperText={`${elevatorRemaining} characters remaining`}>
-                        <TextArea placeholder={''}
+                        <TextArea placeholder={'We help our customers solve...'}
                             maxLength={300}
                             value={elevatorPitch}
                             onChange={createSetter('elevatorPitch')}
@@ -69,12 +69,12 @@ class ProductService extends React.Component {
                     </FormGroup>
                 </div>
                 <div>
-                    <h3>Relevancy</h3>
+                    <h3>Integrations</h3>
                     <p className='description'>
-                        Why do you think your offering will help {teamName}?
+                        List relevant integrations (comma separated)
                     </p>
                     <FormGroup label='' helperText={`${relevancyRemaining} characters remaining`} >
-                        <TextArea placeholder={null}
+                        <TextArea placeholder={'SalesForce, HubSpot, Marketo, ...'}
                             maxLength={300}
                             value={relevancy}
                             onChange={createSetter('relevancy')}
@@ -84,7 +84,7 @@ class ProductService extends React.Component {
                 </div>
                 <div>
                     <h3>Pitch Material</h3>
-                    <p className='description'>Upload the most recent pitch deck.  Ideally it includes features, benefits, and pricing!</p>
+                    <p className='description'>Upload the most recent pitch deck.  Ideally it includes features, benefits, and pricing</p>
                     <FileUploadForm buttonText={'Upload Document'}
                         fileKeyPrefix={'inbound/pitches'}
                         onCompleted={setPitchFilePath}

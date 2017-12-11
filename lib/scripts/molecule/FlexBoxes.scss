@@ -20,6 +20,8 @@
         .content{
             // flex: 1 0 auto;
             flex-grow: 1;
+            min-height: 8rem;
+
             &.default-style{
                 // border: 1px solid black;
                 @include contentBox;

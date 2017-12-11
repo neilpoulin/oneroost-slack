@@ -16,7 +16,10 @@ class CompanyInfo extends React.Component {
         nextRoute: PropTypes.string.isRequired,
         teamName: PropTypes.string.isRequired,
         tags: PropTypes.arrayOf(PropTypes.string),
-        tagOptions: PropTypes.arrayOf(PropTypes.object),
+        tagOptions: PropTypes.arrayOf(PropTypes.shape({
+            label: PropTypes.string,
+            value: PropTypes.string,
+        })),
         channelOptions: PropTypes.arrayOf(PropTypes.object),
         selectedChannel: PropTypes.string,
         companyName: PropTypes.string,
@@ -50,11 +53,10 @@ class CompanyInfo extends React.Component {
             saveAndContinue,
         } = this.props
         return <div>
-            <Header title="Company Information" subtitle={'Share a bit about your organization'}/>
+            <Header title="Company Information" subtitle={'Tell us who you are, where you work, and who buys your offering'}/>
             <FlexBoxes defaultContentStyles={true}>
                 <div>
-                    <h3>Personal Info</h3>
-
+                    <h3>Contact Info</h3>
                     <FormGroup label='Your Name'>
                         <TextInput placeholder="Jon Doe" onChange={createSetter('fullName')} value={fullName}/>
                     </FormGroup>
@@ -78,7 +80,7 @@ class CompanyInfo extends React.Component {
                 <div >
                     <h3>Target Buyer</h3>
                     <p className='description'>
-                        Which Team at {teamName} will be most interested in your offering?
+                        Which team would be most interested in your offering?
                     </p>
                     <FormGroup label='Team'>
                         <Select

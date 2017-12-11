@@ -18,8 +18,11 @@
     justify-content: center;
     border: 2px dashed $secondaryColor;
     border-radius: 6px;
+
     .actions{
         align-self: center;
+        flex-direction: column;
+        text-align: center;
     }
 }
 

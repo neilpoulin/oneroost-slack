@@ -23,7 +23,6 @@ class ProductSubmissionReview extends React.Component {
 
         })),
         //actions
-        submit: PropTypes.func.isRequired,
         loadPage: PropTypes.func.isRequired,
     }
 
@@ -46,8 +45,8 @@ class ProductSubmissionReview extends React.Component {
             <div>
                 <div className='instructions'>
                     <div className=''>
-                        <h3>Success!</h3>
-                        <div>Your proposal has been submitted to {teamName}</div>
+                        <h3>Level Up Your Sales Strategy</h3>
+                        <div>Faster sales cycles. Actionable buyer intelligence. Introducing OneRoost's Seller Services</div>
                     </div>
                 </div>
             </div>
@@ -80,12 +79,6 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        submit: () => {
-            dispatch(submitInbound())
-        },
-        vendorSignUp: () => {
-            dispatch(submitVendor())
-        },
         loadPage: () => {
             dispatch(loadSellerPlans())
         }

@@ -6,6 +6,7 @@ import ProductService from 'inbound/ProductService'
 import ProcessOverview from 'inbound/ProcessOverview'
 import CustomerValidation from 'inbound/CustomerValidation'
 import Review from 'inbound/Review'
+import ProductReview from 'inbound/ProductSubmissionReview'
 import PageTabs from 'inbound/PageTabs'
 import {
     Route,
@@ -34,7 +35,7 @@ const links = [
         path: 'case-studies'
     },
     {
-        text: `Review &${'\u00a0'}Submit`,
+        text: 'Review',
         path: '/review'
     }
 ]
@@ -84,7 +85,8 @@ class TeamInboundPage extends React.Component {
                 <Route path={`${match.url}/company`} render={() => <CompanyInfo teamName={teamName} nextRoute={`${match.url}/product`}/>}/>
                 <Route path={`${match.url}/product`} render={()=> <ProductService teamName={teamName} nextRoute={`${match.url}/case-studies`}/>}/>
                 <Route path={`${match.url}/case-studies`} render={()=> <CustomerValidation teamName={teamName} nextRoute={`${match.url}/review`}/>}/>
-                <Route path={`${match.url}/review`} render={()=> <Review teamName={teamName}/>}/>
+                <Route path={`${match.url}/review`} render={()=> <Review teamName={teamName} nextRoute={`${match.url}/plans`}/>}/>
+                <Route path={`${match.url}/plans`} render={()=> <ProductReview teamName={teamName}/>}/>
             </div>
             <footer>
                 <Link to='/' className='link'>Powered by <Logo/></Link>

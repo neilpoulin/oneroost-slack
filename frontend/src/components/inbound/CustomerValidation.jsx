@@ -65,12 +65,12 @@ class CustomerValidation extends React.Component {
         } = this.props
 
         return <div className='container'>
-            <Header title={'Customer Validation'} subtitle={'Let us know what previous customers are saying.  Optional but highly recommended!'}/>
+            <Header title={'Customer Validation'} subtitle={'Prove you can execute. What are your customers saying?'}/>
             <div className='flexboxes'>
                 <FlexBoxes defaultContentStyles={false}>
                     <div className='content'>
                         <h3>Case Study</h3>
-                        <p className='description'>Upload the a case study that illustrates how your offering could impact {teamName}.</p>
+                        <p className='description'>Upload a case study from a happy customer</p>
                         <FileUploadForm buttonText={'Upload a Case Study'}
                             fileKeyPrefix={'inbound/pitches'}
                             onCompleted={setCaseStudyFilePath}
@@ -84,12 +84,17 @@ class CustomerValidation extends React.Component {
                     </div>
                     {testimonials.map((testimonial, i) => {
                         return <div key={`testimonial-${i}`} className='content'>
-                            <h3>Testimonials</h3>
+
                             <FormGroup label='Customer Name'>
-                                <TextInput onChange={createTestimonialSetter(i, 'customerName')} value={testimonial.customerName}/>
+                                <TextInput onChange={createTestimonialSetter(i, 'customerName')}
+                                    value={testimonial.customerName}
+                                    placeholder={'Acme, Inc'}
+                                />
                             </FormGroup>
-                            <FormGroup label='Comments'>
-                                <TextArea rows={6} onChange={createTestimonialSetter(i, 'comment')} value={testimonial.comment}/>
+                            <FormGroup label='Testimonial'>
+                                <TextArea rows={6} onChange={createTestimonialSetter(i, 'comment')}
+                                    value={testimonial.comment}
+                                />
                             </FormGroup>
                             <div>
                                 <Clickable look='link' onClick={() => removeTestimonial(i)} text='remove'/>
@@ -98,7 +103,7 @@ class CustomerValidation extends React.Component {
                     })}
                     <div className='addTestimonial'>
                         <div className='actions'>
-                            <Clickable inline={true} onClick={addTestimonial} outline={true} text='Add New Testimonial'/>
+                            <Clickable inline={true} onClick={addTestimonial} outline={true} text='Add a Testimonial'/>
                         </div>
                     </div>
                 </FlexBoxes>
