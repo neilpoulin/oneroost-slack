@@ -136,6 +136,8 @@ export function loadUser() {
                         console.error(error)
                         dispatch(logout()).then(() => window.location = '/')
                     })
+                } else {
+                    dispatch(userLoggedIn(parseUser))
                 }
 
             }

@@ -6,6 +6,7 @@ var collectionsToClean = [
     'Waitlist',
     'StripeEvent',
     'Redirect',
+    'SlackTeam',
     '_Session',
     '_Role',
     'Inbound',

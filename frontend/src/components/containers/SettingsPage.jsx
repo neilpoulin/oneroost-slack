@@ -18,6 +18,7 @@ import SlackSvg from 'atoms/SlackSvg'
 import GoogleLogo from 'atoms/GoogleLogo'
 import Logo from 'atoms/Logo'
 import SlackLoginButton from './SlackLoginButton'
+import SlackAddButton from './SlackAddButton'
 import CheckoutForm from 'organisms/CheckoutForm'
 import {hasActiveSubscription} from 'selectors/payment';
 
@@ -109,7 +110,16 @@ class SettingsPage extends React.Component {
                                 </div>
                             </div>
                             <div display-if={!hasSlack}>
-                                <SlackLoginButton/>
+                                <div className={'slackActions'}>
+                                    <div>
+                                        <p className='description'>Want to enhance your OneRoost experience? Install to Slack using the button below.</p>
+                                        <SlackAddButton/>
+                                    </div>
+                                    <div>
+                                        <p className='description'>Does your team Already have OneRoost in Slack? Sign in below.</p>
+                                        <SlackLoginButton/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div>

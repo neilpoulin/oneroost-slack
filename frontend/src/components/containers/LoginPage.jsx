@@ -86,6 +86,9 @@ class LoginPage extends React.Component{
                     </div>
                     <div display-if={installSuccess}>
                         <p>You have successfully installed OneRoost to your team. Now, please log in below.</p>
+                        <div>
+                            <SlackLoginButton/>
+                        </div>
                     </div>
                     <div display-if={error}>
                         Something went wrong while authenticating with Slack: {error}
@@ -93,10 +96,10 @@ class LoginPage extends React.Component{
                     <div display-if={isLoading}>
                         Loading...
                     </div>
-                    <div display-if={!hasSlack && !isLoading && !isLoggedIn} className='action'>
+                    <div display-if={!hasSlack && !isLoading && !isLoggedIn && !installSuccess} className='action'>
 
                         <section className={'siginContainer'}>
-                            <div className={'signinActions'}>
+                            <div className={'signinActions'} display-if={!installSuccess}>
                                 <div className='action'><GoogleLoginButton/></div>
                             </div>
                         </section>
@@ -105,9 +108,9 @@ class LoginPage extends React.Component{
                             <div className={'slackActions'}>
                                 <div>
                                     <SlackLoginButton/>
-                                    <p className='description'>Already have OneRoost in Slack? Sign in above.</p>
+                                    <p className='description' >Already have OneRoost in Slack? Sign in above.</p>
                                 </div>
-                                <div>
+                                <div >
                                     <SlackAddButton/>
                                     <p className='description'>Does your team need to install OneRoost? Install using the button above.</p>
                                 </div>

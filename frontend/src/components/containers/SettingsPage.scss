@@ -19,6 +19,14 @@
     }
 }
 
+
+.slackActions{
+    text-align: center;
+    > * {
+        margin-bottom: 5rem;
+    }
+}
+
 .channels{
     margin: 2rem 0;
 
