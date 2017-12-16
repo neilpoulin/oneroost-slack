@@ -15,7 +15,8 @@
         "build": "gulp install",
         "test": "jest --watch",
         "tunnel": "lt --subdomain oneroost --port 8081",
-        "dev": "gulp dev"
+        "dev": "gulp dev",
+        "dbclean": "cd scripts/db && bash dbclean.sh"
     },
     "jest": {
         "setupTestFrameworkScriptFile": "./node_modules/jest-enzyme/lib/index.js",
@@ -48,6 +49,8 @@
         "eslint": "^4.10.0",
         "eslint-plugin-jasmine": "^2.9.1",
         "eslint-plugin-jest": "^21.2.0",
+        "eslint-plugin-mongo": "^1.0.5",
+        "eslint-plugin-mongodb": "^0.2.4",
         "eslint-plugin-react": "^7.4.0",
         "extract-text-webpack-plugin": "^3.0.0",
         "file-loader": "^0.11.2",

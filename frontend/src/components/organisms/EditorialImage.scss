@@ -36,7 +36,7 @@ section {
     p {
       text-align: justify;
       font-size: 1rem;
-      margin-bottom: 4rem;
+      margin-bottom: 2rem;
       @include font-body;
       color: $secondaryColor;
     }
@@ -100,6 +100,7 @@ section {
         display: flex;
         flex-direction: row;
         align-items: center;
+        padding-top: 1rem;
         .user {
           font-size: .9rem;
           margin-top: 0;

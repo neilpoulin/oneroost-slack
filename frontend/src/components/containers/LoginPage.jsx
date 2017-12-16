@@ -11,6 +11,8 @@ import Clickable from 'atoms/Clickable'
 import SlackLoginButton from './SlackLoginButton'
 import SlackAddButton from './SlackAddButton'
 import FlexBoxes from 'molecule/FlexBoxes'
+import GoogleLoginButton from 'GoogleLoginButton'
+import SlackSvg from 'atoms/SlackSvg'
 
 class LoginPage extends React.Component{
     static propTypes = {
@@ -77,7 +79,7 @@ class LoginPage extends React.Component{
                         <Logo size='heading' color='primary'/>
                     </div>
                     <div display-if={isLoggedIn} className="success">
-                        <p className=''>Successfully logged in as {userName} @ {teamName}</p>
+                        <p className=''>Successfully logged in as {userName} <span display-if={teamName}>@ {teamName}</span></p>
                         <div className='action'>
                             <Clickable to='/settings' text='View my settings' inline={true}/>
                         </div>
@@ -91,19 +93,27 @@ class LoginPage extends React.Component{
                     <div display-if={isLoading}>
                         Loading...
                     </div>
-                    <div display-if={!hasSlack && !isLoading} className='action'>
-                        <FlexBoxes columns={2}>
-                            <section>
-                                <h3 className='title'>Login</h3>
-                                <SlackLoginButton/>
-                                <p className='description'>Already have OneRoost in Slack? Sign in above.</p>
-                            </section>
-                            <section>
-                                <h3 className='title'>Install</h3>
-                                <SlackAddButton/>
-                                <p className='description'>Does your team need to install OneRoost? Install using the button above.</p>
-                            </section>
-                        </FlexBoxes>
+                    <div display-if={!hasSlack && !isLoading && !isLoggedIn} className='action'>
+
+                        <section className={'siginContainer'}>
+                            <div className={'signinActions'}>
+                                <div className='action'><GoogleLoginButton/></div>
+                            </div>
+                        </section>
+                        <section className={'slackContainer'}>
+                            <h2 className='heading title'><SlackSvg className={'slackLogo'}/> Slack</h2>
+                            <div className={'slackActions'}>
+                                <div>
+                                    <SlackLoginButton/>
+                                    <p className='description'>Already have OneRoost in Slack? Sign in above.</p>
+                                </div>
+                                <div>
+                                    <SlackAddButton/>
+                                    <p className='description'>Does your team need to install OneRoost? Install using the button above.</p>
+                                </div>
+                            </div>
+                        </section>
+
                     </div>
                 </div>
             </BasePage>)

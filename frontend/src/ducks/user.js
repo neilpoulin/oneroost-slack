@@ -44,8 +44,8 @@ const initialState = Immutable.Map({
     teamImages: {},
 })
 
-export default function reducer(state=initialState, action){
-    switch(action.type){
+export default function reducer(state = initialState, action) {
+    switch (action.type) {
         case SLACK_AUTH_REQUEST:
             return state.set('isLoading', true)
 
@@ -68,15 +68,15 @@ export default function reducer(state=initialState, action){
             state = state.set('slackAccessToken', action.payload.get('accessToken'))
             state = state.set('error', null)
             state = state.set('isLoggedIn', true)
-            if (action.payload.get('user')){
-                if (action.payload.get('user').name){
-                    let splitName =  action.payload.get('user').name.split(' ')
+            if (action.payload.get('user')) {
+                if (action.payload.get('user').name) {
+                    let splitName = action.payload.get('user').name.split(' ')
                     let firstName = splitName[0]
                     let lastName = splitName.length > 0 ? splitName[1] : ''
                     state = state.set('firstName', firstName)
                         .set('lastName', lastName)
                 }
-                state = state.set('email',  action.payload.get('user').email)
+                state = state.set('email', action.payload.get('user').email)
             }
             state = state.set('hasSlack', true)
             return state
@@ -122,14 +122,14 @@ export default function reducer(state=initialState, action){
     return state;
 }
 
-export function loadUser(){
+export function loadUser() {
     return dispatch => {
-        try{
+        try {
             let parseUser = Parse.User.current()
 
-            if (parseUser){
+            if (parseUser) {
                 let slackTeam = parseUser.get('slackTeam')
-                if (slackTeam){
+                if (slackTeam) {
                     slackTeam.fetch().then(fetched => {
                         dispatch(userLoggedIn(parseUser))
                     }).catch(error => {
@@ -139,13 +139,13 @@ export function loadUser(){
                 }
 
             }
-        }catch(e){
+        } catch (e) {
             console.error(e)
         }
     }
 }
 
-export function authorizeSlackTeam(code, redirectUri){
+export function authorizeSlackTeam(code, redirectUri) {
     console.log('authorize slack team')
     return dispatch => {
         axios.post('/tokens/slack', {
@@ -160,7 +160,7 @@ export function authorizeSlackTeam(code, redirectUri){
     }
 }
 
-export function installSlack(code, redirectUri){
+export function installSlack(code, redirectUri) {
     return dispatch => {
         dispatch({
             type: SLACK_INSTALL_REQUEST,
@@ -190,7 +190,7 @@ export function installSlack(code, redirectUri){
     }
 }
 
-export function loginWithSlack(code, redirectUri){
+export function loginWithSlack(code, redirectUri) {
     return dispatch => {
         dispatch({
             type: SLACK_AUTH_REQUEST,
@@ -214,7 +214,7 @@ export function loginWithSlack(code, redirectUri){
                 // id_token: authData.tokenId,
                 id: user.id,
                 firstName: user.name ? user.name.split(' ')[0] : '',
-                lastName:  user.name ? user.name.split(' ')[1] : '',
+                lastName: user.name ? user.name.split(' ')[1] : '',
                 slackUserId: user.id,
                 email: user.email,
                 username: user.email,
@@ -241,10 +241,10 @@ export function loginWithSlack(code, redirectUri){
 }
 
 
-export function linkUserWithProvider(provider, authData){
+export function linkUserWithProvider(provider, authData) {
     return (dispatch, getState) => {
         console.log('authData:', authData)
-        if(!authData || !authData.access_token){
+        if (!authData || !authData.access_token) {
             console.log('no valid auth data present, exit')
             return null;
         }
@@ -261,11 +261,11 @@ export function linkUserWithProvider(provider, authData){
 }
 
 /**
-* Should be a parse user
-*/
-export function userLoggedIn(user){
+ * Should be a parse user
+ */
+export function userLoggedIn(user) {
     return dispatch => {
-        if (!user){
+        if (!user) {
             return null;
         }
         dispatch({
@@ -275,7 +275,7 @@ export function userLoggedIn(user){
         dispatch(fetchUpcomingInvoice())
         dispatch(fetchSubscriptionInfo())
         let authData = user.get('authData')
-        if (authData){
+        if (authData) {
             Object.keys(authData).forEach(provider => {
                 dispatch({
                     type: SET_HAS_PROVIDER,
@@ -289,7 +289,7 @@ export function userLoggedIn(user){
 
 }
 
-function linkUser(user, provider, authData){
+function linkUser(user, provider, authData) {
     return (dispatch) => {
         let options = {
             authData
@@ -303,14 +303,20 @@ function linkUser(user, provider, authData){
                     provider
                 },
             })
-            dispatch(userLoggedIn(savedUser))
+            let team = savedUser.get('slackTeam')
+            if (team) {
+                team.fetch().then(() => dispatch(userLoggedIn(savedUser)))
+            } else {
+                dispatch(userLoggedIn(savedUser))
+            }
+
             // Parse.Cloud.run('checkEmailAfterOAuth').then((response) => {
             //     dispatch(userLoggedIn(savedUser))
             // }).catch(error => console.error)
             return savedUser
         }).catch(error => {
             let email = user.get('email')
-            switch (error.code){
+            switch (error.code) {
                 case 202:
                     console.log('user exists, can\'t link.. need to login first')
                     dispatch(connectExistingUser({email, provider, authData}))
@@ -328,7 +334,7 @@ function linkUser(user, provider, authData){
     }
 }
 
-export function connectExistingUser({email, provider, authData}){
+export function connectExistingUser({email, provider, authData}) {
     return (dispatch) => {
         console.warn('this method is not implemented!!!')
         // fetchUserByEmail(email).then(user => {
@@ -350,7 +356,7 @@ export function connectExistingUser({email, provider, authData}){
     }
 }
 
-export function linkUserWithProviderError(providerName, error){
+export function linkUserWithProviderError(providerName, error) {
     return (dispatch, getState) => {
         console.error('Failed to link ' + providerName, error)
         dispatch({
@@ -362,22 +368,34 @@ export function linkUserWithProviderError(providerName, error){
     }
 }
 
-export function logout(){
+export function logout() {
     return dispatch => {
         console.log('logging out...')
         let user = Parse.User.current()
-        if (user){
-            return Parse.User.logOut().then(() => {
+        let promises = []
+        if (user) {
+            promises.push(Parse.User.logOut().then(() => {
                 dispatch({
                     type: LOGOUT
                 })
-            }).catch(console.error)
+            }).catch(console.error))
         }
-        return Promise.resolve()
+        if (window.gapi) {
+            try {
+                var auth2 = window.gapi.auth2.getAuthInstance();
+                promises.push(auth2.signOut().then(function () {
+                    console.log('User signed out from google.');
+                }));
+            } catch (e) {
+                console.error('failed to sign out of google', e)
+            }
+
+        }
+        return Promise.all(promises).then(() => removeGoogleCookies())
     }
 }
 
-export function setOAuthState(){
+export function setOAuthState() {
     return (dispatch, getState) => {
         const state = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)
         Cookie.set('oneroost_state', state)
@@ -388,7 +406,12 @@ export function setOAuthState(){
     }
 }
 
-export function getOAuthState(){
+function removeGoogleCookies() {
+    Cookie.remove('G_AUTHUSER_H')
+    console.log('cleared google cookie')
+}
+
+export function getOAuthState() {
     let state = Cookie.get('oneroost_state')
     return state
 }

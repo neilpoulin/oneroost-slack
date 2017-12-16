@@ -24,7 +24,6 @@ import {hasActiveSubscription} from 'selectors/payment';
 class SettingsPage extends React.Component {
     static propTypes = {
         code: PropTypes.string,
-        slackClientId: PropTypes.string.isRequired,
         error: PropTypes.any,
         isLoggedIn: PropTypes.bool,
         userName: PropTypes.string,
@@ -46,9 +45,8 @@ class SettingsPage extends React.Component {
         save: PropTypes.func.isRequired,
     }
 
-    render () {
+    render() {
         const {
-            slackClientId,
             userName,
             teamName,
             teamId,
@@ -69,10 +67,14 @@ class SettingsPage extends React.Component {
                 <div>
                     <section className='teamInfo'>
                         <div display-if={teamImageUrl} className='teamConnect'>
-                            <img src={teamImageUrl} display-if={teamImageUrl}/><span className='plus'>+</span><Logo color='primary'/>
+                            <img src={teamImageUrl} display-if={teamImageUrl}/><span className='plus'>+</span><Logo
+                                color='primary'/>
                         </div>
                         <p className='welcome'>
-                            Welcome, {userName} @ {teamName} (<LogoutLink/>)
+                            Welcome, {userName} <span display-if={teamName}>@ {teamName}</span>
+                        </p>
+                        <p>
+                            <LogoutLink/>
                         </p>
                         <div className='action'>
                             <Clickable to={`/teams/${teamId}`} inline outline text='View your vendor inbound flow'/>
@@ -82,23 +84,29 @@ class SettingsPage extends React.Component {
                     <FlexBoxes defaultContentStyles={true} columns={3}>
                         <div>
                             <h2 className='heading'><SlackSvg className='slackLogo'/>Slack Settings</h2>
-
-                            <Clickable inline={true} outline={false} look='link' onClick={refreshSlack} text='Refresh Channels'/>
-                            <div display-if={channels} className='channels'>
-                                <h4>Channels</h4>
-                                {channels.map((c, i) =>
-                                    <div key={`channel_${i}`} className={`channel ${c.selected ? 'selected' : ''}`}>
-                                        <Checkbox label={`#${c.name}`} onChange={(selected) => selectChannel(c.id, selected)} selected={c.selected}>
-                                            <FormGroup display-if={c.selected} >
-                                                <TextInput placeholder={`#${c.name}`} onChange={createChannelVanitySetter(c.id)} value={c.vanityName}/>
-                                            </FormGroup>
-                                        </Checkbox>
-                                    </div>)
-                                }
-                            </div>
-                            <div className='action'>
-                                <Clickable text='Save Slack Settings' onClick={save}/>
-                                <p display-if={saveSuccess}>Settings saved successfully</p>
+                            <div display-if={hasSlack}>
+                                <Clickable inline={true} outline={false} look='link' onClick={refreshSlack}
+                                    text='Refresh Channels'/>
+                                <div display-if={channels} className='channels'>
+                                    <h4>Channels</h4>
+                                    {channels.map((c, i) =>
+                                        <div key={`channel_${i}`} className={`channel ${c.selected ? 'selected' : ''}`}>
+                                            <Checkbox label={`#${c.name}`}
+                                                onChange={(selected) => selectChannel(c.id, selected)}
+                                                selected={c.selected}>
+                                                <FormGroup display-if={c.selected}>
+                                                    <TextInput placeholder={`#${c.name}`}
+                                                        onChange={createChannelVanitySetter(c.id)}
+                                                        value={c.vanityName}/>
+                                                </FormGroup>
+                                            </Checkbox>
+                                        </div>)
+                                    }
+                                </div>
+                                <div className='action'>
+                                    <Clickable text='Save Slack Settings' onClick={save}/>
+                                    <p display-if={saveSuccess}>Settings saved successfully</p>
+                                </div>
                             </div>
                             <div display-if={!hasSlack}>
                                 <SlackLoginButton/>
@@ -130,12 +138,11 @@ class SettingsPage extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-    const {config, user, slack} = state
+    const {user, slack} = state
     let params = {}
     const parseUser = Parse.User.current()
     let channels = getChannels(state)
     return {
-        slackClientId: config.get('SLACK_CLIENT_ID'),
         ...params,
         isLoggedIn: user.get('isLoggedIn'),
         isLoading: user.get('isLoading'),
