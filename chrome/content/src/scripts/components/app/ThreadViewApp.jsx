@@ -13,9 +13,9 @@ anchor.className = 'ThreadViewApp'
 
 store.ready().then(() => {
     render(<Provider store={store} className="">
-            <ThreadView/>
-        </Provider>,
-        anchor)
+        <ThreadView/>
+    </Provider>,
+    anchor)
 
     return anchor
 })

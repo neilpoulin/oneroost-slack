@@ -42,6 +42,7 @@ module.exports = {
             'node_modules',
             'actions',
             'controllers',
+            'styles',
             '../../lib/scripts',
             '../../lib/styles',
             '../../lib/fonts',

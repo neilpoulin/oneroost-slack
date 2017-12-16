@@ -1,0 +1,11 @@
+@import "~content_variables.scss";
+.ThreadView{
+  height: 100%;
+  .subject{
+    font-weight: bold;
+    color: $roostOrange;
+  }
+  .message-body{
+    white-space: pre-line;
+  }
+}

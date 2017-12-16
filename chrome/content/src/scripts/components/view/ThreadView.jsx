@@ -9,19 +9,27 @@ class ThreadView extends Component {
     }
 
     render() {
-        const {subject, sender, body, isLoggedIn, fullName} = this.props
+        const {
+            subject,
+            isLoggedIn,
+            fullName,
+            vendorFound,
+            vendor,
+            isLoading,
+        } = this.props
         return (
             <div className="ThreadView">
-                <div display-if={isLoggedIn}>
-                    <h3>Welcome, {fullName}</h3>
+                <div display-if={isLoading}>
+                    Loading....
                 </div>
-                <div className="subject">{subject}</div>
-                <div display-if={sender}>
-                    From: {sender.name} ({sender.emailAddress})
+                <div display-if={vendorFound}>
+                    <h1 className='subject'>Roost Rating: {vendor.roostRating ? vendor.roostRating : 'No Rating'}</h1>
+                    <h2>{vendor.companyName}</h2>
+                    <div>{vendor.email.name}</div>
+                    <div>{vendor.email.emailAddress}</div>
                 </div>
-                <div display-if={body}>
-                    <h4>Body</h4>
-                    <p className="message-body">{body}</p>
+                <div display-if={!vendorFound && !isLoading}>
+                    WARNING: Vendor has no roost rating
                 </div>
             </div>
         );
@@ -30,22 +38,32 @@ class ThreadView extends Component {
 
 ThreadView.propTypes = {
     subject: PropTypes.string,
-    body: PropTypes.string,
-    sender: PropTypes.shape({
-        emailAddress: PropTypes.string,
-        name: PropTypes.string
-    })
+    isLoggedIn: PropTypes.bool,
+    fullName: PropTypes.string,
+    vendor: PropTypes.shape({
+        companyName: PropTypes.string,
+        roostRating: PropTypes.any,
+        email: PropTypes.shape({
+            name: PropTypes.string,
+            emailAddress: PropTypes.string,
+        })
+    }),
+    vendorFound: PropTypes.bool,
+    isLoading: PropTypes.bool,
 }
 
 const mapStateToProps = (state) => {
     const thread = state.thread
     const {userId, isLoggedIn} = state.user;
+    const {vendor, isLoading} = state.vendor;
+
     return {
         subject: thread.subject,
-        body: thread.body,
-        sender: thread.sender,
         userId,
         isLoggedIn,
+        vendorFound: !!vendor,
+        vendor,
+        isLoading,
         fullName: getFullName(state)
     }
 }

@@ -4,10 +4,15 @@ import {
     SET_BODY,
     SET_SENDER,
 } from 'actions/thread'
+import {FIND_VENDOR_BY_EMAIL_ALIAS} from 'actions/vendor'
 import {
     RESET_USER_REDIRECT
 } from 'actions/gmail'
 import {composeViewHandler} from 'RedirectButtonController'
+import {threadViewHandler} from 'ThreadViewController'
+import ThreadView from 'ThreadViewApp'
+
+const smallIconUrl = chrome.runtime.getURL('images/logo30x30.png')
 
 const store = new Store({
     portName: 'oneroost'
@@ -32,10 +37,24 @@ Promise.all([loadSDK, storeReady]).then(function([sdk, isReady]){
         composeViewHandler(composeView, store)
     });
 
+    sdk.Toolbars.registerThreadButton({
+        title: 'OneRoost',
+        iconUrl: smallIconUrl,
+        onClick: ({selectedThreadViews=[], selectedThreadRowViews=[]}) => {
+            selectedThreadViews.forEach(threadView => {
+                threadViewHandler(threadView, store)
+            })
+        }
+    })
+
     sdk.Conversations.registerThreadViewHandler(function(threadView){
         // dispatch({type: RESET_THREAD})
-        const subject = threadView.getSubject()
-        dispatch({type: SET_SUBJECT, payload: subject})
+        threadViewHandler(threadView, store)
+        // threadView.on('contactHover', () => {
+        //     sdk.Widgets.showDrawerView({
+        //         el: ThreadView,
+        //     })
+        // })
     });
 
     sdk.Conversations.registerMessageViewHandler(function(messageView){
@@ -44,6 +63,10 @@ Promise.all([loadSDK, storeReady]).then(function([sdk, isReady]){
 
         dispatch({type: SET_BODY, payload: $messageBody.innerText})
         dispatch({type: SET_SENDER, payload: sender})
+        dispatch({
+            type: FIND_VENDOR_BY_EMAIL_ALIAS,
+            email: sender
+        })
         dispatch({type: RESET_USER_REDIRECT})
     })
 });
