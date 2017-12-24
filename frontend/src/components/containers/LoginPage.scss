@@ -19,13 +19,16 @@
 
 .action{    
     justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
     .title{
         margin-bottom: 2rem;
-        font-size: 1.5rem;
+        //font-size: 1.5rem;
     }
     section{
-        padding: 2rem 4rem;
-
+        padding: 2rem 2rem;
+        max-width: 600px;
     }
 }
 
@@ -37,4 +40,45 @@
 .title{
     font-family: "Gotham Bold";
     color: $headerColor;
+}
+
+.heading{
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.siginContainer{
+    display: flex;
+    flex-direction: column;
+    .action{
+        margin-bottom: 3rem;
+    }
+}
+
+.slackLogo{
+    height: 4rem;
+    position: relative;
+    margin-top: -1.2rem;
+}
+
+.slackContainer{
+    @include contentBox;
+}
+.slackActions{
+    display: flex;
+    flex-direction: row;
+    > * {
+        width: 50%;
+        padding: .5rem;
+    }
+}
+
+@media (max-width: $screen-md-min) {
+    .slackActions{
+        flex-direction: column;
+        > * {
+            width: 100%;
+        }
+    }
 }

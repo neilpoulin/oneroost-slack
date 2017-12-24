@@ -10,9 +10,19 @@ import {
 class GoogleLoginButton extends React.Component {
     static propTypes = {
         hostedDomain: PropTypes.string,
+        googleSuccess: PropTypes.func,
+        googleError: PropTypes.func,
+        error: PropTypes.any,
+        googleClientId: PropTypes.string,
     }
     render () {
-        const {googleSuccess, googleError, hostedDomain, error, googleClientId} = this.props;
+        const {
+            googleSuccess,
+            googleError,
+            hostedDomain,
+            error,
+            googleClientId
+        } = this.props;
         return <div>
             <p display-if={error}>
                 {error.message}
@@ -29,7 +39,7 @@ class GoogleLoginButton extends React.Component {
                 tag="span"
                 buttonText={null}
                 hostedDomain={hostedDomain}
-                />
+            />
         </div>
     }
 }

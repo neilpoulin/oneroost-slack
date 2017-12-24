@@ -63,7 +63,6 @@ class SellerLandingPage extends React.Component{
 
         return <BasePage showNav={true}
             fixedNav={true}
-            navBackgroundStyle=''
             navTextColor={'primary'}
             suppressPadding={true}
             showHome={true}

@@ -2727,6 +2727,18 @@ eslint-plugin-jest@^21.2.0:
   version "21.2.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-21.2.0.tgz#292044df9cf0866ad9c530e78e6528fae287b926"
 
+eslint-plugin-mongo@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-mongo/-/eslint-plugin-mongo-1.0.5.tgz#e0cc946d65d5a2d65b71bf4507fc235c9621ca5b"
+  dependencies:
+    requireindex "~1.1.0"
+
+eslint-plugin-mongodb@^0.2.4:
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-mongodb/-/eslint-plugin-mongodb-0.2.4.tgz#0bd410770e0e4804cdb52f49ce7e19ed5b3492d8"
+  dependencies:
+    yerror "^1.0.1"
+
 eslint-plugin-react@^7.4.0:
   version "7.4.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.4.0.tgz#300a95861b9729c087d362dd64abcc351a74364a"
@@ -7283,6 +7295,10 @@ require_optional@~1.0.0:
     resolve-from "^2.0.0"
     semver "^5.1.0"
 
+requireindex@~1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/requireindex/-/requireindex-1.1.0.tgz#e5404b81557ef75db6e49c5a72004893fe03e162"
+
 requires-port@1.0.x, requires-port@1.x.x:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
@@ -8866,3 +8882,7 @@ yargs@~3.10.0:
     cliui "^2.1.0"
     decamelize "^1.0.0"
     window-size "0.1.0"
+
+yerror@^1.0.1:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/yerror/-/yerror-1.0.2.tgz#3b4afc653a2dfd7c916cfb0afd89a1cf98ee2594"
