@@ -137,3 +137,11 @@ a {
 .btn-white{
     @include button-style(white, $roostOrange)
 }
+
+.btn-green{
+    @include button-style($colorGreen, white)
+}
+
+.btn-outline-green{
+    @include button-outline-style($colorGreen)
+}

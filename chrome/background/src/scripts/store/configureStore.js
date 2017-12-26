@@ -6,7 +6,7 @@ import reducers from './../ducks'
 import {aliases as userAliases} from './../ducks/user'
 import {aliases as gmailAliases} from './../ducks/gmail'
 import {aliases as configAliases} from './../ducks/config'
-import {aliases as vendorAliases} from './../ducks/vendor'
+import {aliases as vendorAliases} from '../ducks/vendor'
 import {composeWithDevTools} from 'redux-devtools-extension/developmentOnly'
 
 const aliases = {

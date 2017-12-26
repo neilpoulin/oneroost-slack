@@ -4,7 +4,10 @@ import webpack from 'webpack';
 import rimraf from 'rimraf';
 import zip from 'gulp-zip';
 import jeditor from 'gulp-json-editor';
+import notify from 'gulp-notify'
 import manifestKeys from './manifestEnv.json'
+import path from 'path'
+import opn from 'opn'
 
 const plugins = loadPlugins();
 
@@ -118,6 +121,34 @@ gulp.task('manifest:tick', () => {
         .pipe(gulp.dest('./'));
 })
 
+notify.on('click', function (options) {
+    console.log('I clicked something!', options);
+    // opn(null, {app: 'google chrome', wait: false})
+    //     .then((resp) => console.log('succssfully opened browser', resp))
+    //     .catch(console.error);
+});
+
+let notifyOpts = {
+    title: '\u2705 OneRoost',
+    message:'Finished Building OneRoost Chrome Extension.',
+    // message: 'Click to go to the extensions page',
+    onLast: true,
+    icon: path.join(__dirname, 'images', 'oneroost_logo_square_128x128.png'),
+    // open: 'https://inbox.google.com',
+    wait: true,
+    timeout: 5
+}
+
+gulp.task('notify-test', () => {
+    gulp.src('gulpfile.babel.js')
+        .pipe(notify(notifyOpts))
+})
+
+gulp.task('notify', ['chrome'], () => {
+    gulp.src('gulpfile.babel.js')
+        .pipe(notify(notifyOpts))
+})
+
 gulp.task('chrome', ['chrome:copy-images',
     'chrome:copy-lib',
     'chrome:copy-oauth-html',
@@ -127,10 +158,10 @@ gulp.task('chrome', ['chrome:copy-images',
     'chrome:content-js',
     'chrome:background-js']);
 
-gulp.task('chrome:watch', ['chrome'], () => {
-    gulp.watch('content/**/*', ['chrome']);
-    gulp.watch('background/**/*', ['chrome']);
-    gulp.watch('manifest.json', ['chrome']);
-    gulp.watch('lib/**/*', ['chrome']);
-    gulp.watch('../lib/**/*', ['chrome']);
+gulp.task('chrome:watch', ['chrome', 'notify'], () => {
+    gulp.watch('content/**/*', ['chrome', 'notify']);
+    gulp.watch('background/**/*', ['chrome', 'notify']);
+    gulp.watch('manifest.json', ['chrome', 'notify']);
+    gulp.watch('lib/**/*', ['chrome', 'notify']);
+    gulp.watch('../lib/**/*', ['chrome', 'notify']);
 });

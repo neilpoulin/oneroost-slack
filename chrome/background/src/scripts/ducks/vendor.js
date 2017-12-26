@@ -1,16 +1,19 @@
 import Immutable from 'immutable'
-
+import Parse from 'parse'
 import * as VendorActions from 'actions/vendor'
+import {getDomainFromEmail} from 'util/emailUtil'
 
 export const aliases = {
     [VendorActions.FIND_VENDOR_BY_EMAIL_ALIAS]: findVendorByEmail
 }
 
-const initialState = Immutable.fromJS({
+export const initialState = Immutable.fromJS({
     isLoading: false,
     hasLoaded: false,
-    vendor: null,
-    error: null,
+    companyName: null,
+    roostRating: null,
+    email: null,
+    emailDomains: []
 })
 
 export default function reducer(state=initialState, action){
@@ -21,34 +24,72 @@ export default function reducer(state=initialState, action){
         case VendorActions.FIND_VENDOR_SUCCESS:
             state = state.set('isLoading', false)
             state = state.set('hasLoaded', true)
-            state = state.set('vendor', action.payload)
+            // state = state.set('vendor', action.payload)
+            state = state.merge(action.payload)
             break
         case VendorActions.FIND_VENDOR_ERROR:
             state = state.set('isLoading', false)
             state = state.set('error', action.payload)
             break
         default:
+            console.log('not a Vendor supported action', action)
             break
     }
     return state
 }
 
-export function findVendorByEmail({email}){
-    return (dispatch) => {
+function fetchVendorByDomain(domain){
+    let query = new Parse.Query('Vendor')
+    query.equalTo('emailDomains', domain)
+    query.include('inbound')
+    query.include('emailDomains')
+    return query.first()
+}
+
+export function findVendorByEmail({email='unknown@unknown.com'}){
+    return (dispatch, getState) => {
+
+        let vendors = getState().vendors
+
+        if (vendors.get(email)){
+            console.log('vendor already loaded', email)
+            return null
+        }
+
+        let domain = getDomainFromEmail(email)
         dispatch({
-            type: VendorActions.FIND_VENDOR_REQUEST
+            type: VendorActions.FIND_VENDOR_REQUEST,
+            vendorEmail: email,
         })
-        let address = email.emailAddress || 'unknown@unknown.com'
-        let domain = address.split('@')[1]
-        setTimeout(() => {
+        return fetchVendorByDomain(domain).then(vendor => {
+            if (!vendor){
+                console.info('no vendor found')
+                dispatch({
+                    type: VendorActions.FIND_VENDOR_SUCCESS,
+                    vendorEmail: email,
+                    payload: {}
+                })
+                return null
+            }
+
+            let inbound = vendor.get('inbound').toJSON()
+            let payload = {
+                companyName: inbound.companyName,
+                email: email,
+                ...vendor.toJSON()
+            }
             dispatch({
                 type: VendorActions.FIND_VENDOR_SUCCESS,
-                payload: {
-                    companyName: domain,
-                    email,
-                    roostRating: domain.length,
-                }
+                vendorEmail: email,
+                payload
             })
-        }, 1000)
+            return payload
+        }).catch(error => {
+            console.error('Failed to fetch vendors', error)
+            dispatch({
+                type: VendorActions.FIND_VENDOR_ERROR,
+                error,
+            })
+        })
     }
 }

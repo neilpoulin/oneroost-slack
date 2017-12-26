@@ -3,14 +3,14 @@ import thread from './thread'
 import user from './user'
 import gmail from './gmail'
 import config from './config'
-import vendor from './vendor'
+import vendors from './vendors'
 
 const reducers = combineReducers({
     config,
     gmail,
     thread,
     user,
-    vendor,
+    vendors,
 })
 
 export default reducers
