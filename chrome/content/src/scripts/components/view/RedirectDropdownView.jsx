@@ -7,8 +7,8 @@ import {CREATE_FILTER_ALIAS} from 'actions/gmail'
 function buildHtmlMessage(message){
     let $el = document.createElement('div')
     let jsx = <div>
-            {message}
-        </div>
+        {message}
+    </div>
     render(jsx, $el)
     return $el;
 }
@@ -51,7 +51,7 @@ class RedirectDropdownView extends React.Component {
 }
 
 RedirectDropdownView.propTypes = {
-    composeView: PropTypes.object.isRequired,
+    composeView: PropTypes.object,
     insertLink: PropTypes.func.isRequired,
     loadPages: PropTypes.func.isRequired,
     isLoading: PropTypes.bool,

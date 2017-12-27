@@ -5,6 +5,7 @@ import {getDomainFromEmail} from 'util/emailUtil'
 import WarningIcon from 'atoms/icon/warning'
 import {roostOrange} from 'util/variables'
 import Clickable, {COLOR_GREEN} from 'atoms/Clickable'
+import {CREATE_FILTER_ALIAS} from 'actions/gmail'
 
 class ThreadView extends Component {
     constructor(props) {
@@ -21,6 +22,7 @@ class ThreadView extends Component {
         domain: PropTypes.string,
         vendorFound: PropTypes.bool,
         isLoading: PropTypes.bool,
+        blockOnly: PropTypes.func.isRequired,
     }
 
     render() {
@@ -30,6 +32,7 @@ class ThreadView extends Component {
             isLoading,
             email,
             domain,
+            blockOnly,
         } = this.props
         return (
             <div className="container">
@@ -38,7 +41,7 @@ class ThreadView extends Component {
                 </div>
 
                 <div className={'title'}>
-                    <h2 display-if={vendorFound}>{vendor.companyName}</h2>
+                    <h2 display-if={vendorFound && vendor && vendor.inbound }>{vendor.inbound.companyName}</h2>
                     <h2 display-if={domain && !vendorFound}>{domain}</h2>
                     <div className={'roostRating'} display-if={vendorFound}>
                         <span className='rating'>{vendor.roostRating ? vendor.roostRating : 'N/A'}</span>
@@ -46,6 +49,9 @@ class ThreadView extends Component {
                     </div>
                     <div className={'roostRating'} display-if={!vendorFound}>
                         <span className="caption">Roost Rating not available</span>
+                    </div>
+                    <div>
+                        {email}
                     </div>
                 </div>
 
@@ -71,7 +77,7 @@ class ThreadView extends Component {
                         </section>
                         <section className={'actions'}>
                             <Clickable text={'Request Info'} outline={true} colorType={COLOR_GREEN}/>
-                            <Clickable text={'Block'}/>
+                            <Clickable text={'Block'} onClick={() => blockOnly({senderEmail: email})}/>
                         </section>
                         <section display-if={vendor.inbound.testimonials} className='testimonials'>
                             <h3>Testimonials</h3>
@@ -88,10 +94,14 @@ class ThreadView extends Component {
                         <label>Sender</label>
                         <p>{email}</p>
                     </div>
-                    <div className={'warning'}>
+                    <section className={'warning'}>
                         <h2 className={'header'}><WarningIcon color={roostOrange}/> Caution</h2>
                         There is no data on this vendor. We recommend requesting more details below for more information.
-                    </div>
+                    </section>
+                    <section className={'actions'}>
+                        <Clickable text={'Request Info'} outline={true} colorType={COLOR_GREEN}/>
+                        <Clickable text={'Block'} onClick={() => blockOnly({senderEmail: email})}/>
+                    </section>
                 </div>
             </div>
         );
@@ -109,8 +119,9 @@ const mapStateToProps = (state) => {
             vendorFound: false,
         }
     }
-    let vendor = state.vendors[email];
     let domain = getDomainFromEmail(email)
+    let vendor = state.vendors[domain];
+
     if (!vendor)
     {
         return {
@@ -130,4 +141,18 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(ThreadView);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        blockOnly: ({senderName, senderEmail}) => {
+            dispatch({
+                type: CREATE_FILTER_ALIAS,
+                senderName,
+                senderEmail,
+                destinationUrl: null,
+                blocked: true,
+            })
+        },
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ThreadView);

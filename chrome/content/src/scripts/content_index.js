@@ -10,9 +10,11 @@ import {FIND_VENDOR_BY_EMAIL_ALIAS} from 'actions/vendor'
 import {
     RESET_USER_REDIRECT
 } from 'actions/gmail'
-import {composeViewHandler} from 'RedirectButtonController'
+import {composeViewHandler, handleRedirectClick} from 'RedirectButtonController'
 import {threadViewHandler} from 'ThreadViewController'
 import {getVendorByEmail} from 'selectors/vendors'
+import * as RedirectDropdownApp from "./components/app/RedirectDropdownApp";
+
 const manifest = chrome.runtime.getManifest()
 
 const smallIconUrl = chrome.runtime.getURL('images/logo30x30.png')
@@ -62,13 +64,10 @@ function initialize(){
                         let {emailAddress: email} = contacts[0]
                         let vendor = getVendorByEmail(store.getState(), email)
                         if (!vendor) {
-                            console.log('no vendor found for email ', email)
                             let unsubscribeEmail = store.subscribe(() => {
                                 vendor = getVendorByEmail(store.getState(), email)
-                                console.log('vendor: ', vendor)
                                 if (vendor) {
                                     let title = `${vendor.roostRating ? vendor.roostRating : 'N/A'}`
-                                    console.log('found the vendor, unsubscribing')
                                     unsubscribeEmail()
                                     return resolve({
                                         title,
@@ -81,22 +80,21 @@ function initialize(){
                                 email
                             })
                         } else {
-                            console.log('vendor found for email ', email)
                             let title = `${vendor.roostRating ? vendor.roostRating : 'N/A'}`
-                            resolve({
+                            return resolve({
                                 title,
                                 iconUrl: smallIconUrl
                             })
                         }
                     } else {
-                        resolve({
+                        return resolve({
                             title: 'N/A',
                             iconUrl: smallIconUrl,
                         })
                     }
                 } catch (e) {
-                    console.error('something unexpected went wrong getting vendor info', e)
-                    reject(e)
+                    Raven.captureException(e)
+                    return reject(e)
                 }
             })
 
@@ -107,11 +105,31 @@ function initialize(){
         sdk.Toolbars.registerThreadButton({
             title: 'OneRoost',
             iconUrl: smallIconUrl,
-            onClick: ({selectedThreadViews = [], selectedThreadRowViews = []}) => {
-                // selectedThreadViews.forEach(threadView => {
-                //     threadViewHandler(threadView, store)
-                // })
-                console.warn('thread button click not implemented')
+            hasDropdown: true,
+            hideFor: (routeView) => {
+                return false
+            },
+            // onClick: ({selectedThreadViews = [], selectedThreadRowViews = []}) => {
+            // selectedThreadViews.forEach(threadView => {
+            //     threadViewHandler(threadView, store)
+            // })
+            // console.warn('thread button click not implemented')
+            // }
+            onClick: ({selectedThreadViews = [], selectedThreadRowViews = [], dropdown}) => {
+                console.log('handling click')
+                // selectedThreadRowViews[0].get
+                let contacts = selectedThreadRowViews.length > 0 ?  selectedThreadRowViews[0].getContacts() : []
+                if (contacts.length > 0) {
+                    store.dispatch({type: SET_SENDER, payload: contacts[0]})
+                    //NOTE: you can't set the text or subject of the email in composeView unless you want the dropdown to close
+                    dropdown.setPlacementOptions({
+                        position: 'top',
+                    })
+
+                    RedirectDropdownApp.fromElement(dropdown.el).then(() => {
+                        console.log('registered the React component')
+                    })
+                }
             }
         })
 

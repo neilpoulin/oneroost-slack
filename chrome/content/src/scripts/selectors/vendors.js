@@ -1,3 +1,6 @@
+import {getDomainFromEmail} from 'util/emailUtil'
+
 export function getVendorByEmail(state, email) {
-    return state.vendors[email]
+    let domain = getDomainFromEmail(email)
+    return state.vendors[domain]
 }

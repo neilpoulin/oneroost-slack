@@ -280,6 +280,8 @@ export function logRedirect({
             type: SAVE_REDIRECT_REQUEST,
             payload: {
                 blocked,
+                senderEmail,
+                senderName
             }
         })
         Parse.Cloud.run('logRedirect', {

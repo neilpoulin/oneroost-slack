@@ -57,13 +57,12 @@ export function findVendorByEmail({email='unknown@unknown.com'}){
     return (dispatch, getState) => {
 
         let vendors = getState().vendors
-
-        if (vendors.get(email)){
+        let domain = getDomainFromEmail(email)
+        if (vendors.get(domain) || vendors.get(email)){
             console.log('vendor already loaded', email)
             return null
         }
 
-        let domain = getDomainFromEmail(email)
         dispatch({
             type: VendorActions.FIND_VENDOR_REQUEST,
             vendorEmail: email,
@@ -101,3 +100,4 @@ export function findVendorByEmail({email='unknown@unknown.com'}){
         })
     }
 }
+

@@ -1,6 +1,7 @@
 import Immutable from 'immutable'
 import Parse from 'parse'
 import Raven from 'raven-js'
+import {getDomainFromEmail} from 'util/emailUtil'
 
 import vendorReducer, {initialState} from './vendor'
 
@@ -12,18 +13,20 @@ export default function reducer(state=Immutable.Map({}), action){
     try{
         const vendorEmail = action.vendorEmail
         if (vendorEmail){
-            let currentVendorState = state.get(vendorEmail, initialState)
+            let vendorDomain = getDomainFromEmail(vendorEmail)
+            let currentVendorState = state.get(vendorDomain, initialState)
             let vendorState = vendorReducer(currentVendorState, action)
-            state = state.set(vendorEmail, vendorState)
+            state = state.set(vendorDomain, vendorState)
         }
         switch (action.type){
             case LOAD_ALL_VENDORS_SUCCESS:
-                let updatedMap = action.payload.vendors.map(vendor => {
-                    return {
-                        [vendor.get('email')]: vendor
-                    }
-                })
-                state = state.merge(updatedMap)
+                state = state.merge(action.payload.vendors.reduce((map, vendor) => {
+                    let domains = vendor.emailDomains || []
+                    domains.forEach(domain => {
+                        map[domain] = vendor
+                    })
+                    return map
+                }, {}))
                 break;
             default:
                 break;
