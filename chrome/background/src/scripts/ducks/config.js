@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
 import axios from 'axios'
 import {SET_SERVER_URL} from 'actions/config'
-
+import Raven from 'raven-js'
 export const CONFIGS_LOAD_REQUEST = 'oneroost/config/CONFIGS_LOAD_REQUEST'
 export const CONFIGS_LOAD_SUCCESS = 'oneroost/config/CONFIGS_LOAD_SUCCESS'
 export const CONFIGS_LOAD_ERROR = 'oneroost/config/CONFIGS_LOAD_ERROR'
@@ -9,10 +9,10 @@ export const TEAM_CONFIGS_LOAD_REQUEST = 'oneroost/config/TEAM_CONFIGS_LOAD_REQU
 export const TEAM_CONFIGS_LOAD_SUCCESS = 'oneroost/config/TEAM_CONFIGS_LOAD_SUCCESS'
 export const TEAM_CONFIGS_LOAD_ERROR = 'oneroost/config/TEAM_CONFIGS_LOAD_ERROR'
 
-
 import * as ConfigActions from 'actions/config'
 import Parse from 'parse'
 import {loadCachedUser} from 'ducks/user'
+
 
 const initialState = Immutable.fromJS({
     PARSE_PUBLIC_URL: null,
@@ -116,12 +116,14 @@ export function loadTeamConfigs(){
 
 export function updateServerConfigs(){
     return dispatch => {
-        dispatch(loadServerConfigs()).then(configs => {
+        return dispatch(loadServerConfigs()).then(configs => {
             console.log(configs)
             Parse.initialize(configs.PARSE_APP_ID);
             Parse.serverURL = configs.PARSE_PUBLIC_URL;
+
             dispatch(loadTeamConfigs())
             dispatch(loadCachedUser())
+            return configs
         })
     }
 }

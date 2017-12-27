@@ -3,6 +3,7 @@ import {fromJS} from 'immutable'
 import {handleSignInClick, handleSignOutClick, loadUserFromCache} from 'googleAuth'
 import * as UserActions from 'actions/user'
 import {syncTeamRedirects} from 'ducks/gmail'
+import Raven from 'raven-js'
 
 const initialState = {
     isLogin: false,
@@ -76,6 +77,7 @@ export const loadUserDetails = (userId) => (dispatch, getState) => {
         })
     }).catch(error => {
         console.error(error)
+        Raven.captureException(error)
     })
 }
 
@@ -99,6 +101,7 @@ export const logIn = ({email, password}) => (dispatch, getState) => {
         })
         .catch(error => {
             console.error(error)
+            Raven.captureException(error)
         })
 }
 
@@ -122,14 +125,14 @@ export const logInGoogle = () => (dispatch, getState) => {
         console.log('Signed In Click finished...', email)
         dispatch(linkUserWithProvider('google', {access_token, id}))
         dispatch({type: UserActions.GOOGLE_LOG_IN_SUCCESS, payload: {email}})
-    })
+    }).catch(Raven.captureException)
 }
 
 export function logOutGoogle(){
     return (dispatch, getState) => {
         handleSignOutClick().then(() => {
             dispatch({type: UserActions.GOOGLE_LOG_OUT_SUCCESS})
-        })
+        }).catch(Raven.captureException)
     }
 }
 
@@ -148,7 +151,7 @@ export const loadCachedUser = () => (dispatch, getState) => {
         dispatch(linkUserWithProvider('google', {access_token, id}))
         dispatch(syncTeamRedirects())
         // dispatch({type: UserActions.GOOGLE_LOG_IN_SUCCESS, payload: {email}})
-    }).catch(console.error)
+    }).catch(Raven.captureException)
 }
 
 export function linkUserWithProvider(provider, authData){
@@ -173,7 +176,7 @@ export function refreshUserData(){
                     userId: user.id,
                     payload: updatedUser.toJSON()
                 })
-            })
+            }).catch(Raven.captureException)
         }
     }
 }
@@ -205,6 +208,7 @@ function linkUser(user, provider, authData){
                 default:
                     console.error('Failed to link with' + provider, error)
                     dispatch(linkUserWithProviderError(provider, error))
+                    Raven.captureException(error)
                     break
             }
         })

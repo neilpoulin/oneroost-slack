@@ -51,28 +51,36 @@ class ThreadView extends Component {
 
                 <div display-if={vendorFound}>
                     <div display-if={vendor && vendor.inbound}>
-                        <ul className={'tags'} display-if={vendor.inbound.tags}>
-                            {vendor.inbound.tags.map((tag, i) =>
-                                <li className='tag' key={`tags_${i}`}>{tag}</li>
-                            )}
-                        </ul>
-
-                        <div display-if={vendor.inbound.website}>
+                        <section>
+                            <ul className={'tags'} display-if={vendor.inbound.tags}>
+                                {vendor.inbound.tags.map((tag, i) =>
+                                    <li className='tag' key={`tags_${i}`}>{tag}</li>
+                                )}
+                            </ul>
+                        </section>
+                        <section display-if={vendor.inbound.website}>
                             <Clickable href={vendor.inbound.website} target={'_blank'} text={'View Website'}/>
-                        </div>
-                        <div display-if={vendor.inbound.elevatorPitch}>
+                        </section>
+                        <section display-if={vendor.inbound.elevatorPitch}>
                             <h3>Elevator Pitch</h3>
                             <p>{vendor.inbound.elevatorPitch}</p>
-                        </div>
-                        <div display-if={vendor.inbound.relevancy}>
+                        </section>
+                        <section display-if={vendor.inbound.relevancy}>
                             <h3>Integrations</h3>
                             <p>{vendor.inbound.relevancy}</p>
-                        </div>
-                    </div>
-
-                    <div className={'actions'}>
-                        <Clickable text={'Request Info'} outline={true} colorType={COLOR_GREEN}/>
-                        <Clickable text={'Block'}/>
+                        </section>
+                        <section className={'actions'}>
+                            <Clickable text={'Request Info'} outline={true} colorType={COLOR_GREEN}/>
+                            <Clickable text={'Block'}/>
+                        </section>
+                        <section display-if={vendor.inbound.testimonials} className='testimonials'>
+                            <h3>Testimonials</h3>
+                            {vendor.inbound.testimonials.map((testimonial, i) =>
+                                <div key={`testimonial_${i}`} className='testimonial'>
+                                    <h4>{testimonial.customerName}</h4>
+                                    <q>{testimonial.comment}</q>
+                                </div>)}
+                        </section>
                     </div>
                 </div>
                 <div display-if={!vendorFound && !isLoading}>

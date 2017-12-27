@@ -10,6 +10,10 @@ $borderWeight: 2px;
   }
 }
 
+section{
+  margin-bottom: 1.5rem;
+}
+
 p{
   white-space: pre-line;
   margin: 0;
@@ -52,7 +56,6 @@ ul.tags{
 }
 
 .actions{
-  margin-top: 5rem;
   > * {
     margin-bottom: 1rem;
   }
@@ -95,4 +98,8 @@ ul.tags{
     align-items: center;
 
   }
+}
+
+.testimonial{
+  margin-bottom: 1rem;
 }

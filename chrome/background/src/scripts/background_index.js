@@ -7,6 +7,8 @@ import {SET_SERVER_URL, } from 'actions/config'
 import {
     syncTeamRedirects
 } from 'ducks/gmail'
+import Raven from 'raven-js'
+import {loadAllVendors} from 'ducks/vendors'
 
 const oneroostDomain = process.env.HOSTNAME || 'https://www.oneroost.com'
 console.log('ONEROOST DOMAIN = ' + oneroostDomain)
@@ -21,7 +23,17 @@ store.dispatch({
     }
 })
 
-store.dispatch(updateServerConfigs())
+store.dispatch(updateServerConfigs()).then(configs => {
+    Raven.config('https://742ac732418c4de7bd0e22903a537a8e@sentry.io/264134', {
+        environment: configs.ENV
+    }).install()
+
+    window.onunhandledrejection = function(evt) {
+        Raven.captureException(evt.reason);
+    };
+
+    store.dispatch(loadAllVendors())
+})
 
 //poll for new changes every 10 minutes
 window.setInterval(() => {

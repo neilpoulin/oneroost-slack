@@ -1,6 +1,7 @@
 import {fromJS} from 'immutable'
 import axios from 'axios'
 import Parse from 'parse'
+import Raven from 'raven-js'
 import {
     CREATE_FILTER_ALIAS,
     GET_FILTERS_ALIAS,
@@ -105,6 +106,7 @@ export function getGmailFilters(){
                 })
             }).catch(error => {
                 console.error(error)
+                Raven.captureException(error)
                 dispatch({
                     type: GET_FILTERS_ERROR,
                     error,
@@ -120,13 +122,16 @@ export function syncTeamRedirects(){
             type: LOAD_REDIRECTS_REQUEST
         })
         let teamRedirectsAsync = dispatch(getTeamRedirects())
-        .then(results => {
-            console.log('teamRedirectSync results', results)
-            return results.map(r => {
-                console.log('result', r)
-                return r.toJSON()
+            .then(results => {
+                console.log('teamRedirectSync results', results)
+                return results.map(r => {
+                    console.log('result', r)
+                    return r.toJSON()
+                })
+            }).catch(error => {
+                console.error('failed to sync team redirects', error)
+                Raven.captureException(error)
             })
-        }).catch(error => console.error(error))
 
         let labelsAsync = getCurrentLabels()
         let filtersAsync = getCurrentFilters()
@@ -213,6 +218,7 @@ export function syncTeamRedirects(){
                 })
             }).catch(error => {
                 console.warn('Unable to sync filters', error)
+                Raven.captureException(error)
             })
 
             dispatch({
@@ -220,6 +226,8 @@ export function syncTeamRedirects(){
                 payload: redirects
             })
         }).catch(error => {
+            console.error('failed to sync team vendor filters')
+            Raven.captureException(error)
             dispatch({
                 type: LOAD_REDIRECTS_ERROR,
                 error,
@@ -251,6 +259,7 @@ export function getTeamRedirects(){
             })
             return redirects
         }).catch(error => {
+            Raven.captureException(error)
             dispatch({
                 type: LOAD_REDIRECTS_ERROR,
                 error,
@@ -284,6 +293,7 @@ export function logRedirect({
             })
         }).catch(error => {
             console.error(error)
+            Raven.captureException(error)
             dispatch({
                 type: SAVE_REDIRECT_ERROR
             })
@@ -371,6 +381,7 @@ export function createFilter({senderName, senderEmail, destinationUrl, blocked})
             return
         }).catch(error => {
             console.error(error)
+            Raven.captureException(error)
             dispatch({
                 type: CREATE_FILTER_ERROR,
                 error
