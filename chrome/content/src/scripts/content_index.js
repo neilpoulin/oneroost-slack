@@ -119,6 +119,7 @@ function initialize(){
                 console.log('handling click')
                 // selectedThreadRowViews[0].get
                 let contacts = selectedThreadRowViews.length > 0 ?  selectedThreadRowViews[0].getContacts() : []
+                contacts = [...contacts, selectedThreadViews.length > 0 ? selectedThreadViews[0].getMessageViewsAll()[0].getSender() : []]
                 if (contacts.length > 0) {
                     store.dispatch({type: SET_SENDER, payload: contacts[0]})
                     //NOTE: you can't set the text or subject of the email in composeView unless you want the dropdown to close

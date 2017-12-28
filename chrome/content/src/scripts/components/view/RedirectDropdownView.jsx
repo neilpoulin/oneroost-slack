@@ -16,10 +16,26 @@ class RedirectDropdownView extends React.Component {
     componentDidMount(){
 
     }
+
+    static propTypes = {
+        composeView: PropTypes.object,
+        handleRequestMoreInfo: PropTypes.func.isRequired,
+        loadPages: PropTypes.func.isRequired,
+        isLoading: PropTypes.bool,
+        senderName: PropTypes.string,
+        senderEmail: PropTypes.string,
+        teamUrl: PropTypes.string,
+        message: PropTypes.string,
+        blockOnly: PropTypes.func.isRequired,
+        saved: PropTypes.bool,
+        userBlocked: PropTypes.bool,
+    }
+
+
     render () {
         const {
             isLoading,
-            insertLink,
+            handleRequestMoreInfo,
             senderName,
             senderEmail,
             teamUrl,
@@ -28,11 +44,11 @@ class RedirectDropdownView extends React.Component {
             saved,
             userBlocked,
         } = this.props
-        return <div className="RedirectDropdownView">
+        return <div className={'container'}>
             <div display-if={isLoading}>
                 Loading....
             </div>
-            <div display-if={!isLoading}>
+            <div display-if={!isLoading && senderEmail}>
                 <p className={`username ${userBlocked ? 'blocked' : (saved ? 'unblocked' : '')}`}>
                     <span className='title'>{senderEmail}</span>
                     <span display-if={saved}>
@@ -42,26 +58,15 @@ class RedirectDropdownView extends React.Component {
 
                 <ul className="vanityUrls">
                     <li className='vanityUrl' onClick={() => blockOnly({senderName, senderEmail})}>Block Only</li>
-                    <li className='vanityUrl' onClick={() => insertLink({message, teamUrl, senderName, senderEmail, doBlock: true})}>Redirect and Block</li>
-                    <li className='vanityUrl' onClick={() => insertLink({message, teamUrl, senderName, senderEmail, doBlock: false})}>Redirect and Do Not Block</li>
+                    <li className='vanityUrl' onClick={() => handleRequestMoreInfo({message, teamUrl, senderName, senderEmail, doBlock: false})}>Request Info</li>
+                    <li className='vanityUrl' onClick={() => handleRequestMoreInfo({message, teamUrl, senderName, senderEmail, doBlock: true})}>Request Info and Block</li>
                 </ul>
+            </div>
+            <div display-if={!senderEmail && !isLoading}>
+                Oops, something went wrong this thread could not be processed for blocking
             </div>
         </div>
     }
-}
-
-RedirectDropdownView.propTypes = {
-    composeView: PropTypes.object,
-    insertLink: PropTypes.func.isRequired,
-    loadPages: PropTypes.func.isRequired,
-    isLoading: PropTypes.bool,
-    senderName: PropTypes.string,
-    senderEmail: PropTypes.string,
-    teamUrl: PropTypes.string,
-    message: PropTypes.string,
-    blockOnly: PropTypes.func.isRequired,
-    saved: PropTypes.bool,
-    userBlocked: PropTypes.bool,
 }
 
 const mapStateToProps = (state, ownProps) => {
@@ -93,8 +98,11 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        insertLink: ({message, teamUrl, senderName, senderEmail, doBlock}) => {
-            ownProps.composeView.insertHTMLIntoBodyAtCursor(buildHtmlMessage(message))
+        handleRequestMoreInfo: ({message, teamUrl, senderName, senderEmail, doBlock}) => {
+            if (ownProps.composeView)
+            {
+                ownProps.composeView.insertHTMLIntoBodyAtCursor(buildHtmlMessage(message))
+            }
             dispatch({
                 type: CREATE_FILTER_ALIAS,
                 senderName,
@@ -102,6 +110,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 destinationUrl: teamUrl,
                 blocked: doBlock,
             })
+
         },
         blockOnly: ({senderName, senderEmail}) => {
             dispatch({

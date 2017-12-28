@@ -118,6 +118,10 @@ export function getGmailFilters(){
 export function syncTeamRedirects(){
     return (dispatch, getState) => {
         console.log('syncing team info')
+        let token = getState().user.google_access_token
+        console.log('setting up axios headers with token ', token)
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
         dispatch({
             type: LOAD_REDIRECTS_REQUEST
         })
@@ -249,6 +253,7 @@ export function getTeamRedirects(){
         }
         let query = new Parse.Query('Redirect')
         query.equalTo('slackTeam', user.get('slackTeam'))
+        query.equalTo('createdBy', user)
         dispatch({
             type: LOAD_REDIRECTS_REQUEST
         })

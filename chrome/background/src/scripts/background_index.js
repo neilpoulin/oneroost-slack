@@ -31,7 +31,7 @@ store.dispatch(updateServerConfigs()).then(configs => {
     window.onunhandledrejection = function(evt) {
         Raven.captureException(evt.reason);
     };
-
+    store.dispatch(syncTeamRedirects())
     store.dispatch(loadAllVendors())
 })
 

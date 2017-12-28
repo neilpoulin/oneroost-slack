@@ -4,6 +4,7 @@ import {handleSignInClick, handleSignOutClick, loadUserFromCache} from 'googleAu
 import * as UserActions from 'actions/user'
 import {syncTeamRedirects} from 'ducks/gmail'
 import Raven from 'raven-js'
+import axios from 'axios'
 
 const initialState = {
     isLogin: false,
@@ -16,6 +17,8 @@ const initialState = {
     error: null,
     teamId: null,
     channels: {},
+    google_access_token: null,
+    google_user_id: null,
     selectedChannels: []
 }
 
@@ -34,12 +37,27 @@ export default function reducer(state=initialState, action){
             state.userId = getUserIdFromAction(action);
             state.isLoading = false;
             state.isLoggedIn = true;
+
+            state.firstName = payload.firstName;
+            state.lastName = payload.lastName;
+            state.email = payload.email;
+            state.isAdmin = payload.admin;
+            state.google_access_token = (payload.authData && payload.authData.google) ? payload.authData.google.access_token : null
+            state.google_user_id = (payload.authData && payload.authData.google) ? payload.authData.google.id: null
+            if (payload.slackTeam){
+                state.channels = payload.slackTeam.channels || {}
+                state.selectedChannels = payload.slackTeam.selectedChannels || []
+                state.teamId = payload.slackTeam.objectId
+            }
+
             break;
         case UserActions.UPDATE_USER_INFO:
             state.firstName = payload.firstName;
             state.lastName = payload.lastName;
             state.email = payload.email;
             state.isAdmin = payload.admin;
+            state.google_access_token = (payload.authData && payload.authData.google) ? payload.authData.google.access_token : null
+            state.google_user_id = (payload.authData && payload.authData.google) ? payload.authData.google.id: null
             if (payload.slackTeam){
                 state.channels = payload.slackTeam.channels || {}
                 state.selectedChannels = payload.slackTeam.selectedChannels || []
@@ -167,7 +185,7 @@ export function linkUserWithProvider(provider, authData){
 }
 
 export function refreshUserData(){
-    return (dispatch) => {
+    return (dispatch, getState) => {
         let user = Parse.User.current();
         if (user){
             user.fetch().then(updatedUser => {
@@ -176,6 +194,8 @@ export function refreshUserData(){
                     userId: user.id,
                     payload: updatedUser.toJSON()
                 })
+                let token = getState().user.google_access_token
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             }).catch(Raven.captureException)
         }
     }

@@ -248,9 +248,7 @@ export function initialize(){
             user = await userQuery.get(user.id)
 
             let slackTeam = user.get('slackTeam')
-            if (!slackTeam){
-                reject({message: 'no slack team could be found for user ' + user.id})
-            }
+
             const {
                 senderName,
                 senderEmail,
@@ -261,8 +259,12 @@ export function initialize(){
             redirectQuery.include('slackTeam')
             redirectQuery.include('createdBy')
             redirectQuery.equalTo('senderEmail', senderEmail)
-            redirectQuery.equalTo('slackTeam', slackTeam)
 
+            if (slackTeam){
+                redirectQuery.equalTo('slackTeam', slackTeam)
+            } else {
+                redirectQuery.equalTo('createdBy', user)
+            }
 
             let existingRedirect = await redirectQuery.first()
             if (existingRedirect){
@@ -288,8 +290,6 @@ export function initialize(){
                 await redirect.save()
                 resolve({success: 'successfully saved new the redirect'})
             }
-
-
 
         }, 10000).then(body => {
             return response.success(body)
