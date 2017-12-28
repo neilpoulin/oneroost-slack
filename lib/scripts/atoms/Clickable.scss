@@ -22,6 +22,7 @@ a {
     display: flex;
     justify-content: center;
     height: 100%;
+    white-space: pre-line;
     &.disabled{
         background-color: lightgray;
         border-color: darkgray;

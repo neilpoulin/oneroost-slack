@@ -120,9 +120,6 @@ export function updateServerConfigs(){
             console.log(configs)
             Parse.initialize(configs.PARSE_APP_ID);
             Parse.serverURL = configs.PARSE_PUBLIC_URL;
-
-            dispatch(loadTeamConfigs())
-            dispatch(loadCachedUser())
             return configs
         })
     }

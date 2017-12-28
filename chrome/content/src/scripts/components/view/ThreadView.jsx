@@ -6,6 +6,7 @@ import WarningIcon from 'atoms/icon/warning'
 import {roostOrange} from 'util/variables'
 import Clickable, {COLOR_GREEN} from 'atoms/Clickable'
 import {CREATE_FILTER_ALIAS} from 'actions/gmail'
+import {formatDateShort} from 'util/timeUtil'
 
 class ThreadView extends Component {
     constructor(props) {
@@ -23,6 +24,11 @@ class ThreadView extends Component {
         vendorFound: PropTypes.bool,
         isLoading: PropTypes.bool,
         blockOnly: PropTypes.func.isRequired,
+        unblock: PropTypes.func.isRequired,
+        redirect: PropTypes.shape({
+            blocked: PropTypes.bool,
+        }),
+        senderBlocked: PropTypes.bool,
     }
 
     render() {
@@ -33,6 +39,9 @@ class ThreadView extends Component {
             email,
             domain,
             blockOnly,
+            unblock,
+            redirect,
+            senderBlocked,
         } = this.props
         return (
             <div className="container">
@@ -77,7 +86,11 @@ class ThreadView extends Component {
                         </section>
                         <section className={'actions'}>
                             <Clickable text={'Request Info'} outline={true} colorType={COLOR_GREEN}/>
-                            <Clickable text={'Block'} onClick={() => blockOnly({senderEmail: email})}/>
+                            <Clickable display-if={!senderBlocked} text={`Block\n${email}`} onClick={() => blockOnly({senderEmail: email})}/>
+                            <Clickable display-if={senderBlocked} text={`UnBlock\n${email}`} colorType={COLOR_GREEN} onClick={() => unblock({senderEmail: email})}/>
+                            <div display-if={redirect}>
+                                {redirect.blocked ? 'blocked' : 'unblocked'} by {redirect.updatedBy.username} on {formatDateShort(redirect.updatedAt)}
+                            </div>
                         </section>
                         <section display-if={vendor.inbound.testimonials} className='testimonials'>
                             <h3>Testimonials</h3>
@@ -100,7 +113,11 @@ class ThreadView extends Component {
                     </section>
                     <section className={'actions'}>
                         <Clickable text={'Request Info'} outline={true} colorType={COLOR_GREEN}/>
-                        <Clickable text={'Block'} onClick={() => blockOnly({senderEmail: email})}/>
+                        <Clickable display-if={!senderBlocked} text={`Block\n${email}`} onClick={() => blockOnly({senderEmail: email})}/>
+                        <Clickable display-if={senderBlocked} text={`UnBlock\n${email}`} colorType={COLOR_GREEN} onClick={() => unblock({senderEmail: email})}/>
+                        <div display-if={redirect}>
+                            {redirect.blocked ? 'blocked' : 'unblocked'} by {redirect.updatedBy.username} on {formatDateShort(redirect.updatedAt)}
+                        </div>
                     </section>
                 </div>
             </div>
@@ -119,6 +136,7 @@ const mapStateToProps = (state) => {
             vendorFound: false,
         }
     }
+    let redirect = state.gmail.redirectsByEmail[email]
     let domain = getDomainFromEmail(email)
     let vendor = state.vendors[domain];
 
@@ -138,6 +156,8 @@ const mapStateToProps = (state) => {
         domain,
         vendor,
         isLoading: vendor.isLoading,
+        redirect,
+        senderBlocked: redirect && redirect.blocked
     }
 }
 
@@ -150,6 +170,15 @@ const mapDispatchToProps = (dispatch) => {
                 senderEmail,
                 destinationUrl: null,
                 blocked: true,
+            })
+        },
+        unblock: ({senderName, senderEmail}) => {
+            dispatch({
+                type: CREATE_FILTER_ALIAS,
+                senderName,
+                senderEmail,
+                destinationUrl: null,
+                blocked: false,
             })
         },
     }

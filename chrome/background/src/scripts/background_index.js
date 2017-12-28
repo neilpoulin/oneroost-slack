@@ -9,6 +9,8 @@ import {
 } from 'ducks/gmail'
 import Raven from 'raven-js'
 import {loadAllVendors} from 'ducks/vendors'
+import {loadCachedUser} from 'ducks/user'
+import {loadTeamConfigs} from 'ducks/config'
 
 const oneroostDomain = process.env.HOSTNAME || 'https://www.oneroost.com'
 console.log('ONEROOST DOMAIN = ' + oneroostDomain)
@@ -23,6 +25,8 @@ store.dispatch({
     }
 })
 
+const dispatch = store.dispatch
+
 store.dispatch(updateServerConfigs()).then(configs => {
     Raven.config('https://742ac732418c4de7bd0e22903a537a8e@sentry.io/264134', {
         environment: configs.ENV
@@ -31,14 +35,27 @@ store.dispatch(updateServerConfigs()).then(configs => {
     window.onunhandledrejection = function(evt) {
         Raven.captureException(evt.reason);
     };
-    store.dispatch(syncTeamRedirects())
+
+    if (store.getState().user.userId){
+        console.log('user is logged in, fetching user info')
+        store.dispatch(syncTeamRedirects())
+        dispatch(loadTeamConfigs())
+    } else {
+        console.log('user is not logged in, attempting to fetch cached user')
+        dispatch(loadCachedUser())
+    }
+    console.log('loading non-user specific items')
     store.dispatch(loadAllVendors())
+}).catch(error => {
+    console.log('Something went wrong while fetching configs', error)
 })
 
 //poll for new changes every 10 minutes
 window.setInterval(() => {
     try{
-        store.dispatch(syncTeamRedirects())
+        if (store.getState().user.userId){
+            store.dispatch(syncTeamRedirects())
+        }
         store.dispatch(updateServerConfigs())
     } catch (e){
         console.error('Failed to execute polling', e)

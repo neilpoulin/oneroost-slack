@@ -1,7 +1,7 @@
 import axios from 'axios'
 // helpful link https://developer.chrome.com/apps/app_identity
 // https://developer.chrome.com/extensions/tut_oauth#oauth-dance
-
+import Raven from 'raven-js'
 const verifyTokenUrl = 'https://www.googleapis.com/oauth2/v3/tokeninfo'
 const manifest = chrome.runtime.getManifest()
 const clientId = manifest.oauth2.client_id
@@ -10,10 +10,12 @@ var access_token = null;
 var id_token = null;
 
 window.getLastToken = function() {
+    console.log('removing last access token: ', access_token)
     return access_token;
 }
 
 export function loadUserFromCache() {
+    console.warn('load user form cache not implemented')
     return Promise.reject(null)
     // return oauth2(false)
 }
@@ -27,31 +29,34 @@ function oauth2(interactive=true, isRetry=false){
     return new Promise((resolve, reject) => {
         try{
             chrome.identity.getAuthToken({
-                interactive: true,
+                interactive,
             }, function(token){
                 console.log('got token', token)
                 access_token = token
-                console.log('Background login complete.. token =', access_token);
+                console.log('Chrome login complete.. token =', access_token);
                 getTokenInfo(access_token).then(({isValid, ...rest}) => {
-                    if(isValid){
+                    if(isValid && rest.sub){
                         console.log('Token was found to be valid!!', rest)
                     }
                     else{
-                        console.log('Token was not valid!')
+                        console.log('Token was not valid, or did not have a subject!')
                         if (!isRetry){
                             console.log('attempting to remove the cached token, and try again')
-                            chrome.identity.removeCachedAuthToken(
+                            return chrome.identity.removeCachedAuthToken(
                                 { 'token': access_token },
                                 () => oauth2(false, true)
                             )
                         } else {
                             console.log('not retrying as we already have')
+                            reject()
                         }
                     }
-                    resolve({...rest,
+                    console.log('fetching profile info to get the user id')
+                    id_token = rest.sub || id_token
+                    return resolve({...rest,
                         id_token,
                         access_token,
-                        id: rest.sub,
+                        id: id_token,
                     })
                 })
             });
@@ -62,12 +67,14 @@ function oauth2(interactive=true, isRetry=false){
     })
 }
 
-export function handleSignOutClick(event) {
-    return doLogout()
+export function handleSignOutClick({token}) {
+    console.log('logging out with token ', token)
+    return doLogout({token})
 }
 
-export function doLogout(){
-    console.log('handling chrome logout')
+export function doLogout({token}){
+    access_token = token || access_token
+    console.log('handling chrome logout for token', access_token)
     return new Promise((resolve, reject) => {
         chrome.identity.removeCachedAuthToken(
             { 'token': access_token },
@@ -78,7 +85,9 @@ export function doLogout(){
                     access_token=null
                     resolve(tokenInfo)
                 }).catch(error => {
-                    console.log(error)
+                    console.error('chrome logout failed for some reason', error)
+                    access_token=null
+                    Raven.captureException(error)
                     reject(error)
                 })
             }
@@ -94,7 +103,7 @@ export function getTokenInfo(token){
             let grantedScopes = data.scope;
             let hasAllScopes = true;
             requiredScopes.forEach(scope => {
-                if (hasAllScopes && grantedScopes.indexOf(scope) == -1){
+                if (hasAllScopes && grantedScopes.indexOf(scope) === -1){
                     hasAllScopes = false;
                     return;
                 }
@@ -110,6 +119,7 @@ export function getTokenInfo(token){
             return false
         }).catch(function (error) {
             console.log(error);
+            Raven.captureException(error)
             delete axios.defaults.headers.common['Authorization'];
             return false;
         });

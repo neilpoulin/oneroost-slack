@@ -1,18 +1,21 @@
+@import "~content_variables.scss";
+
 $gmailHoverColor: #dddddd;
 $padding: 10px;
 
 .container{
+    display: flex;
+}
 
+.blocked{
+    color: red;
+}
+.unblocked{
+    color: green;
 }
 
 .username{
     padding: 0 $padding;
-    &.blocked{
-        color: red;
-    }
-    &.unblocked{
-        color: green;
-    }
 }
 
 .title{
@@ -22,11 +25,11 @@ $padding: 10px;
 ul.vanityUrls{
     list-style: none;
     margin: 0px;
-    padding: 0px;
+    padding: 0;
     li.vanityUrl{
-        padding: $padding;
         text-decoration: none;
-        margin: 0px;
+        margin: 0;
+        padding: $padding;
         &:hover{
             cursor: pointer;
             background-color: $gmailHoverColor;
@@ -35,4 +38,16 @@ ul.vanityUrls{
             // border-top: 1px solid darkgray;
         }
     }
+}
+
+.userInfo{
+    padding: $padding;
+    text-align: center;
+    .title{
+        font-weght: 1.2rem;
+    }
+    .status{
+
+    }
+    border-bottom: 2px solid $borderColor;
 }

@@ -29,6 +29,7 @@ const initialState = {
     redirectSaveSuccess: false,
     filterSaveSuccess: false,
     redirects: [],
+    redirectsByEmail: {},
     error: null,
     userBlocked: false,
 }
@@ -59,6 +60,7 @@ export default function reducer(state=initialState, action){
         case SAVE_REDIRECT_SUCCESS:
             state = state.set('redirectsSaving', false)
             state = state.set('redirectSaveSuccess', true)
+            state = state.setIn(['redirectsByEmail'], {[action.payload.senderEmail] : action.payload} )
             break;
         case SAVE_REDIRECT_ERROR:
             state = state.set('redirectsSaving', false)
@@ -69,6 +71,10 @@ export default function reducer(state=initialState, action){
             break;
         case LOAD_REDIRECTS_SUCCESS:
             state = state.set('redirects', action.payload)
+            state = state.mergeIn(['redirectsByEmail'], action.payload.reduce((byEmail, redirect) => {
+                byEmail[redirect.senderEmail] = redirect
+                return byEmail
+            }, {}))
             state = state.set('redirectsLoading', false)
             break;
         case LOAD_REDIRECTS_ERROR:
@@ -116,6 +122,7 @@ export function getGmailFilters(){
 }
 
 export function syncTeamRedirects(){
+    console.log('syncing team redirects')
     return (dispatch, getState) => {
         console.log('syncing team info')
         let token = getState().user.google_access_token
@@ -252,6 +259,7 @@ export function getTeamRedirects(){
             return Promise.resolve([])
         }
         let query = new Parse.Query('Redirect')
+        query.include('updatedBy')
         query.equalTo('slackTeam', user.get('slackTeam'))
         query.equalTo('createdBy', user)
         dispatch({
@@ -294,9 +302,10 @@ export function logRedirect({
             senderEmail,
             blocked,
             destinationUrl
-        }).then(() => {
+        }).then(({redirect}) => {
             dispatch({
-                type: SAVE_REDIRECT_SUCCESS
+                type: SAVE_REDIRECT_SUCCESS,
+                payload: redirect.toJSON()
             })
         }).catch(error => {
             console.error(error)
@@ -328,7 +337,16 @@ export function createGmailFilter({
         },
         action,
     }
-    return axios.post('https://www.googleapis.com/gmail/v1/users/me/settings/filters', filter).then(({data}) => data)
+    return axios.post('https://www.googleapis.com/gmail/v1/users/me/settings/filters', filter).then(({data}) => data).catch(({message, response}) => {
+        switch(response.status){
+            case 400:
+                console.log('filter already exists', response.data)
+                break
+            default:
+                console.error(message, response.data)
+                break;
+        }
+    })
 }
 
 export function deleteFilter({id}){

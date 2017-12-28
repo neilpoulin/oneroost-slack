@@ -273,8 +273,8 @@ export function initialize(){
                     blocked,
                     destinationUrl
                 })
-                await existingRedirect.save()
-                resolve({success: 'successfully updated existing redirect'})
+                let saved = await existingRedirect.save()
+                resolve({success: 'successfully updated existing redirect', redirect: saved})
             }
             else {
                 let redirect = new Redirect()
@@ -287,8 +287,8 @@ export function initialize(){
                     destinationUrl,
                     updatedBy: user,
                 })
-                await redirect.save()
-                resolve({success: 'successfully saved new the redirect'})
+                let saved = await redirect.save()
+                resolve({success: 'successfully saved new the redirect', redirect: saved})
             }
 
         }, 10000).then(body => {

@@ -1,7 +1,5 @@
 @import "~content_variables.scss";
 
-$borderColor: #dddddd;
-$borderWeight: 2px;
 .container{
   height: 100%;
   h2{
@@ -86,7 +84,7 @@ ul.tags{
   justify-content: center;
   flex-direction: column;
   text-align: center;
-
+  margin-bottom: 4rem;
   border: $borderWeight solid $borderColor;
   border-radius: 6px;
   .header{

@@ -1,13 +1,13 @@
 import Parse from 'parse'
 import {fromJS} from 'immutable'
-import {handleSignInClick, handleSignOutClick, loadUserFromCache} from 'googleAuth'
+import {handleSignInClick, handleSignOutClick, loadUserFromCache} from '../googleAuth'
 import * as UserActions from 'actions/user'
 import {syncTeamRedirects} from 'ducks/gmail'
 import Raven from 'raven-js'
 import axios from 'axios'
 
 const initialState = {
-    isLogin: false,
+    isLoggedIn: false,
     userId: null,
     isAdmin: false,
     firstName: null,
@@ -72,6 +72,10 @@ export default function reducer(state=initialState, action){
             break;
         case UserActions.SET_PROVIDER_ERROR:
             break;
+        case UserActions.GOOGLE_LOG_IN_ERROR:
+            break;
+        case UserActions.GOOGLE_LOG_IN_SUCCESS:
+            break;
         default:
             break;
     }
@@ -88,11 +92,19 @@ const getUserQuery = (userId) => {
 
 // Actions
 export const loadUserDetails = (userId) => (dispatch, getState) => {
-    getUserQuery(userId).then(user => {
+    if (!userId){
+        let state = getState()
+        userId = state.user.userId
+    }
+    if (!userId){
+        console.log('no userId passed into loaduserDetails function')
+    }
+    return getUserQuery(userId).then(user => {
         dispatch({
             type: UserActions.UPDATE_USER_INFO,
             payload: user.toJSON()
         })
+        dispatch(syncTeamRedirects())
     }).catch(error => {
         console.error(error)
         Raven.captureException(error)
@@ -120,56 +132,83 @@ export const logIn = ({email, password}) => (dispatch, getState) => {
         .catch(error => {
             console.error(error)
             Raven.captureException(error)
+            dispatch({type: UserActions.LOG_IN_ERROR, error,})
         })
 }
 
 export function logOut (){
     return (dispatch, getState) => {
         console.log('Logging out')
+        let google_access_token = getState().user.google_access_token
         if (!Parse.User.current()){
             dispatch({type: UserActions.LOG_OUT_SUCCESS})
-            dispatch(logOutGoogle())
+            dispatch(logOutGoogle(google_access_token))
             return null
         }
         Parse.User.logOut().then(() => {
             dispatch({type: UserActions.LOG_OUT_SUCCESS})
-            dispatch(logOutGoogle())
+            dispatch(logOutGoogle(google_access_token))
         })
     }
 }
 
 export const logInGoogle = () => (dispatch, getState) => {
+    console.log('Attempting to logging in with google')
     handleSignInClick().then(({email, id_token, access_token, id}) => {
         console.log('Signed In Click finished...', email)
-        dispatch(linkUserWithProvider('google', {access_token, id}))
-        dispatch({type: UserActions.GOOGLE_LOG_IN_SUCCESS, payload: {email}})
-    }).catch(Raven.captureException)
+        if (!id){
+            throw new Error('No ID token present after google login - can not complete the login')
+        }
+        dispatch(linkUserWithProvider('google', {access_token, id})).then(linkedUser => {
+            dispatch({type: UserActions.GOOGLE_LOG_IN_SUCCESS, payload: {email}})
+            if (linkedUser){
+                dispatch(loadUserDetails(linkedUser.id))
+            }
+        }).catch(error => {
+            console.error('failed to connect a valid google login to a parse user', error)
+            dispatch({type: UserActions.GOOGLE_LOG_IN_ERROR})
+        })
+
+    }).catch(error => {
+        console.error('failed to complete login in with google', error)
+        dispatch({type: UserActions.GOOGLE_LOG_IN_ERROR})
+        Raven.captureException(error)
+    })
 }
 
-export function logOutGoogle(){
+export function logOutGoogle(token){
     return (dispatch, getState) => {
-        handleSignOutClick().then(() => {
+        token = token || getState().user.google_access_token
+        handleSignOutClick({token}).then(() => {
             dispatch({type: UserActions.GOOGLE_LOG_OUT_SUCCESS})
-        }).catch(Raven.captureException)
+        }).catch(error => {
+            console.error('failed to log out with google', error)
+            Raven.captureException(error)
+        })
     }
 }
 
 export const loadCachedUser = () => (dispatch, getState) => {
     let user = Parse.User.current()
     if (user){
+        console.log('parse user found in cache... setting as current user')
         dispatch({
             type: UserActions.LOG_IN_SUCCESS,
             userId: user.id,
             payload: user.toJSON()
         })
-        dispatch(loadUserDetails(user.id))
+        dispatch(loadUserDetails(user.id)).then(() => {
+            console.log('finished loading user details, now synching team redirects')
+        })
+    } else {
+        console.log('no user found in cache')
     }
-    loadUserFromCache().then(({email, access_token, id}) => {
-        console.log('Loaded google user from cache finished...', email)
-        dispatch(linkUserWithProvider('google', {access_token, id}))
-        dispatch(syncTeamRedirects())
-        // dispatch({type: UserActions.GOOGLE_LOG_IN_SUCCESS, payload: {email}})
-    }).catch(Raven.captureException)
+    // loadUserFromCache().then(({email, access_token, id}) => {
+    //     console.log('Loaded google user from cache finished...', email)
+    //     dispatch(linkUserWithProvider('google', {access_token, id}))
+    //     dispatch(syncTeamRedirects())
+    //     // dispatch({type: UserActions.GOOGLE_LOG_IN_SUCCESS, payload: {email}})
+    // }).catch(Raven.captureException)
 }
 
 export function linkUserWithProvider(provider, authData){
@@ -180,7 +219,7 @@ export function linkUserWithProvider(provider, authData){
             return null;
         }
         let user = Parse.User.current() || new Parse.User({});
-        dispatch(linkUser(user, provider, authData))
+        return dispatch(linkUser(user, provider, authData))
     }
 }
 
@@ -188,7 +227,7 @@ export function refreshUserData(){
     return (dispatch, getState) => {
         let user = Parse.User.current();
         if (user){
-            user.fetch().then(updatedUser => {
+            return user.fetch().then(updatedUser => {
                 dispatch({
                     type: UserActions.UPDATE_USER_INFO,
                     userId: user.id,
@@ -196,6 +235,7 @@ export function refreshUserData(){
                 })
                 let token = getState().user.google_access_token
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                return updatedUser;
             }).catch(Raven.captureException)
         }
     }
@@ -217,7 +257,7 @@ function linkUser(user, provider, authData){
             // Parse.Cloud.run('checkEmailAfterOAuth').then((response) => {
             //     dispatch(refreshUserData())
             // }).catch(error => console.error)
-            dispatch(refreshUserData())
+            return dispatch(refreshUserData()).then(refreshedUser => refreshedUser).catch(() => savedUser)
         }).catch(error => {
             switch (error.code){
                 case 202:

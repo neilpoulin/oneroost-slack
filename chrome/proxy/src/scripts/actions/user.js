@@ -5,6 +5,7 @@ export const LOG_OUT_REQUEST = 'oneroost/user/LOG_OUT_REQUEST'
 export const LOG_OUT_SUCCESS = 'oneroost/user/LOG_OUT_SUCCESS'
 export const UPDATE_USER_INFO = 'oneroost/user/UPDATE_USER_INFO'
 export const GOOGLE_LOG_IN_SUCCESS = 'oneroost/user/GOOGLE_LOG_IN_SUCCESS'
+export const GOOGLE_LOG_IN_ERROR = 'oneroost/user/GOOGLE_LOG_IN_ERROR'
 export const GOOGLE_LOG_OUT_SUCCESS = 'oneroost/user/GOOGLE_LOG_OUT_SUCCESS'
 export const SET_PROVIDER_ERROR = 'oneroost/user/SET_PROVIDER_ERROR'
 

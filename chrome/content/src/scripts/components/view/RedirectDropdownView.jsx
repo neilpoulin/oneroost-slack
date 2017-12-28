@@ -49,17 +49,17 @@ class RedirectDropdownView extends React.Component {
                 Loading....
             </div>
             <div display-if={!isLoading && senderEmail}>
-                <p className={`username ${userBlocked ? 'blocked' : (saved ? 'unblocked' : '')}`}>
-                    <span className='title'>{senderEmail}</span>
-                    <span display-if={saved}>
-                        {`${userBlocked ? ' Blocked' : ' Unblocked'}`}
-                    </span>
-                </p>
+                <div className={'userInfo'}>
+                    <div className='title'>{senderEmail}</div>
+                    <div display-if={saved} className={`status ${userBlocked ? 'blocked' : (saved ? 'unblocked' : '')}`}>
+                        {`${userBlocked ? ' Blocked' : ' Not Blocked'}`}
+                    </div>
+                </div>
 
                 <ul className="vanityUrls">
                     <li className='vanityUrl' onClick={() => blockOnly({senderName, senderEmail})}>Block Only</li>
-                    <li className='vanityUrl' onClick={() => handleRequestMoreInfo({message, teamUrl, senderName, senderEmail, doBlock: false})}>Request Info</li>
-                    <li className='vanityUrl' onClick={() => handleRequestMoreInfo({message, teamUrl, senderName, senderEmail, doBlock: true})}>Request Info and Block</li>
+                    <li className='vanityUrl' onClick={() => handleRequestMoreInfo({message, teamUrl, senderName, senderEmail, doBlock: false})}>Request Info & Unblock</li>
+                    <li className='vanityUrl' onClick={() => handleRequestMoreInfo({message, teamUrl, senderName, senderEmail, doBlock: true})}>Request Info & Block</li>
                 </ul>
             </div>
             <div display-if={!senderEmail && !isLoading}>
@@ -75,6 +75,9 @@ const mapStateToProps = (state, ownProps) => {
     const user = state.user;
     const teamId = state.user.teamId
     const {channels, selectedChannels} = user
+    const redirectsByEmail = state.gmail.redirectsByEmail
+
+    let redirect = sender ? redirectsByEmail[sender.emailAddress] : null
 
     let availableChannels = selectedChannels.map(id => {
         return channels[id]
@@ -88,9 +91,9 @@ const mapStateToProps = (state, ownProps) => {
     return {
         senderName: sender.name,
         senderEmail: sender.emailAddress,
-        saved: state.gmail.redirectSaveSuccess,
+        saved: !!redirect,
         channels: availableChannels,
-        userBlocked: state.gmail.userBlocked,
+        userBlocked: redirect && redirect.blocked,
         teamUrl,
         message,
     }
