@@ -19,7 +19,7 @@ class PopupView extends Component {
         settingsUrl: PropTypes.string,
         isAdmin: PropTypes.bool,
         serverUrl: PropTypes.string,
-        setServerUrl: PropTypes.string,
+        setServerUrl: PropTypes.func,
         helpUrl: PropTypes.string,
     }
 

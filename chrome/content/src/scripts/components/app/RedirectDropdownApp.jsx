@@ -14,9 +14,9 @@ export const fromElement = ($el, composeView) => {
 function doRender($el, composeView){
     return store.ready().then(() => {
         render(<Provider store={store} className="">
-                <RedirectDropdownView composeView={composeView}/>
-            </Provider>,
-            $el)
+            <RedirectDropdownView composeView={composeView}/>
+        </Provider>,
+        $el)
         return $el
     })
 }

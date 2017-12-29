@@ -1,6 +1,7 @@
 import {fromJS} from 'immutable'
 import axios from 'axios'
 import Parse from 'parse'
+import Raven from 'raven-js'
 import {
     CREATE_FILTER_ALIAS,
     GET_FILTERS_ALIAS,
@@ -15,11 +16,16 @@ import {
     LOAD_REDIRECTS_REQUEST,
     LOAD_REDIRECTS_SUCCESS,
     LOAD_REDIRECTS_ERROR,
-    RESET_USER_REDIRECT
+    RESET_USER_REDIRECT,
 } from 'actions/gmail'
 
 const GMAIL_LABEL_NAME_BLOCKED = 'OneRoost | Blocked'
 const GMAIL_LABEL_NAME_NOT_BLOCKED = 'OneRoost | Not Blocked'
+
+export const aliases = {
+    [GET_FILTERS_ALIAS]: getGmailFilters,
+    [CREATE_FILTER_ALIAS]: createFilter,
+}
 
 const initialState = {
     filters: [],
@@ -28,6 +34,7 @@ const initialState = {
     redirectSaveSuccess: false,
     filterSaveSuccess: false,
     redirects: [],
+    redirectsByEmail: {},
     error: null,
     userBlocked: false,
 }
@@ -58,6 +65,7 @@ export default function reducer(state=initialState, action){
         case SAVE_REDIRECT_SUCCESS:
             state = state.set('redirectsSaving', false)
             state = state.set('redirectSaveSuccess', true)
+            state = state.setIn(['redirectsByEmail'], {[action.payload.senderEmail] : action.payload} )
             break;
         case SAVE_REDIRECT_ERROR:
             state = state.set('redirectsSaving', false)
@@ -68,6 +76,10 @@ export default function reducer(state=initialState, action){
             break;
         case LOAD_REDIRECTS_SUCCESS:
             state = state.set('redirects', action.payload)
+            state = state.mergeIn(['redirectsByEmail'], action.payload.reduce((byEmail, redirect) => {
+                byEmail[redirect.senderEmail] = redirect
+                return byEmail
+            }, {}))
             state = state.set('redirectsLoading', false)
             break;
         case LOAD_REDIRECTS_ERROR:
@@ -85,10 +97,6 @@ export default function reducer(state=initialState, action){
     return state.toJS()
 }
 
-export const aliases = {
-    [GET_FILTERS_ALIAS]: getGmailFilters,
-    [CREATE_FILTER_ALIAS]: createFilter,
-}
 
 export function getCurrentFilters() {
     return axios.get('https://www.googleapis.com/gmail/v1/users/me/settings/filters').then(({data: {filter=[]}}) => filter)
@@ -105,6 +113,7 @@ export function getGmailFilters(){
                 })
             }).catch(error => {
                 console.error(error)
+                Raven.captureException(error)
                 dispatch({
                     type: GET_FILTERS_ERROR,
                     error,
@@ -114,19 +123,27 @@ export function getGmailFilters(){
 }
 
 export function syncTeamRedirects(){
+    console.log('syncing team redirects')
     return (dispatch, getState) => {
         console.log('syncing team info')
+        let token = getState().user.google_access_token
+        console.log('setting up axios headers with token ', token)
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
         dispatch({
             type: LOAD_REDIRECTS_REQUEST
         })
         let teamRedirectsAsync = dispatch(getTeamRedirects())
-        .then(results => {
-            console.log('teamRedirectSync results', results)
-            return results.map(r => {
-                console.log('result', r)
-                return r.toJSON()
+            .then(results => {
+                console.log('teamRedirectSync results', results)
+                return results.map(r => {
+                    console.log('result', r)
+                    return r.toJSON()
+                })
+            }).catch(error => {
+                console.error('failed to sync team redirects', error)
+                Raven.captureException(error)
             })
-        }).catch(error => console.error(error))
 
         let labelsAsync = getCurrentLabels()
         let filtersAsync = getCurrentFilters()
@@ -213,6 +230,7 @@ export function syncTeamRedirects(){
                 })
             }).catch(error => {
                 console.warn('Unable to sync filters', error)
+                Raven.captureException(error)
             })
 
             dispatch({
@@ -220,6 +238,8 @@ export function syncTeamRedirects(){
                 payload: redirects
             })
         }).catch(error => {
+            console.error('failed to sync team vendor filters')
+            Raven.captureException(error)
             dispatch({
                 type: LOAD_REDIRECTS_ERROR,
                 error,
@@ -240,7 +260,9 @@ export function getTeamRedirects(){
             return Promise.resolve([])
         }
         let query = new Parse.Query('Redirect')
+        query.include('updatedBy')
         query.equalTo('slackTeam', user.get('slackTeam'))
+        query.equalTo('createdBy', user)
         dispatch({
             type: LOAD_REDIRECTS_REQUEST
         })
@@ -251,6 +273,7 @@ export function getTeamRedirects(){
             })
             return redirects
         }).catch(error => {
+            Raven.captureException(error)
             dispatch({
                 type: LOAD_REDIRECTS_ERROR,
                 error,
@@ -271,6 +294,8 @@ export function logRedirect({
             type: SAVE_REDIRECT_REQUEST,
             payload: {
                 blocked,
+                senderEmail,
+                senderName
             }
         })
         Parse.Cloud.run('logRedirect', {
@@ -278,12 +303,14 @@ export function logRedirect({
             senderEmail,
             blocked,
             destinationUrl
-        }).then(() => {
+        }).then(({redirect}) => {
             dispatch({
-                type: SAVE_REDIRECT_SUCCESS
+                type: SAVE_REDIRECT_SUCCESS,
+                payload: redirect.toJSON()
             })
         }).catch(error => {
             console.error(error)
+            Raven.captureException(error)
             dispatch({
                 type: SAVE_REDIRECT_ERROR
             })
@@ -311,7 +338,16 @@ export function createGmailFilter({
         },
         action,
     }
-    return axios.post('https://www.googleapis.com/gmail/v1/users/me/settings/filters', filter).then(({data}) => data)
+    return axios.post('https://www.googleapis.com/gmail/v1/users/me/settings/filters', filter).then(({data}) => data).catch(({message, response}) => {
+        switch(response.status){
+            case 400:
+                console.log('filter already exists', response.data)
+                break
+            default:
+                console.error(message, response.data)
+                break;
+        }
+    })
 }
 
 export function deleteFilter({id}){
@@ -371,6 +407,7 @@ export function createFilter({senderName, senderEmail, destinationUrl, blocked})
             return
         }).catch(error => {
             console.error(error)
+            Raven.captureException(error)
             dispatch({
                 type: CREATE_FILTER_ERROR,
                 error

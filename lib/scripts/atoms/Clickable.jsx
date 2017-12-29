@@ -3,12 +3,13 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import {Link} from 'react-router-dom'
 
-const LOOK_BUTTON = 'button'
-const LOOK_LINK = 'link'
+export const LOOK_BUTTON = 'button'
+export const LOOK_LINK = 'link'
 
-const COLOR_PRIMARY = 'primary'
-const COLOR_SECONDARY = 'secondary'
-const COLOR_WHITE = 'white'
+export const COLOR_PRIMARY = 'primary'
+export const COLOR_SECONDARY = 'secondary'
+export const COLOR_WHITE = 'white'
+export const COLOR_GREEN = 'green'
 
 class Clickable extends React.Component {
     static propTypes = {
@@ -16,7 +17,7 @@ class Clickable extends React.Component {
         onClick: PropTypes.func,
         look: PropTypes.oneOf([LOOK_BUTTON, LOOK_LINK]),
         outline: PropTypes.bool,
-        colorType: PropTypes.oneOf([COLOR_PRIMARY, COLOR_SECONDARY, COLOR_WHITE]),
+        colorType: PropTypes.oneOf([COLOR_PRIMARY, COLOR_SECONDARY, COLOR_WHITE, COLOR_GREEN]),
         className: PropTypes.string,
         target: PropTypes.string,
         href: PropTypes.string,

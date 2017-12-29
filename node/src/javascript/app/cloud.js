@@ -20,11 +20,15 @@ import {
     getUpcomingInvoice
 } from './subscriptionService';
 
-const roostOrange = '#ef5b25'
+import requestVendorInfo from 'cloud/requestVendorInfo'
+import {roostOrange} from 'util/variables'
+
 var s3Client = new AWS.S3({computeChecksums: true, signatureVersion: 'v4'}); // this is the default setting
 
 export function initialize(){
     console.log('setting up cloud functions')
+    //adding imported cloud functions
+    requestVendorInfo()
 
     Parse.Cloud.define('cancelSubscription', async function(request, response){
         let user = request.user
@@ -248,9 +252,7 @@ export function initialize(){
             user = await userQuery.get(user.id)
 
             let slackTeam = user.get('slackTeam')
-            if (!slackTeam){
-                reject({message: 'no slack team could be found for user ' + user.id})
-            }
+
             const {
                 senderName,
                 senderEmail,
@@ -261,8 +263,12 @@ export function initialize(){
             redirectQuery.include('slackTeam')
             redirectQuery.include('createdBy')
             redirectQuery.equalTo('senderEmail', senderEmail)
-            redirectQuery.equalTo('slackTeam', slackTeam)
 
+            if (slackTeam){
+                redirectQuery.equalTo('slackTeam', slackTeam)
+            } else {
+                redirectQuery.equalTo('createdBy', user)
+            }
 
             let existingRedirect = await redirectQuery.first()
             if (existingRedirect){
@@ -271,8 +277,8 @@ export function initialize(){
                     blocked,
                     destinationUrl
                 })
-                await existingRedirect.save()
-                resolve({success: 'successfully updated existing redirect'})
+                let saved = await existingRedirect.save()
+                resolve({success: 'successfully updated existing redirect', redirect: saved})
             }
             else {
                 let redirect = new Redirect()
@@ -285,11 +291,9 @@ export function initialize(){
                     destinationUrl,
                     updatedBy: user,
                 })
-                await redirect.save()
-                resolve({success: 'successfully saved new the redirect'})
+                let saved = await redirect.save()
+                resolve({success: 'successfully saved new the redirect', redirect: saved})
             }
-
-
 
         }, 10000).then(body => {
             return response.success(body)

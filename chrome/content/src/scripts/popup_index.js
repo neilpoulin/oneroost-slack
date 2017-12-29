@@ -13,5 +13,5 @@ proxyStore.ready().then(() => {
         <Provider store={proxyStore}>
             <PopupView/>
         </Provider>
-      , document.getElementById('popup_app'))
+        , document.getElementById('popup_app'))
 })

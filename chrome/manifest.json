@@ -1,7 +1,7 @@
 {
     "name": "OneRoost",
     "description": "OneRoost Gmail Extension",
-    "version": "5.5",
+    "version": "5.7",
     "background": {
         "page": "background.html",
         "persistent": true
@@ -41,6 +41,8 @@
         "https://www.googleapis.com/auth/gmail.labels",
         "https://www.googleapis.com/auth/gmail.settings.basic",
         "https://www.googleapis.com/auth/gmail.modify",
+        "https://mail.google.com/",
+        "https://www.googleapis.com/auth/userinfo.profile",
         "identity",
         "tabs"
     ],
@@ -58,7 +60,9 @@
             "https://www.googleapis.com/auth/gmail.modify",
             "https://www.googleapis.com/auth/gmail.labels",
             "https://www.googleapis.com/auth/gmail.settings.basic",
-            "https://www.googleapis.com/auth/userinfo.email"
+            "https://mail.google.com/",
+            "https://www.googleapis.com/auth/userinfo.email",
+            "https://www.googleapis.com/auth/userinfo.profile"
         ]
     }
 }

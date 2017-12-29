@@ -22,6 +22,7 @@ a {
     display: flex;
     justify-content: center;
     height: 100%;
+    white-space: pre-line;
     &.disabled{
         background-color: lightgray;
         border-color: darkgray;
@@ -136,4 +137,12 @@ a {
 
 .btn-white{
     @include button-style(white, $roostOrange)
+}
+
+.btn-green{
+    @include button-style($colorGreen, white)
+}
+
+.btn-outline-green{
+    @include button-outline-style($colorGreen)
 }
