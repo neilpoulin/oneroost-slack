@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import {render} from 'react-dom';
 import {connect} from 'react-redux'
 import {CREATE_FILTER_ALIAS} from 'actions/gmail'
+import {REQUEST_VENDOR_INFO_ALIAS} from 'actions/vendor'
+import {getVendorByEmail} from 'selectors/vendors'
 
 function buildHtmlMessage(message){
     let $el = document.createElement('div')
@@ -29,6 +31,9 @@ class RedirectDropdownView extends React.Component {
         blockOnly: PropTypes.func.isRequired,
         saved: PropTypes.bool,
         userBlocked: PropTypes.bool,
+        unblock: PropTypes.func.isRequired,
+        vendor: PropTypes.object,
+        requestInfo: PropTypes.func.isRequired,
     }
 
 
@@ -43,6 +48,9 @@ class RedirectDropdownView extends React.Component {
             blockOnly,
             saved,
             userBlocked,
+            unblock,
+            vendor,
+            requestInfo,
         } = this.props
         return <div className={'container'}>
             <div display-if={isLoading}>
@@ -57,9 +65,10 @@ class RedirectDropdownView extends React.Component {
                 </div>
 
                 <ul className="vanityUrls">
-                    <li className='vanityUrl' onClick={() => blockOnly({senderName, senderEmail})}>Block Only</li>
-                    <li className='vanityUrl' onClick={() => handleRequestMoreInfo({message, teamUrl, senderName, senderEmail, doBlock: false})}>Request Info & Unblock</li>
-                    <li className='vanityUrl' onClick={() => handleRequestMoreInfo({message, teamUrl, senderName, senderEmail, doBlock: true})}>Request Info & Block</li>
+                    <li display-if={!userBlocked} className='vanityUrl' onClick={() => blockOnly({senderName, senderEmail})}>Block Sender</li>
+                    <li display-if={userBlocked} className='vanityUrl' onClick={() => unblock({senderName, senderEmail})}>Unblock Sender</li>
+                    <li display-if={!vendor || !vendor.infoRequest} className='vanityUrl' onClick={() => requestInfo({vendor, email: senderEmail})}>Request Info</li>
+                    <li display-if={vendor && vendor.infoRequest} className='vanityUrl no-action' onClick={() => null}>Info has been requested</li>
                 </ul>
             </div>
             <div display-if={!senderEmail && !isLoading}>
@@ -87,7 +96,7 @@ const mapStateToProps = (state, ownProps) => {
     const messageTemplate = state.config.redirectMessage.message
 
     const message = messageTemplate.replace('$TEAM_LINK', teamUrl)
-
+    let vendor = getVendorByEmail(state, sender.emailAddress)
     return {
         senderName: sender.name,
         senderEmail: sender.emailAddress,
@@ -96,6 +105,7 @@ const mapStateToProps = (state, ownProps) => {
         userBlocked: redirect && redirect.blocked,
         teamUrl,
         message,
+        vendor,
     }
 }
 
@@ -113,7 +123,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 destinationUrl: teamUrl,
                 blocked: doBlock,
             })
-
+        },
+        requestInfo: ({vendor, email}) => {
+            console.log('requesting vendor info')
+            dispatch({
+                type: REQUEST_VENDOR_INFO_ALIAS,
+                vendorId: vendor ? vendor.objectId : null,
+                vendorEmail: email,
+            })
         },
         blockOnly: ({senderName, senderEmail}) => {
             dispatch({
@@ -122,6 +139,15 @@ const mapDispatchToProps = (dispatch, ownProps) => {
                 senderEmail,
                 destinationUrl: null,
                 blocked: true,
+            })
+        },
+        unblock: ({senderName, senderEmail}) => {
+            dispatch({
+                type: CREATE_FILTER_ALIAS,
+                senderName,
+                senderEmail,
+                destinationUrl: null,
+                blocked: false,
             })
         },
     }

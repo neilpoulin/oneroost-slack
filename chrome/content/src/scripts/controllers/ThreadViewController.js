@@ -1,6 +1,6 @@
 import ThreadViewApp from 'ThreadViewApp'
 import {SET_SUBJECT} from 'actions/thread'
-import {FIND_VENDOR_REQUEST} from 'actions/vendor';
+import {FIND_VENDOR_BY_EMAIL_ALIAS} from 'actions/vendor';
 import {SET_SENDER} from 'actions/thread';
 import {RESET_USER_REDIRECT} from 'actions/gmail';
 
@@ -16,8 +16,9 @@ export function threadViewHandler(threadView, store){
     // let {companyName='Company X'} = state.vendors[sender.emailAddress]
     let email = sender.emailAddress
     store.dispatch({
-        type: FIND_VENDOR_REQUEST,
+        type: FIND_VENDOR_BY_EMAIL_ALIAS,
         email,
+        vendorEmail: email,
     })
 
     threadView.addSidebarContentPanel({

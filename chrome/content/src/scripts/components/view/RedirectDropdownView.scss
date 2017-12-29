@@ -30,7 +30,12 @@ ul.vanityUrls{
         text-decoration: none;
         margin: 0;
         padding: $padding;
-        &:hover{
+
+        &.no-action{
+            font-style: italic;
+        }
+
+        &:not(.no-action):hover{
             cursor: pointer;
             background-color: $gmailHoverColor;
         }

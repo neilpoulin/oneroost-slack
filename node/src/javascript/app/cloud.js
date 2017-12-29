@@ -20,11 +20,15 @@ import {
     getUpcomingInvoice
 } from './subscriptionService';
 
-const roostOrange = '#ef5b25'
+import requestVendorInfo from 'cloud/requestVendorInfo'
+import {roostOrange} from 'util/variables'
+
 var s3Client = new AWS.S3({computeChecksums: true, signatureVersion: 'v4'}); // this is the default setting
 
 export function initialize(){
     console.log('setting up cloud functions')
+    //adding imported cloud functions
+    requestVendorInfo()
 
     Parse.Cloud.define('cancelSubscription', async function(request, response){
         let user = request.user

@@ -16,11 +16,16 @@ import {
     LOAD_REDIRECTS_REQUEST,
     LOAD_REDIRECTS_SUCCESS,
     LOAD_REDIRECTS_ERROR,
-    RESET_USER_REDIRECT
+    RESET_USER_REDIRECT,
 } from 'actions/gmail'
 
 const GMAIL_LABEL_NAME_BLOCKED = 'OneRoost | Blocked'
 const GMAIL_LABEL_NAME_NOT_BLOCKED = 'OneRoost | Not Blocked'
+
+export const aliases = {
+    [GET_FILTERS_ALIAS]: getGmailFilters,
+    [CREATE_FILTER_ALIAS]: createFilter,
+}
 
 const initialState = {
     filters: [],
@@ -92,10 +97,6 @@ export default function reducer(state=initialState, action){
     return state.toJS()
 }
 
-export const aliases = {
-    [GET_FILTERS_ALIAS]: getGmailFilters,
-    [CREATE_FILTER_ALIAS]: createFilter,
-}
 
 export function getCurrentFilters() {
     return axios.get('https://www.googleapis.com/gmail/v1/users/me/settings/filters').then(({data: {filter=[]}}) => filter)

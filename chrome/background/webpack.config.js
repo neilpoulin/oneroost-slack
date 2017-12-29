@@ -33,7 +33,10 @@ module.exports = {
             'actions',
             'controllers',
             '../../lib/scripts',
-        ]
+        ],
+        alias: {
+            models: path.resolve(__dirname, '../../lib/scripts/models/frontend/'),
+        }
     },
     devtool: 'source-map',
     module: {

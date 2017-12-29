@@ -13,7 +13,7 @@ import {
 import {composeViewHandler, handleRedirectClick} from 'RedirectButtonController'
 import {threadViewHandler} from 'ThreadViewController'
 import {getVendorByEmail} from 'selectors/vendors'
-import * as RedirectDropdownApp from "./components/app/RedirectDropdownApp";
+import * as RedirectDropdownApp from './components/app/RedirectDropdownApp'
 
 const manifest = chrome.runtime.getManifest()
 
@@ -56,34 +56,44 @@ function initialize(){
         sdk.Lists.registerThreadRowViewHandler((threadRow) => {
             // make a stream, see example https://gist.github.com/omarstreak/8f9590514f326940e710
             // let labelStream = Kefir.fromPromise()
+
+            const labelState  = store.getState()
             let labelPromise = new Promise((resolve, reject) => {
                 try {
                     // count = count + 1
                     let contacts = threadRow.getContacts()
                     if (contacts.length > 0) {
                         let {emailAddress: email} = contacts[0]
-                        let vendor = getVendorByEmail(store.getState(), email)
-                        if (!vendor) {
-                            let unsubscribeEmail = store.subscribe(() => {
-                                vendor = getVendorByEmail(store.getState(), email)
-                                if (vendor) {
-                                    let title = `${vendor.roostRating ? vendor.roostRating : 'N/A'}`
-                                    unsubscribeEmail()
-                                    return resolve({
-                                        title,
-                                        iconUrl: smallIconUrl
-                                    })
-                                }
-                            })
-                            store.dispatch({
-                                type: FIND_VENDOR_BY_EMAIL_ALIAS,
-                                email
-                            })
-                        } else {
+                        // we can assume the vendors are in memory already since we fetch them all after login
+                        let vendor = getVendorByEmail(labelState, email)
+                        // if (!vendor) {
+                        //     let unsubscribeEmail = store.subscribe(() => {
+                        //         vendor = getVendorByEmail(store.getState(), email)
+                        //         if (vendor) {
+                        //             let title = `${vendor.roostRating ? vendor.roostRating : 'N/A'}`
+                        //             unsubscribeEmail()
+                        //             return resolve({
+                        //                 title,
+                        //                 iconUrl: smallIconUrl
+                        //             })
+                        //         }
+                        //     })
+                        //     store.dispatch({
+                        //         type: FIND_VENDOR_BY_EMAIL_ALIAS,
+                        //         email
+                        //     })
+                        // }
+                        // else {
+                        if (vendor){
                             let title = `${vendor.roostRating ? vendor.roostRating : 'N/A'}`
                             return resolve({
                                 title,
                                 iconUrl: smallIconUrl
+                            })
+                        } else {
+                            return resolve({
+                                title: 'N/A',
+                                iconUrl: smallIconUrl,
                             })
                         }
                     } else {
@@ -122,6 +132,10 @@ function initialize(){
                 contacts = [...contacts, selectedThreadViews.length > 0 ? selectedThreadViews[0].getMessageViewsAll()[0].getSender() : []]
                 if (contacts.length > 0) {
                     store.dispatch({type: SET_SENDER, payload: contacts[0]})
+                    store.dispatch({
+                        type: FIND_VENDOR_BY_EMAIL_ALIAS,
+                        email: contacts[0].emailAddress
+                    })
                     //NOTE: you can't set the text or subject of the email in composeView unless you want the dropdown to close
                     dropdown.setPlacementOptions({
                         position: 'top',

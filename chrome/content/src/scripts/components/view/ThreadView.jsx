@@ -7,6 +7,7 @@ import {roostOrange} from 'util/variables'
 import Clickable, {COLOR_GREEN} from 'atoms/Clickable'
 import {CREATE_FILTER_ALIAS} from 'actions/gmail'
 import {formatDateShort} from 'util/timeUtil'
+import {REQUEST_VENDOR_INFO_ALIAS} from 'actions/vendor'
 
 class ThreadView extends Component {
     constructor(props) {
@@ -29,6 +30,13 @@ class ThreadView extends Component {
             blocked: PropTypes.bool,
         }),
         senderBlocked: PropTypes.bool,
+        requestInfo: PropTypes.func.isRequired,
+        savingInfoRequest: PropTypes.bool,
+        infoRequest: PropTypes.shape({
+            createdAt: PropTypes.any,
+            updatedAt: PropTypes.any,
+            createdBy: PropTypes.object,
+        })
     }
 
     render() {
@@ -38,11 +46,29 @@ class ThreadView extends Component {
             isLoading,
             email,
             domain,
-            blockOnly,
-            unblock,
             redirect,
             senderBlocked,
+            savingInfoRequest,
+            infoRequest,
+            //actions
+            requestInfo,
+            unblock,
+            blockOnly,
         } = this.props
+
+        let $actions = <section className={'actions'}>
+            <Clickable text={infoRequest ? 'Info Requested' : 'Request Info'} outline={true} colorType={COLOR_GREEN} onClick={() => requestInfo({email, vendor})} disabled={savingInfoRequest || infoRequest}/>
+            <div display-if={infoRequest}>
+                Vendor Information requested on {formatDateShort(infoRequest.createdAt)} <span display-if={infoRequest.createdBy}>by {infoRequest.createdBy.username}</span>
+            </div>
+
+            <Clickable display-if={!senderBlocked} text={`Block\n${email}`} onClick={() => blockOnly({senderEmail: email})}/>
+            <Clickable display-if={senderBlocked} text={`Unblock\n${email}`} colorType={COLOR_GREEN} onClick={() => unblock({senderEmail: email})}/>
+            <div display-if={redirect}>
+                {redirect.blocked ? 'blocked' : 'unblocked'} by {redirect.updatedBy.username} on {formatDateShort(redirect.updatedAt)}
+            </div>
+        </section>
+
         return (
             <div className="container">
                 <div display-if={isLoading}>
@@ -84,15 +110,8 @@ class ThreadView extends Component {
                             <h3>Integrations</h3>
                             <p>{vendor.inbound.relevancy}</p>
                         </section>
-                        <section className={'actions'}>
-                            <Clickable text={'Request Info'} outline={true} colorType={COLOR_GREEN}/>
-                            <Clickable display-if={!senderBlocked} text={`Block\n${email}`} onClick={() => blockOnly({senderEmail: email})}/>
-                            <Clickable display-if={senderBlocked} text={`UnBlock\n${email}`} colorType={COLOR_GREEN} onClick={() => unblock({senderEmail: email})}/>
-                            <div display-if={redirect}>
-                                {redirect.blocked ? 'blocked' : 'unblocked'} by {redirect.updatedBy.username} on {formatDateShort(redirect.updatedAt)}
-                            </div>
-                        </section>
-                        <section display-if={vendor.inbound.testimonials} className='testimonials'>
+                        {$actions}
+                        <section display-if={vendor.inbound.testimonials && vendor.inbound.testimonials.length > 0} className='testimonials'>
                             <h3>Testimonials</h3>
                             {vendor.inbound.testimonials.map((testimonial, i) =>
                                 <div key={`testimonial_${i}`} className='testimonial'>
@@ -111,14 +130,7 @@ class ThreadView extends Component {
                         <h2 className={'header'}><WarningIcon color={roostOrange}/> Caution</h2>
                         There is no data on this vendor. We recommend requesting more details below for more information.
                     </section>
-                    <section className={'actions'}>
-                        <Clickable text={'Request Info'} outline={true} colorType={COLOR_GREEN}/>
-                        <Clickable display-if={!senderBlocked} text={`Block\n${email}`} onClick={() => blockOnly({senderEmail: email})}/>
-                        <Clickable display-if={senderBlocked} text={`UnBlock\n${email}`} colorType={COLOR_GREEN} onClick={() => unblock({senderEmail: email})}/>
-                        <div display-if={redirect}>
-                            {redirect.blocked ? 'blocked' : 'unblocked'} by {redirect.updatedBy.username} on {formatDateShort(redirect.updatedAt)}
-                        </div>
-                    </section>
+                    {$actions}
                 </div>
             </div>
         );
@@ -139,7 +151,8 @@ const mapStateToProps = (state) => {
     let redirect = state.gmail.redirectsByEmail[email]
     let domain = getDomainFromEmail(email)
     let vendor = state.vendors[domain];
-
+    let savingInfoRequest = vendor.savingInfoRequest
+    let infoRequest = vendor.infoRequest
     if (!vendor)
     {
         return {
@@ -157,7 +170,9 @@ const mapStateToProps = (state) => {
         vendor,
         isLoading: vendor.isLoading,
         redirect,
-        senderBlocked: redirect && redirect.blocked
+        senderBlocked: redirect && redirect.blocked,
+        savingInfoRequest,
+        infoRequest
     }
 }
 
@@ -181,6 +196,14 @@ const mapDispatchToProps = (dispatch) => {
                 blocked: false,
             })
         },
+        requestInfo: ({vendor, email}) => {
+            console.log('requesting vendor info')
+            dispatch({
+                type: REQUEST_VENDOR_INFO_ALIAS,
+                vendorId: vendor ? vendor.objectId : null,
+                vendorEmail: email,
+            })
+        }
     }
 }
 
