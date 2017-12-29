@@ -5,6 +5,7 @@ import setup from 'app/setup'
 import * as cloud from 'app/cloud'
 import {getParseServer, getParseDashboard} from 'app/parseServer'
 import {getSignedWebhookEvent} from 'app/subscriptionService';
+import Raven from 'raven'
 
 var router = express.Router()
 import routes from 'app/routes';
@@ -15,6 +16,7 @@ import {
 } from 'util/Environment'
 
 var app = express();
+//Raven.config(____DSN____)
 setup(app);
 app.post('/webhooks/stripe', bodyParser.json({verify:function(req,res,buf){req.rawBody=buf}}))
 app.use(bodyParser.json());

@@ -1,5 +1,5 @@
 import {Parse} from 'parse/node'
-import Raven from 'raven-js'
+// import Raven from 'raven'
 import {Config} from 'util/variables'
 import {VENDOR_CLASSNAME} from 'models/ModelConstants'
 import VendorInfoRequest from 'models/VendorInfoRequest'
@@ -38,7 +38,7 @@ export default function initialize() {
 
             if (!vendor){
                 console.warn('No vendor found for given vendorId or senderEmail', vendorId, vendorEmail)
-                Raven.captureMessage(`No vendor found for given vendorId=${vendorId} or senderEmail=${vendorEmail}`)
+                // Raven.captureMessage(`No vendor found for given vendorId=${vendorId} or senderEmail=${vendorEmail}`)
             }
 
             let vendorInfoRequest = new VendorInfoRequest()
@@ -60,7 +60,7 @@ export default function initialize() {
         }
         catch (e) {
             console.error('requestVendorInfo Something unexpected went wrong', e)
-            Raven.captureException(e)
+            // Raven.captureException(e)
         }
     })
 }
