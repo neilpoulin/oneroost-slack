@@ -119,12 +119,7 @@ function initialize(){
             hideFor: (routeView) => {
                 return false
             },
-            // onClick: ({selectedThreadViews = [], selectedThreadRowViews = []}) => {
-            // selectedThreadViews.forEach(threadView => {
-            //     threadViewHandler(threadView, store)
-            // })
-            // console.warn('thread button click not implemented')
-            // }
+            positions: ['THREAD', 'ROW'],
             onClick: ({selectedThreadViews = [], selectedThreadRowViews = [], dropdown}) => {
                 console.log('handling click')
                 // selectedThreadRowViews[0].get
