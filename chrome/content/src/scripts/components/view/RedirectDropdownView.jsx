@@ -34,6 +34,7 @@ class RedirectDropdownView extends React.Component {
         unblock: PropTypes.func.isRequired,
         vendor: PropTypes.object,
         requestInfo: PropTypes.func.isRequired,
+        showSlackLink: PropTypes.bool,
     }
 
 
@@ -51,6 +52,7 @@ class RedirectDropdownView extends React.Component {
             unblock,
             vendor,
             requestInfo,
+            showSlackLink,
         } = this.props
         return <div className={'container'}>
             <div display-if={isLoading}>
@@ -69,6 +71,7 @@ class RedirectDropdownView extends React.Component {
                     <li display-if={userBlocked} className='vanityUrl' onClick={() => unblock({senderName, senderEmail})}>Unblock Sender</li>
                     <li display-if={!vendor || !vendor.infoRequest} className='vanityUrl' onClick={() => requestInfo({vendor, email: senderEmail})}>Request Info</li>
                     <li display-if={vendor && vendor.infoRequest} className='vanityUrl no-action' onClick={() => null}>Info has been requested</li>
+                    <li display-if={showSlackLink} className='vanityUrl ' onClick={() => handleRequestMoreInfo({message})}>Send To Slack</li>
                 </ul>
             </div>
             <div display-if={!senderEmail && !isLoading}>
@@ -97,6 +100,7 @@ const mapStateToProps = (state, ownProps) => {
 
     const message = messageTemplate.replace('$TEAM_LINK', teamUrl)
     let vendor = getVendorByEmail(state, sender.emailAddress)
+
     return {
         senderName: sender.name,
         senderEmail: sender.emailAddress,
@@ -106,23 +110,17 @@ const mapStateToProps = (state, ownProps) => {
         teamUrl,
         message,
         vendor,
+        showSlackLink: !!ownProps.composeView && teamId
     }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        handleRequestMoreInfo: ({message, teamUrl, senderName, senderEmail, doBlock}) => {
+        handleRequestMoreInfo: ({message}) => {
             if (ownProps.composeView)
             {
                 ownProps.composeView.insertHTMLIntoBodyAtCursor(buildHtmlMessage(message))
             }
-            dispatch({
-                type: CREATE_FILTER_ALIAS,
-                senderName,
-                senderEmail,
-                destinationUrl: teamUrl,
-                blocked: doBlock,
-            })
         },
         requestInfo: ({vendor, email}) => {
             console.log('requesting vendor info')

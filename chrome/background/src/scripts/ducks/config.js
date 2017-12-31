@@ -8,6 +8,7 @@ export const CONFIGS_LOAD_ERROR = 'oneroost/config/CONFIGS_LOAD_ERROR'
 export const TEAM_CONFIGS_LOAD_REQUEST = 'oneroost/config/TEAM_CONFIGS_LOAD_REQUEST'
 export const TEAM_CONFIGS_LOAD_SUCCESS = 'oneroost/config/TEAM_CONFIGS_LOAD_SUCCESS'
 export const TEAM_CONFIGS_LOAD_ERROR = 'oneroost/config/TEAM_CONFIGS_LOAD_ERROR'
+export const SET_PARSE_CONFIG  = 'oneroost/config/SET_POPUP_CONFIG'
 
 import * as ConfigActions from 'actions/config'
 import Parse from 'parse'
@@ -29,6 +30,7 @@ const initialState = Immutable.fromJS({
     hasLoaded: false,
     serverUrl: 'https://dev.oneroost.com',
     error: null,
+    popupConfig: null,
 })
 
 export default function reducer(state=initialState, action){
@@ -58,6 +60,9 @@ export default function reducer(state=initialState, action){
             state = state.set('teamConfigLoading', false)
             state = state.set('error', action.error)
             break
+        case SET_PARSE_CONFIG:
+            state = state.set('popupConfig', action.payload.popupConfig)
+            break;
         default:
             break
     }
@@ -120,6 +125,14 @@ export function updateServerConfigs(){
             console.log(configs)
             Parse.initialize(configs.PARSE_APP_ID);
             Parse.serverURL = configs.PARSE_PUBLIC_URL;
+            Parse.Config.get().then(config => {
+                dispatch({
+                    type: SET_PARSE_CONFIG,
+                    payload: {
+                        popupConfig: config.get('extensionPopup')
+                    }
+                })
+            })
             return configs
         })
     }

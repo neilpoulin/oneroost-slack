@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import JoinWaitlist from 'organisms/JoinWaitlist'
 import Clickable from 'atoms/Clickable';
-
+import ChromeExtensionButton from 'molecules/ChromeExtensionButton'
 class EditorialImage extends React.Component {
     static propTypes = {
         title: PropTypes.string,
@@ -19,7 +19,8 @@ class EditorialImage extends React.Component {
             title: PropTypes.string,
             companyUrl: PropTypes.string,
         })),
-        firstImagePosition: PropTypes.oneOf(['left', 'right'])
+        firstImagePosition: PropTypes.oneOf(['left', 'right']),
+        showChromeExtensionButton: PropTypes.bool,
     }
 
     static defaultProps = {
@@ -37,6 +38,7 @@ class EditorialImage extends React.Component {
             vendorInboundUrl,
             firstImagePosition,
             imageCaption,
+            showChromeExtensionButton
         } = this.props
         return <section className={`start-${firstImagePosition}`}>
             <div display-if={imageUrl} className={'image'}>
@@ -48,10 +50,11 @@ class EditorialImage extends React.Component {
             <div className="copy">
                 <h2>{title}</h2>
                 <p>{description}</p>
-                <JoinWaitlist display-if={showWaitlist}
+                <JoinWaitlist display-if={showWaitlist && !showChromeExtensionButton}
                     buttonText='Join the Beta'
                     inline={true}
                 />
+                <ChromeExtensionButton display-if={showChromeExtensionButton} colorType={'primary'}/>
                 <div display-if={testimonials} className={'testimonials'}>
                     {testimonials.map(({quote, name, companyName, companyUrl, title, imageUrl}, i) => (
                         <div key={`inline_testimonial_${i}`} className={'testimonial'}>

@@ -78,6 +78,7 @@ class BuyerLandingPage extends React.Component{
                 testimonials={testimonials}
                 firstImagePosition={'right'}
                 showSignup={true}
+                showChromeExtensionButton={true}
             />
         </BasePage>
     }
