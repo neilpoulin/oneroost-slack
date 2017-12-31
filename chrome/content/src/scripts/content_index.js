@@ -14,10 +14,12 @@ import {composeViewHandler, handleRedirectClick} from 'RedirectButtonController'
 import {threadViewHandler} from 'ThreadViewController'
 import {getVendorByEmail} from 'selectors/vendors'
 import * as RedirectDropdownApp from './components/app/RedirectDropdownApp'
+import {roostOrange} from 'util/variables'
 
 const manifest = chrome.runtime.getManifest()
 
 const smallIconUrl = chrome.runtime.getURL('images/logo30x30.png')
+const smallIconWhiteUrl = chrome.runtime.getURL('images/logo30x30_white.png')
 
 const store = new Store({
     portName: 'oneroost'
@@ -86,10 +88,20 @@ function initialize(){
                         // else {
                         if (vendor){
                             let title = `${vendor.roostRating ? vendor.roostRating : 'N/A'}`
-                            return resolve({
-                                title,
-                                iconUrl: smallIconUrl
-                            })
+                            if (vendor.roostRating){
+                                return resolve({
+                                    title,
+                                    foregroundColor: 'white',
+                                    backgroundColor: roostOrange,
+                                    iconUrl: smallIconWhiteUrl
+                                })
+                            } else {
+                                return resolve({
+                                    title,
+                                    iconUrl: smallIconUrl
+                                })
+                            }
+
                         } else {
                             return resolve({
                                 title: 'N/A',
