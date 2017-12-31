@@ -62,8 +62,8 @@ class ThreadView extends Component {
                 Vendor Information requested on {formatDateShort(infoRequest.createdAt)} <span display-if={infoRequest.createdBy}>by {infoRequest.createdBy.username}</span>
             </div>
 
-            <Clickable display-if={!senderBlocked} text={`Block\n${email}`} onClick={() => blockOnly({senderEmail: email})}/>
-            <Clickable display-if={senderBlocked} text={`Unblock\n${email}`} colorType={COLOR_GREEN} onClick={() => unblock({senderEmail: email})}/>
+            <Clickable display-if={!senderBlocked} text={`Block sender`} onClick={() => blockOnly({senderEmail: email})}/>
+            <Clickable display-if={senderBlocked} text={`Unblock sender`} colorType={COLOR_GREEN} onClick={() => unblock({senderEmail: email})}/>
             <div display-if={redirect}>
                 {redirect.blocked ? 'blocked' : 'unblocked'} by {redirect.updatedBy.username} on {formatDateShort(redirect.updatedAt)}
             </div>
@@ -74,7 +74,6 @@ class ThreadView extends Component {
                 <div display-if={isLoading}>
                     Loading....
                 </div>
-
                 <div className={'title'}>
                     <h2 display-if={vendorFound && vendor && vendor.inbound }>{vendor.inbound.companyName}</h2>
                     <h2 display-if={domain && !vendorFound}>{domain}</h2>
@@ -118,6 +117,28 @@ class ThreadView extends Component {
                                     <h4>{testimonial.customerName}</h4>
                                     <q>{testimonial.comment}</q>
                                 </div>)}
+                        </section>
+                        <section display-if={vendor.inbound.caseStudyFilePath || vendor.inbound.caseStudyUrl}>
+                            <h3>Case Study</h3>
+                            <Clickable display-if={vendor.inbound.caseStudyFilePath}
+                                look={'link'}
+                                text={'View Case Study'}
+                                href={`https://documents.oneroost.com/${vendor.inbound.caseStudyFilePath}`}/>
+                            <Clickable display-if={vendor.inbound.caseStudyUrl}
+                                look={'link'}
+                                text={'View Case Study'}
+                                href={vendor.inbound.caseStudyUrl}/>
+                        </section>
+                        <section display-if={vendor.inbound.pitchDeckFilePath|| vendor.inbound.pitchDeckUrl}>
+                            <h3>Pitch Deck</h3>
+                            <Clickable display-if={vendor.inbound.pitchDeckFilePath}
+                                look={'link'}
+                                text={'View Pitch Deck'}
+                                href={`https://documents.oneroost.com/${vendor.inbound.pitchDeckFilePath}`}/>
+                            <Clickable display-if={vendor.inbound.pitchDeckUrl}
+                                look={'link'}
+                                text={'View Pitch Deck'}
+                                href={vendor.inbound.pitchDeckUrl}/>
                         </section>
                     </div>
                 </div>
