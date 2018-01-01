@@ -8,6 +8,7 @@ import Clickable, {COLOR_GREEN} from 'atoms/Clickable'
 import {CREATE_FILTER_ALIAS} from 'actions/gmail'
 import {formatDateShort} from 'util/timeUtil'
 import {REQUEST_VENDOR_INFO_ALIAS} from 'actions/vendor'
+import GoogleLoginButton from 'molecules/GoogleLoginButton'
 
 class ThreadView extends Component {
     constructor(props) {
@@ -36,7 +37,8 @@ class ThreadView extends Component {
             createdAt: PropTypes.any,
             updatedAt: PropTypes.any,
             createdBy: PropTypes.object,
-        })
+        }),
+        isLoggedIn: PropTypes.bool,
     }
 
     render() {
@@ -50,6 +52,7 @@ class ThreadView extends Component {
             senderBlocked,
             savingInfoRequest,
             infoRequest,
+            isLoggedIn,
             //actions
             requestInfo,
             unblock,
@@ -57,17 +60,26 @@ class ThreadView extends Component {
         } = this.props
 
         let $actions = <section className={'actions'}>
-            <Clickable text={infoRequest ? 'Info Requested' : 'Request Info'} outline={true} colorType={COLOR_GREEN} onClick={() => requestInfo({email, vendor})} disabled={savingInfoRequest || infoRequest}/>
+            <Clickable text={infoRequest ? 'Info Requested' : 'Request Info'} outline={true} colorType={COLOR_GREEN} onClick={() => requestInfo({email, vendor})} disabled={!!savingInfoRequest || !!infoRequest}/>
             <div display-if={infoRequest}>
                 Vendor Information requested on {formatDateShort(infoRequest.createdAt)} <span display-if={infoRequest.createdBy}>by {infoRequest.createdBy.username}</span>
             </div>
 
-            <Clickable display-if={!senderBlocked} text={`Block sender`} onClick={() => blockOnly({senderEmail: email})}/>
-            <Clickable display-if={senderBlocked} text={`Unblock sender`} colorType={COLOR_GREEN} onClick={() => unblock({senderEmail: email})}/>
+            <Clickable display-if={!senderBlocked} text={'Block sender'} onClick={() => blockOnly({senderEmail: email})}/>
+            <Clickable display-if={senderBlocked} text={'Unblock sender'} colorType={COLOR_GREEN} onClick={() => unblock({senderEmail: email})}/>
             <div display-if={redirect}>
                 {redirect.blocked ? 'blocked' : 'unblocked'} by {redirect.updatedBy.username} on {formatDateShort(redirect.updatedAt)}
             </div>
         </section>
+
+
+        if (!isLoggedIn){
+            $actions = <section display-if={!isLoggedIn} className={'warning'}>
+                <h2 className={'header'}><WarningIcon color={roostOrange}/> not logged in</h2>
+                  Please log in below
+                <GoogleLoginButton/>
+            </section>
+        }
 
         return (
             <div className="container">
@@ -162,6 +174,9 @@ const mapStateToProps = (state) => {
     const thread = state.thread
     let email = thread.sender ? thread.sender.emailAddress : null
 
+    let user = state.user
+
+
     if (!email)
     {
         return {
@@ -172,8 +187,6 @@ const mapStateToProps = (state) => {
     let redirect = state.gmail.redirectsByEmail[email]
     let domain = getDomainFromEmail(email)
     let vendor = state.vendors[domain];
-    let savingInfoRequest = vendor.savingInfoRequest
-    let infoRequest = vendor.infoRequest
     if (!vendor)
     {
         return {
@@ -183,6 +196,8 @@ const mapStateToProps = (state) => {
             domain,
         }
     }
+    let savingInfoRequest = vendor ? vendor.savingInfoRequest : false
+    let infoRequest = vendor ? vendor.infoRequest : null
 
     return {
         vendorFound: !!vendor.roostRating,
@@ -193,7 +208,8 @@ const mapStateToProps = (state) => {
         redirect,
         senderBlocked: redirect && redirect.blocked,
         savingInfoRequest,
-        infoRequest
+        infoRequest,
+        isLoggedIn: user.isLoggedIn,
     }
 }
 

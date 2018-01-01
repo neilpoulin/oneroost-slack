@@ -14,9 +14,9 @@
     font-weight: bold;
 }
 
-#image_preload{
+#image_preload, .image_preload{
     //display: none;
-    //position: fixed;
+    position: fixed;
     top: -99999px;
     left: -9999px;
 }

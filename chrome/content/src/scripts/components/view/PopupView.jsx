@@ -5,7 +5,7 @@ import Clickable from 'atoms/Clickable';
 import {LOG_OUT_ALIAS, LOG_IN_GOOGLE_ALIAS} from 'actions/user'
 import {getFullName} from 'selectors/user'
 import {REFRESH_SERVER_CONFIG_ALIAS, SET_SERVER_URL} from 'actions/config'
-
+import GoogleLoginButton from 'molecules/GoogleLoginButton'
 // import {handleSignInClick, handleSignOutClick} from "background/googleAuth"
 
 class PopupView extends Component {
@@ -62,9 +62,7 @@ class PopupView extends Component {
             <div className='logo'><Clickable href="https://www.oneroost.com" target="_blank" text="OneRoost"
                 look={'link'}/>
             </div>
-            <div display-if={!isLoggedIn} className="loginContainer">
-                <div className="googleLogin" onClick={logInGoogle}></div>
-            </div>
+            <GoogleLoginButton/>
             <div display-if={isLoggedIn} className="">
                 <div display-if={isAdmin} className='admin'>
                     <label className='label'>Admin</label>

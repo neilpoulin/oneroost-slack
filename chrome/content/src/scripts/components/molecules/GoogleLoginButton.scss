@@ -1,0 +1,30 @@
+$googleButtonImagePath: "https://images.oneroost.com/images/chrome/google_signin_buttons/web/1x/";
+$googleButtonImageStyle: "btn_google_signin_dark_";
+
+
+.googleLogin {
+  display: inline-block;
+  background: url("#{$googleButtonImagePath}#{$googleButtonImageStyle}normal_web.png");
+  width: 191px;
+  height: 46px;
+
+  &:hover {
+    cursor: pointer;
+    background: url("#{$googleButtonImagePath}#{$googleButtonImageStyle}focus_web.png");
+  }
+  &:active {
+    cursor: pointer;
+    background: url("#{$googleButtonImagePath}#{$googleButtonImageStyle}pressed_web.png");
+  }
+}
+
+.loginContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.popup_app{
+  display: flex;
+  flex-direction: column;
+  /*overflow: scroll;*/
+}
