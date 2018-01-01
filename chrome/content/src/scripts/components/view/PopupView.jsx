@@ -50,7 +50,7 @@ class PopupView extends Component {
         return <div className="container">
             <div display-if={isLoggedIn} className="">
                 <div className="header">
-                    <div display-if={fullName} className="email">
+                    <div display-if={email} className="email">
                         {email}
                     </div>
                     <Clickable text="Log Out"
