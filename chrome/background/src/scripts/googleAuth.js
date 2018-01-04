@@ -3,6 +3,7 @@ import axios from 'axios'
 // https://developer.chrome.com/extensions/tut_oauth#oauth-dance
 import Raven from 'raven-js'
 const verifyTokenUrl = 'https://www.googleapis.com/oauth2/v3/tokeninfo'
+const userProfileUrl = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json'
 const manifest = chrome.runtime.getManifest()
 const clientId = manifest.oauth2.client_id
 const requiredScopes = manifest.oauth2.scopes;
@@ -51,12 +52,14 @@ function oauth2(interactive=true, isRetry=false){
                             reject()
                         }
                     }
-                    console.log('fetching profile info to get the user id')
+
                     id_token = rest.sub || id_token
                     return resolve({...rest,
                         id_token,
                         access_token,
                         id: id_token,
+                        firstName: rest.given_name,
+                        lastName: rest.family_name,
                     })
                 })
             });
@@ -69,7 +72,9 @@ function oauth2(interactive=true, isRetry=false){
 
 export function handleSignOutClick({token}) {
     console.log('logging out with token ', token)
-    return doLogout({token})
+    return doLogout({token}).then(result => {
+        console.log('finished chrome logout after handle click', result)
+    })
 }
 
 export function doLogout({token}){
@@ -79,17 +84,19 @@ export function doLogout({token}){
         chrome.identity.removeCachedAuthToken(
             { 'token': access_token },
             () => {
-                console.log('chrome logout complete');
-                getTokenInfo(access_token).then(tokenInfo => {
-                    console.log(tokenInfo)
-                    access_token=null
-                    resolve(tokenInfo)
-                }).catch(error => {
-                    console.error('chrome logout failed for some reason', error)
-                    access_token=null
-                    Raven.captureException(error)
-                    reject(error)
-                })
+                console.log('token removed from cache');
+                access_token=null
+                // getTokenInfo(access_token).then(tokenInfo => {
+                //     console.log(tokenInfo)
+                //     access_token=null
+                //     console.log('got token info as part of logout flow')
+                //     resolve(tokenInfo)
+                // }).catch(error => {
+                //     console.error('chrome logout failed for some reason', error)
+                //     access_token=null
+                //     Raven.captureException(error)
+                //     reject(error)
+                // })
             }
         )
     })
@@ -105,7 +112,8 @@ export function getTokenInfo(token){
             requiredScopes.forEach(scope => {
                 if (hasAllScopes && grantedScopes.indexOf(scope) === -1){
                     hasAllScopes = false;
-                    return;
+                    console.error('user does not have all scopes!')
+                    return Promise.reject();
                 }
             })
             if (!hasAllScopes){
@@ -113,8 +121,15 @@ export function getTokenInfo(token){
 
             }
             if(data.aud === clientId){
+                console.log('attempting to fetch profile info')
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                return {...data, isValid: true};
+                return axios.get(`${userProfileUrl}&access_token=${access_token}`).then(({data: userInfo}) => {
+                    console.log('fetched user info', userInfo)
+                    return {...data, ...userInfo, isValid: true};
+                }).catch(error => {
+                    console.error('failed to get user info', error)
+                    return {...data, isValid: true};
+                })
             }
             return false
         }).catch(function (error) {

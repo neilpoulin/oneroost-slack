@@ -8,6 +8,7 @@ import JoinWaitlist from 'organisms/JoinWaitlist'
 import EditorialImage from 'organisms/EditorialImage'
 import FeatureGridItem from './FeatureGridItem';
 import FeatureGrid from './FeatureGrid';
+import ChromeExtensionButton from 'molecules/ChromeExtensionButton'
 
 class MarketingLandingPage extends React.Component {
     static propTypes = {
@@ -35,6 +36,7 @@ class MarketingLandingPage extends React.Component {
             companyUrl: PropTypes.string,
         })),
         showSignup: PropTypes.bool,
+        showChromeExtensionButton: PropTypes.bool,
         featureGrid: PropTypes.shape({
             items: PropTypes.array,
             title: PropTypes.string,
@@ -51,6 +53,7 @@ class MarketingLandingPage extends React.Component {
             featureGrid,
             firstImagePosition,
             showSignup,
+            showChromeExtensionButton,
         } = this.props
 
         var page =
@@ -72,6 +75,7 @@ class MarketingLandingPage extends React.Component {
                                 testimonials={testimonials}
                                 vendorInboundUrl={vendorInboundUrl}
                                 showVendorLink={showVendorLink}
+                                showChromeExtensionButton={showChromeExtensionButton}
                                 firstImagePosition={firstImagePosition}
                                 imageCaption={imageCaption}
                             />

@@ -57,6 +57,7 @@ window.setInterval(() => {
             store.dispatch(syncTeamRedirects())
         }
         store.dispatch(updateServerConfigs())
+        store.dispatch(loadAllVendors())
     } catch (e){
         console.error('Failed to execute polling', e)
     }

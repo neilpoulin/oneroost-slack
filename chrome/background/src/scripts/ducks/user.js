@@ -154,13 +154,23 @@ export function logOut (){
 
 export const logInGoogle = () => (dispatch, getState) => {
     console.log('Attempting to logging in with google')
-    handleSignInClick().then(({email, id_token, access_token, id}) => {
+    handleSignInClick().then(({email, id_token, access_token, id, firstName, lastName}) => {
         console.log('Signed In Click finished...', email)
         if (!id){
             throw new Error('No ID token present after google login - can not complete the login')
         }
-        dispatch(linkUserWithProvider('google', {access_token, id})).then(linkedUser => {
-            dispatch({type: UserActions.GOOGLE_LOG_IN_SUCCESS, payload: {email}})
+        dispatch(linkUserWithProvider('google', {
+            access_token,
+            id,
+            email,
+            firstName,
+            lastName,
+        })).then(linkedUser => {
+            dispatch({
+                type: UserActions.GOOGLE_LOG_IN_SUCCESS,
+                payload: {
+                    email
+                }})
             if (linkedUser){
                 dispatch(loadUserDetails(linkedUser.id))
             }
@@ -218,7 +228,16 @@ export function linkUserWithProvider(provider, authData){
             console.log('no valid auth data present, exit')
             return null;
         }
-        let user = Parse.User.current() || new Parse.User({});
+        let user = Parse.User.current() || new Parse.User({
+            email: authData.email,
+            username: authData.email,
+            firstName: authData.firstName,
+            lastName: authData.lastName
+        });
+        user.set({
+            firstName: authData.firstName,
+            lastName: authData.lastName
+        })
         return dispatch(linkUser(user, provider, authData))
     }
 }

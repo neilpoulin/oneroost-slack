@@ -14,13 +14,8 @@
     font-weight: bold;
 }
 
-#popup_app{
-    width: 300px;
-    min-height: 10rem;
-}
-
-#image_preload{
-    display: none;
+#image_preload, .image_preload{
+    //display: none;
     position: fixed;
     top: -99999px;
     left: -9999px;

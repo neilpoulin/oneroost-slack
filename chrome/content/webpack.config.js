@@ -39,6 +39,7 @@ module.exports = {
             'components/view',
             'selectors',
             'atoms',
+            'components/molecules',
             'node_modules',
             'actions',
             'controllers',

@@ -44,6 +44,8 @@ class SettingsPage extends React.Component {
         postToChannel: PropTypes.func.isRequired,
         createChannelVanitySetter: PropTypes.func.isRequired,
         save: PropTypes.func.isRequired,
+        email: PropTypes.string,
+        googleEmail: PropTypes.string,
     }
 
     render() {
@@ -61,6 +63,8 @@ class SettingsPage extends React.Component {
             save,
             teamImageUrl,
             hasActiveSubscription,
+            email,
+            googleEmail,
         } = this.props
 
         return (
@@ -72,7 +76,7 @@ class SettingsPage extends React.Component {
                                 color='primary'/>
                         </div>
                         <p className='welcome'>
-                            Welcome, {userName} <span display-if={teamName}>@ {teamName}</span>
+                            Welcome, {userName} <span display-if={teamName}>@ {teamName}</span> <span display-if={email} >{email}</span>
                         </p>
                         <p>
                             <LogoutLink/>
@@ -125,7 +129,7 @@ class SettingsPage extends React.Component {
                         <div>
                             <h2 className='heading'><GoogleLogo/>Google Settings</h2>
                             <div className='action' display-if={hasGoogle}>
-                                Connected with Google
+                                Connected with Google <span display-if={googleEmail}>({googleEmail})</span>
                             </div>
                             <div className='action' display-if={!hasGoogle}>
                                 <GoogleLoginButton/>
@@ -169,6 +173,8 @@ const mapStateToProps = (state, ownProps) => {
         saveSuccess: slack.get('saveSuccess'),
         teamImageUrl: user.getIn(['teamImages', 'image_102']),
         hasActiveSubscription: hasActiveSubscription(state),
+        email: user.username,
+        googleEmail: (parseUser && parseUser.get('authData') && parseUser.get('authData').google) ? parseUser.get('authData').google.email : null,
     }
 }
 

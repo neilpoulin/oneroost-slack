@@ -5,6 +5,7 @@ import {connect} from 'react-redux'
 import {CREATE_FILTER_ALIAS} from 'actions/gmail'
 import {REQUEST_VENDOR_INFO_ALIAS} from 'actions/vendor'
 import {getVendorByEmail} from 'selectors/vendors'
+import GoogleLoginButton from 'molecules/GoogleLoginButton'
 
 function buildHtmlMessage(message){
     let $el = document.createElement('div')
@@ -22,7 +23,6 @@ class RedirectDropdownView extends React.Component {
     static propTypes = {
         composeView: PropTypes.object,
         handleRequestMoreInfo: PropTypes.func.isRequired,
-        loadPages: PropTypes.func.isRequired,
         isLoading: PropTypes.bool,
         senderName: PropTypes.string,
         senderEmail: PropTypes.string,
@@ -34,8 +34,9 @@ class RedirectDropdownView extends React.Component {
         unblock: PropTypes.func.isRequired,
         vendor: PropTypes.object,
         requestInfo: PropTypes.func.isRequired,
+        showSlackLink: PropTypes.bool,
+        isLoggedIn: PropTypes.bool,
     }
-
 
     render () {
         const {
@@ -43,7 +44,6 @@ class RedirectDropdownView extends React.Component {
             handleRequestMoreInfo,
             senderName,
             senderEmail,
-            teamUrl,
             message,
             blockOnly,
             saved,
@@ -51,6 +51,8 @@ class RedirectDropdownView extends React.Component {
             unblock,
             vendor,
             requestInfo,
+            showSlackLink,
+            isLoggedIn,
         } = this.props
         return <div className={'container'}>
             <div display-if={isLoading}>
@@ -62,13 +64,18 @@ class RedirectDropdownView extends React.Component {
                     <div display-if={saved} className={`status ${userBlocked ? 'blocked' : (saved ? 'unblocked' : '')}`}>
                         {`${userBlocked ? ' Blocked' : ' Not Blocked'}`}
                     </div>
+                    <div display-if={!isLoggedIn}>
+                        Please log into OneRoost
+                        <GoogleLoginButton/>
+                    </div>
                 </div>
 
-                <ul className="vanityUrls">
+                <ul className="vanityUrls" display-if={isLoggedIn}>
                     <li display-if={!userBlocked} className='vanityUrl' onClick={() => blockOnly({senderName, senderEmail})}>Block Sender</li>
                     <li display-if={userBlocked} className='vanityUrl' onClick={() => unblock({senderName, senderEmail})}>Unblock Sender</li>
                     <li display-if={!vendor || !vendor.infoRequest} className='vanityUrl' onClick={() => requestInfo({vendor, email: senderEmail})}>Request Info</li>
                     <li display-if={vendor && vendor.infoRequest} className='vanityUrl no-action' onClick={() => null}>Info has been requested</li>
+                    <li display-if={showSlackLink} className='vanityUrl ' onClick={() => handleRequestMoreInfo({message})}>Send To Slack</li>
                 </ul>
             </div>
             <div display-if={!senderEmail && !isLoading}>
@@ -83,7 +90,7 @@ const mapStateToProps = (state, ownProps) => {
     const sender = state.thread.sender || {}
     const user = state.user;
     const teamId = state.user.teamId
-    const {channels, selectedChannels} = user
+    const {channels, selectedChannels, isLoggedIn} = user
     const redirectsByEmail = state.gmail.redirectsByEmail
 
     let redirect = sender ? redirectsByEmail[sender.emailAddress] : null
@@ -97,6 +104,7 @@ const mapStateToProps = (state, ownProps) => {
 
     const message = messageTemplate.replace('$TEAM_LINK', teamUrl)
     let vendor = getVendorByEmail(state, sender.emailAddress)
+
     return {
         senderName: sender.name,
         senderEmail: sender.emailAddress,
@@ -106,23 +114,18 @@ const mapStateToProps = (state, ownProps) => {
         teamUrl,
         message,
         vendor,
+        isLoggedIn,
+        showSlackLink: !!ownProps.composeView && teamId
     }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        handleRequestMoreInfo: ({message, teamUrl, senderName, senderEmail, doBlock}) => {
+        handleRequestMoreInfo: ({message}) => {
             if (ownProps.composeView)
             {
                 ownProps.composeView.insertHTMLIntoBodyAtCursor(buildHtmlMessage(message))
             }
-            dispatch({
-                type: CREATE_FILTER_ALIAS,
-                senderName,
-                senderEmail,
-                destinationUrl: teamUrl,
-                blocked: doBlock,
-            })
         },
         requestInfo: ({vendor, email}) => {
             console.log('requesting vendor info')
