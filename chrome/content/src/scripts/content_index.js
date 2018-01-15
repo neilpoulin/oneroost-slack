@@ -15,6 +15,7 @@ import {threadViewHandler} from 'ThreadViewController'
 import {getVendorByEmail} from 'selectors/vendors'
 import * as RedirectDropdownApp from './components/app/RedirectDropdownApp'
 import {roostOrange} from 'util/variables'
+import {showRoostInfoForEmail} from './selectors/config';
 
 const manifest = chrome.runtime.getManifest()
 
@@ -54,10 +55,8 @@ function initialize(){
         sdk.Compose.registerComposeViewHandler((composeView) => {
             composeViewHandler(composeView, store)
         });
-
+        const configState = store.getState()
         sdk.Lists.registerThreadRowViewHandler((threadRow) => {
-            // make a stream, see example https://gist.github.com/omarstreak/8f9590514f326940e710
-            // let labelStream = Kefir.fromPromise()
 
             const labelState  = store.getState()
             let labelPromise = new Promise((resolve, reject) => {
@@ -66,27 +65,17 @@ function initialize(){
                     let contacts = threadRow.getContacts()
                     if (contacts.length > 0) {
                         let {emailAddress: email} = contacts[0]
+
+                        let showLabel = showRoostInfoForEmail(email, configState)
+                        if (!showLabel){
+                            return reject('Not showing label for sender')
+                        }
+
+
                         // we can assume the vendors are in memory already since we fetch them all after login
                         let vendor = getVendorByEmail(labelState, email)
-                        // if (!vendor) {
-                        //     let unsubscribeEmail = store.subscribe(() => {
-                        //         vendor = getVendorByEmail(store.getState(), email)
-                        //         if (vendor) {
-                        //             let title = `${vendor.roostRating ? vendor.roostRating : 'N/A'}`
-                        //             unsubscribeEmail()
-                        //             return resolve({
-                        //                 title,
-                        //                 iconUrl: smallIconUrl
-                        //             })
-                        //         }
-                        //     })
-                        //     store.dispatch({
-                        //         type: FIND_VENDOR_BY_EMAIL_ALIAS,
-                        //         email
-                        //     })
-                        // }
-                        // else {
-                        if (vendor){
+
+                        if (vendor && vendor.objectId){
                             let title = `${vendor.roostRating ? vendor.roostRating : 'N/A'}`
                             if (vendor.roostRating){
                                 return resolve({
@@ -96,23 +85,22 @@ function initialize(){
                                     iconUrl: smallIconWhiteUrl
                                 })
                             } else {
+                                // return reject('No roost rating found')
                                 return resolve({
-                                    title,
-                                    iconUrl: smallIconUrl
+                                    title: 'N/A',
+                                    iconUrl: smallIconUrl,
                                 })
                             }
 
                         } else {
-                            return resolve({
-                                title: 'N/A',
-                                iconUrl: smallIconUrl,
-                            })
+                            return reject('no vendor found')
+                            // return resolve({
+                            //     title: 'N/A',
+                            //     iconUrl: smallIconUrl,
+                            // })
                         }
                     } else {
-                        return resolve({
-                            title: 'N/A',
-                            iconUrl: smallIconUrl,
-                        })
+                        return reject('no vendor found')
                     }
                 } catch (e) {
                     Raven.captureException(e)

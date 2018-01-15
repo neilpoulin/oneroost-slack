@@ -2,7 +2,8 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux';
 import Clickable from 'atoms/Clickable';
-import {LOG_OUT_ALIAS, LOG_IN_GOOGLE_ALIAS} from 'actions/user'
+import Checkbox from 'atoms/Checkbox'
+import {LOG_OUT_ALIAS, LOG_IN_GOOGLE_ALIAS, SET_SHOW_THREAD_WARNING_ALIAS} from 'actions/user'
 import {getFullName} from 'selectors/user'
 import {REFRESH_SERVER_CONFIG_ALIAS, SET_SERVER_URL} from 'actions/config'
 import GoogleLoginButton from 'molecules/GoogleLoginButton'
@@ -21,6 +22,7 @@ class PopupView extends Component {
         serverUrl: PropTypes.string,
         setServerUrl: PropTypes.func,
         helpUrl: PropTypes.string,
+        showThreadViewWarnings: PropTypes.bool,
         popupConfig: PropTypes.shape({
             content: PropTypes.arrayOf(PropTypes.shape({
                 title: PropTypes.string,
@@ -30,6 +32,7 @@ class PopupView extends Component {
                 }))
             }))
         }),
+        setShowThreadViewWarnings: PropTypes.func,
     }
 
     render() {
@@ -46,6 +49,8 @@ class PopupView extends Component {
             setServerUrl,
             helpUrl,
             popupConfig,
+            showThreadViewWarnings,
+            setShowThreadViewWarnings,
         } = this.props
         return <div className="container">
             <div display-if={isLoggedIn} className="">
@@ -75,6 +80,14 @@ class PopupView extends Component {
                         </select>
                     </label>
                 </div>
+
+                <div className='settingsContainer'>
+                    <Checkbox selected={showThreadViewWarnings}
+                        label={'Show warnings when no info available?'}
+                        onChange={(show) => setShowThreadViewWarnings(show) }
+                    />
+                </div>
+
                 <div display-if={popupConfig && popupConfig.content}>
                     {popupConfig.content.map((content, i) =>
                         <div key={`content_${i}`} className="content">
@@ -104,6 +117,7 @@ const mapStateToProps = (state) => {
     const {email, isLoggedIn, userId, isAdmin} = user
     const settingsUrl = `${domain}/settings`
     const helpUrl = `${domain}/support`
+    const showThreadViewWarnings = user.showThreadViewWarnings
     return {
         userId,
         fullName: getFullName(state),
@@ -114,6 +128,7 @@ const mapStateToProps = (state) => {
         serverUrl,
         helpUrl,
         popupConfig,
+        showThreadViewWarnings,
     }
 }
 
@@ -130,6 +145,12 @@ const mapDispatchToProps = (dispatch) => {
                 type: REFRESH_SERVER_CONFIG_ALIAS
             })
         },
+        setShowThreadViewWarnings: (show) => {
+            dispatch({
+                type: SET_SHOW_THREAD_WARNING_ALIAS,
+                show,
+            })
+        }
     }
 }
 

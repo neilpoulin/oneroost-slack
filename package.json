@@ -27,7 +27,10 @@
         ],
         "testPathIgnorePatterns": [
             "dist/"
-        ]
+        ],
+        "moduleNameMapper": {
+            "util(.*)$": "<rootDir>/lib/scripts/util/$1"
+        }
     },
     "devDependencies": {
         "babel-eslint": "^8.0.1",

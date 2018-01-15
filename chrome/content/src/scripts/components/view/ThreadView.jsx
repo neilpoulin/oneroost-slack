@@ -39,6 +39,7 @@ class ThreadView extends Component {
             createdBy: PropTypes.object,
         }),
         isLoggedIn: PropTypes.bool,
+        showThreadViewWarnings: PropTypes.bool,
     }
 
     render() {
@@ -53,6 +54,7 @@ class ThreadView extends Component {
             savingInfoRequest,
             infoRequest,
             isLoggedIn,
+            showThreadViewWarnings,
             //actions
             requestInfo,
             unblock,
@@ -159,7 +161,7 @@ class ThreadView extends Component {
                         <label>Sender</label>
                         <p>{email}</p>
                     </div>
-                    <section className={'warning'}>
+                    <section className={'warning'} display-if={showThreadViewWarnings}>
                         <h2 className={'header'}><WarningIcon color={roostOrange}/> Caution</h2>
                         There is no data on this vendor. We recommend requesting more details below for more information.
                     </section>
@@ -210,6 +212,7 @@ const mapStateToProps = (state) => {
         savingInfoRequest,
         infoRequest,
         isLoggedIn: user.isLoggedIn,
+        showThreadViewWarnings: user.showThreadViewWarnings,
     }
 }
 

@@ -3,6 +3,7 @@ import {SET_SUBJECT} from 'actions/thread'
 import {FIND_VENDOR_BY_EMAIL_ALIAS} from 'actions/vendor';
 import {SET_SENDER} from 'actions/thread';
 import {RESET_USER_REDIRECT} from 'actions/gmail';
+import {showRoostInfoForEmail} from '../selectors/config';
 
 const iconUrl = chrome.runtime.getURL('images/logo30x30.png')
 
@@ -21,10 +22,17 @@ export function threadViewHandler(threadView, store){
         vendorEmail: email,
     })
 
-    threadView.addSidebarContentPanel({
-        el: ThreadViewApp,
-        title: 'Test Title',
-        hideTitleBar: true,
-        iconUrl,
-    })
+    let showSidebar = showRoostInfoForEmail(email, store.getState())
+    if (showSidebar){
+        threadView.addSidebarContentPanel({
+            el: ThreadViewApp,
+            title: 'Test Title',
+            hideTitleBar: true,
+            iconUrl,
+        })
+    } else {
+        console.log('not showing sidebar for sender', email)
+    }
+
+
 }

@@ -5,6 +5,7 @@ import * as UserActions from 'actions/user'
 import {syncTeamRedirects} from 'ducks/gmail'
 import Raven from 'raven-js'
 import axios from 'axios'
+import {SET_SHOW_THREAD_WARNING} from '../../../../proxy/src/scripts/actions/user';
 
 const initialState = {
     isLoggedIn: false,
@@ -19,7 +20,8 @@ const initialState = {
     channels: {},
     google_access_token: null,
     google_user_id: null,
-    selectedChannels: []
+    selectedChannels: [],
+    showThreadWarning: true,
 }
 
 const getUserIdFromAction = (action) => {
@@ -56,6 +58,7 @@ export default function reducer(state=initialState, action){
             state.lastName = payload.lastName;
             state.email = payload.email;
             state.isAdmin = payload.admin;
+            state.showThreadViewWarnings = !!payload.showThreadViewWarnings
             state.google_access_token = (payload.authData && payload.authData.google) ? payload.authData.google.access_token : null
             state.google_user_id = (payload.authData && payload.authData.google) ? payload.authData.google.id: null
             if (payload.slackTeam){
@@ -76,6 +79,9 @@ export default function reducer(state=initialState, action){
             break;
         case UserActions.GOOGLE_LOG_IN_SUCCESS:
             break;
+        case UserActions.SET_SHOW_THREAD_WARNING:
+            state.showThreadViewWarnings = !!action.payload.show
+            break
         default:
             break;
     }
@@ -132,7 +138,7 @@ export const logIn = ({email, password}) => (dispatch, getState) => {
         .catch(error => {
             console.error(error)
             Raven.captureException(error)
-            dispatch({type: UserActions.LOG_IN_ERROR, error,})
+            dispatch({type: UserActions.LOG_IN_ERROR, error, })
         })
 }
 
@@ -306,9 +312,30 @@ export function linkUserWithProviderError(providerName, error){
     }
 }
 
+export function showThreadViewWarnings({show=true}){
+    return dispatch => {
+        let user = Parse.User.current()
+        if (!user){
+            console.warn('User is not logged in. Can not set the user preference')
+            return null
+        }
+        user.set('showThreadViewWarnings', show)
+        dispatch({
+            type: SET_SHOW_THREAD_WARNING,
+            payload: {
+                show,
+            }
+        })
+        user.save().then(saved => {
+            console.log('updated user thread view preferences')
+        })
+    }
+}
+
 export const aliases = {
     [UserActions.LOG_IN_ALIAS]: logIn,
     [UserActions.LOG_OUT_ALIAS]: logOut,
     [UserActions.LOG_IN_GOOGLE_ALIAS]: logInGoogle,
     [UserActions.LOG_OUT_GOOGLE_ALIAS]: logOutGoogle,
+    [UserActions.SET_SHOW_THREAD_WARNING_ALIAS]: showThreadViewWarnings,
 }

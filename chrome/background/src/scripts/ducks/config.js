@@ -8,11 +8,10 @@ export const CONFIGS_LOAD_ERROR = 'oneroost/config/CONFIGS_LOAD_ERROR'
 export const TEAM_CONFIGS_LOAD_REQUEST = 'oneroost/config/TEAM_CONFIGS_LOAD_REQUEST'
 export const TEAM_CONFIGS_LOAD_SUCCESS = 'oneroost/config/TEAM_CONFIGS_LOAD_SUCCESS'
 export const TEAM_CONFIGS_LOAD_ERROR = 'oneroost/config/TEAM_CONFIGS_LOAD_ERROR'
-export const SET_PARSE_CONFIG  = 'oneroost/config/SET_POPUP_CONFIG'
+export const SET_PARSE_CONFIG  = 'oneroost/config/SET_PARSE_CONFIG'
 
 import * as ConfigActions from 'actions/config'
 import Parse from 'parse'
-import {loadCachedUser} from 'ducks/user'
 
 
 const initialState = Immutable.fromJS({
@@ -31,6 +30,7 @@ const initialState = Immutable.fromJS({
     serverUrl: 'https://dev.oneroost.com',
     error: null,
     popupConfig: null,
+    suppressedEmailDomains: [],
 })
 
 export default function reducer(state=initialState, action){
@@ -62,6 +62,7 @@ export default function reducer(state=initialState, action){
             break
         case SET_PARSE_CONFIG:
             state = state.set('popupConfig', action.payload.popupConfig)
+            state = state.set('suppressedEmailDomains', action.payload.suppressedEmailDomains)
             break;
         default:
             break
@@ -129,7 +130,8 @@ export function updateServerConfigs(){
                 dispatch({
                     type: SET_PARSE_CONFIG,
                     payload: {
-                        popupConfig: config.get('extensionPopup')
+                        popupConfig: config.get('extensionPopup'),
+                        suppressedEmailDomains: config.get('suppressedEmailDomains')
                     }
                 })
             })
