@@ -1,3 +1,5 @@
+import {ENV, isProd} from 'util/Environment';
+
 var AWS = require('aws-sdk');
 var SES = new AWS.SES({region: 'us-east-1'});
 
@@ -9,11 +11,12 @@ export function sendTemplate({to=[], bcc=[], from=NOTIFICATIONS_EMAIL, templateN
         if (!templateName){
             return reject(new Error('You must provide a template name when sending a templated email'))
         }
-
+        let toAddresses = isProd() ? to : `neil+${ENV}@oneroost.com`
+        let bccAddresses = isProd() ? ['taylor@oneroost.com', 'neil@oneroost.com'] : bcc
         let params = {
             Destination: {
-                BccAddresses: bcc,
-                ToAddresses: to,
+                BccAddresses: bccAddresses,
+                ToAddresses: toAddresses,
             },
             Source: from,
             ReplyToAddresses: [from],

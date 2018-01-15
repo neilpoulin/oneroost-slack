@@ -56,9 +56,8 @@ export default function initialize() {
 
             try{
                 sendTemplate({
-                    to: [isProd() ? vendorEmail : `neil+${ENV}@oneroost.com`],
+                    to: [vendorEmail],
                     from: NOTIFICATIONS_EMAIL,
-                    bcc: ['neil@oneroost.com', (isProd() ? 'taylor@oneroost.com' : 'neil@oneroost.com')],
                     templateName: VENDOR_INFO_REQUEST_TEMPLATE,
                     data: {
                         requestedByName: getFullName(user),
