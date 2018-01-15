@@ -11,7 +11,7 @@ export function sendTemplate({to=[], bcc=[], from=NOTIFICATIONS_EMAIL, templateN
         if (!templateName){
             return reject(new Error('You must provide a template name when sending a templated email'))
         }
-        let toAddresses = isProd() ? to : `neil+${ENV}@oneroost.com`
+        let toAddresses = isProd() ? to : [`neil+${ENV}@oneroost.com`]
         let bccAddresses = isProd() ? ['taylor@oneroost.com', 'neil@oneroost.com'] : bcc
         let params = {
             Destination: {
