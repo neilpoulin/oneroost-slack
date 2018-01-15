@@ -38,6 +38,6 @@ export function logPageView({path}){
     ReactGA.set({ page: path });
     ReactGA.pageview(path);
     if (window.Intercom){
-        window.Intercom("update");
+        window.Intercom('update');
     }
 }

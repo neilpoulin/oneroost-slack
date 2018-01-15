@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
 import axios from 'axios'
 import Parse from 'parse'
-import {getInboundEmail} from "selectors/inbound";
+import {getInboundEmail} from 'selectors/inbound';
 
 export const LOAD_PLAN_REQUEST = 'oneroost/checkout/LOAD_PLAN_REQUEST'
 export const LOAD_PLAN_SUCCESS = 'oneroost/checkout/LOAD_PLAN_SUCCESS'

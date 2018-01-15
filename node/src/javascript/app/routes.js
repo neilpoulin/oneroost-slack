@@ -4,6 +4,7 @@ var router = require('express').Router()
 var viewRoot = path.join(__dirname, '..', '..', 'view')
 import bodyParser from 'body-parser'
 import Parse from 'parse/node'
+import googleTrends from 'google-trends-api'
 import {
     SLACK_CLIENT_ID,
     SLACK_CLIENT_SECRET,
@@ -100,6 +101,32 @@ router.post('/slack/channels/:channelId', (req, res) => {
     const channelId = req.params.channelId
     const message = req.body.message
     postToChannel(channelId, message)
+})
+
+router.get('/trends', async (req, res)  => {
+    let keywords = req.query.keyword || []
+    console.log('keywords', keywords)
+    let requests = [
+        googleTrends.interestOverTime({keyword: keywords}),
+        googleTrends.relatedTopics({keyword: keywords}),
+        googleTrends.relatedQueries({keyword: keywords}),
+    ]
+    Promise.all(requests)
+        .then(function([trends, relatedTopics, relatedQueries]){
+            console.log('realted', relatedTopics)
+            // console.log(trends);
+            res.header('Access-Control-Allow-Origin', '*')
+            res.send({
+                trends: JSON.parse(trends),
+                relatedTopics: JSON.parse(relatedTopics),
+                relatedQueries: JSON.parse(relatedQueries),
+            })
+        })
+        .catch(function(err){
+            console.error(err);
+            res.status = 500
+            res.send({error: err})
+        });
 })
 
 router.get('/configs', (req, res) => {

@@ -1,7 +1,8 @@
 {
     "name": "OneRoost",
+    "short_name": "OneRoost",
     "description": "OneRoost Gmail Extension",
-    "version": "5.9",
+    "version": "5.11",
     "background": {
         "page": "background.html",
         "persistent": true

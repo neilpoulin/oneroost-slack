@@ -25,7 +25,7 @@ store.dispatch(loadServerConfigs())
 
         initializeAnalytics(config, Parse.User.current())
         ReactDOM.render(
-        <Provider store={store}>
-            <App/>
-        </Provider>, document.getElementById('root'));
+               <Provider store={store}>
+                <App/>
+            </Provider>, document.getElementById('root'));
     })

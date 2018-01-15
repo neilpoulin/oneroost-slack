@@ -4,6 +4,9 @@ import {Config} from 'util/variables'
 import {VENDOR_CLASSNAME} from 'models/ModelConstants'
 import VendorInfoRequest from 'models/VendorInfoRequest'
 import {getDomainFromEmail} from 'util/emailUtil'
+import {sendTemplate, VENDOR_INFO_REQUEST_TEMPLATE, NOTIFICATIONS_EMAIL} from '../email/emailSender'
+import {getCompanyName, getFullName} from '../util/DataUtil';
+import {ENV, isProd} from 'util/Environment';
 
 export default function initialize() {
     Parse.Cloud.define('requestVendorInfo', async (request, response) => {
@@ -21,7 +24,7 @@ export default function initialize() {
             }
 
             let config = await Parse.Config.get()
-            let oneRoostTeamId = config[Config.inboundProductSlackTeamId]
+            let oneRoostTeamId = config.get(Config.inboundProductSlackTeamId)
             let vendor = null
             if (vendorId){
                 let vendorQuery = new Parse.Query(VENDOR_CLASSNAME)
@@ -50,6 +53,24 @@ export default function initialize() {
                 requestForwarded: false,
             })
             let savedRequest = await vendorInfoRequest.save()
+
+            try{
+                sendTemplate({
+                    to: [isProd() ? vendorEmail : `neil+${ENV}@oneroost.com`],
+                    from: NOTIFICATIONS_EMAIL,
+                    bcc: ['neil@oneroost.com', (isProd() ? 'taylor@oneroost.com' : 'neil@oneroost.com')],
+                    templateName: VENDOR_INFO_REQUEST_TEMPLATE,
+                    data: {
+                        requestedByName: getFullName(user),
+                        requestedByCompany: getCompanyName(user),
+                        oneroostTeamId: oneRoostTeamId,
+                    }
+                }).then(result => {
+                    console.log('successfully sent vendor request email!', result)
+                })
+            } catch(e){
+                console.error('unexpectd error occurred sending VendorInfoRequest email', e);
+            }
 
             return response.success({
                 oneRoostTeamId,
